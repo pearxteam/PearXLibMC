@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url = "http://files.minecraftforge.net/maven" }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = "${mc_version}-${mod_version}"
+group = "ru.pearx.libmc"
+archivesBaseName = "PearXLibMC"
+
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+minecraft {
+    version = "${mc_version}-${forge_version}"
+    runDir = "run"
+    mappings = "${mappings_version}"
+
+    replace("@VERSION@", mod_version)
+    replace("@MCVERSION@", mc_version)
+    replaceIn("PXLMC.java")
+}
+
+dependencies {
+}
+
+processResources {
+    rename '(.+_at.cfg)', 'META-INF/$1'
+}
+
+jar {
+    manifest {
+        attributes 'FMLAT': 'pearxlibmc_at.cfg'
+    }
+}
