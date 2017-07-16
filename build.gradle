@@ -37,6 +37,6 @@ processResources {
 
 jar {
     manifest {
-        attributes 'FMLAT': 'pearxlibmc_at.cfg'
+        attributes 'FMLAT': 'pxlmc_at.cfg'
     }
 }
