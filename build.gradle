@@ -42,5 +42,5 @@ jar {
     manifest {
         attributes 'FMLAT': 'pxlmc_at.cfg'
     }
-    from rootProject.project("PearXLib2").sourceSets.main.output
+    from project.project("PearXLib2").sourceSets.main.output
 }
