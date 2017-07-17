@@ -1,0 +1,3 @@
+[submodule "PearXLib2"]
+	path = PearXLib2
+	url = git://github.com/PearXTeam/PearXLib2

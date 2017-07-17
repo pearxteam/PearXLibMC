@@ -29,14 +29,18 @@ minecraft {
 }
 
 dependencies {
+    compile project(":PearXLib2")
 }
 
 processResources {
     rename '(.+_at.cfg)', 'META-INF/$1'
 }
 
+evaluationDependsOn(project(":PearXLib2").path)
+jar.dependsOn project(":PearXLib2").tasks["classes"]
 jar {
     manifest {
         attributes 'FMLAT': 'pxlmc_at.cfg'
     }
+    from rootProject.project(":PearXLib2").sourceSets.main.output
 }
