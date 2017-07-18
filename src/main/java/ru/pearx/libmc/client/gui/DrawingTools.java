@@ -30,7 +30,7 @@ public class DrawingTools
     public static void drawTexture(ResourceLocation tex, int x, int y, int width, int height)
     {
         Minecraft.getMinecraft().getTextureManager().bindTexture(tex);
-        GuiScreen.drawModalRectWithCustomSizedTexture(x, y, x, y, width, height, width, height);
+        GuiScreen.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
     }
 
     public static void drawString(String str, int x, int y, Color col, boolean shadow, float scale, FontRenderer rend)
