@@ -1,13 +1,10 @@
 package ru.pearx.libmc.client.models;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

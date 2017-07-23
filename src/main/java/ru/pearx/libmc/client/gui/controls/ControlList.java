@@ -2,7 +2,6 @@ package ru.pearx.libmc.client.gui.controls;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import scala.actors.threadpool.AbstractCollection;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;

@@ -7,8 +7,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.client.ClientUtils;
 import ru.pearx.libmc.client.models.IModelProvider;
 
-import java.lang.reflect.Field;
-
 /*
  * Created by mrAppleXZ on 10.07.17 22:11.
  */
