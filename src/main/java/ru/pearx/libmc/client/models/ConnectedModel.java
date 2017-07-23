@@ -65,6 +65,7 @@ public class ConnectedModel extends OvModel
             }
             quads.add(new BakedQuadWNT(baseQ, getSprite(digits)));
         }
+        process(quads, state, side, rand);
         return quads;
     }
 

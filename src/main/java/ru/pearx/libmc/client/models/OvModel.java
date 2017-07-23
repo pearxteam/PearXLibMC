@@ -1,5 +1,6 @@
 package ru.pearx.libmc.client.models;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -9,17 +10,25 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.util.vector.Vector3f;
 import ru.pearx.libmc.client.models.processors.IQuadProcessor;
+import ru.pearx.libmc.client.models.processors.IVertexProcessor;
+import ru.pearx.libmc.common.blocks.controllers.HorizontalFacingController;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +39,15 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class OvModel implements IPXModel
 {
-    protected List<IQuadProcessor> processors = new ArrayList<>();
+    protected List<IQuadProcessor> quadProcessors = new ArrayList<>();
+    protected List<IVertexProcessor> vertexProcessors = new ArrayList<>();
     private ResourceLocation baseModel;
     private IBakedModel baked;
     private WeakReference<ItemStack> stack;
     private boolean flipV = true;
+    private boolean disableSides = true;
+
+    protected static final ImmutableList<BakedQuad> DUMMY_LIST = ImmutableList.of();
 
     @Override
     public void bake()
@@ -58,12 +71,56 @@ public class OvModel implements IPXModel
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
     {
+        if(shouldDisableSides() && side != null)
+            return DUMMY_LIST;
+
         List<BakedQuad> l = new ArrayList<>();
-        for (BakedQuad quad : getBaked().getQuads(state, side, rand))
-            l.add(new BakedQuad(quad.getVertexData(), 1, quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat()));
-        for(IQuadProcessor proc : processors)
-            proc.process(l, state, side, rand);
+        for(BakedQuad quad : getBaked().getQuads(state, side, rand))
+            l.add(quad);
+        process(l, state, side, rand);
         return l;
+    }
+
+    protected void process(List<BakedQuad> quads, @Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+    {
+        for(IQuadProcessor proc : quadProcessors)
+            if((proc.processState() && state != null) || (proc.processStack() && getStack() != null))
+                proc.process(quads, state, side, rand, this);
+
+        boolean flag = false;
+        for(IVertexProcessor proc : vertexProcessors)
+        {
+            if((proc.processState() && state != null) || (proc.processStack() && getStack() != null))
+                flag = true;
+        }
+        if(flag)
+        {
+            for(IVertexProcessor proc : vertexProcessors)
+                if((proc.processState() && state != null) || (proc.processStack() && getStack() != null))
+                    proc.preProcess(quads, state, side, rand, this);
+            for (int iq = 0; iq < quads.size(); iq++)
+            {
+                BakedQuad q = quads.get(iq);
+                UnpackedBakedQuad.Builder bld = new UnpackedBakedQuad.Builder(q.getFormat());
+                bld.setQuadTint(q.getTintIndex());
+                bld.setQuadOrientation(q.getFace());
+                bld.setTexture(q.getSprite());
+                bld.setApplyDiffuseLighting(q.shouldApplyDiffuseLighting());
+                for (int i = 0; i < 4; i++)
+                {
+                    for (int e = 0; e < q.getFormat().getElementCount(); e++)
+                    {
+                        float[] lst = new float[q.getFormat().getElement(e).getElementCount()];
+                        LightUtil.unpack(q.getVertexData(), lst, q.getFormat(), i, e);
+                        for(IVertexProcessor proc : vertexProcessors)
+                            if((proc.processState() && state != null) || (proc.processStack() && getStack() != null))
+                                lst = proc.process(q, lst, i, e, state, side, rand, this);
+                        bld.put(e, lst);
+                    }
+                }
+                quads.set(iq, bld.build());
+            }
+        }
     }
 
     @Override
@@ -144,5 +201,15 @@ public class OvModel implements IPXModel
     public ResourceLocation getBaseModel()
     {
         return baseModel;
+    }
+
+    public boolean shouldDisableSides()
+    {
+        return disableSides;
+    }
+
+    public void setShouldDisableSides(boolean disableSides)
+    {
+        this.disableSides = disableSides;
     }
 }

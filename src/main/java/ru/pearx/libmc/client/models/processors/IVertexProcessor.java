@@ -11,12 +11,13 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /*
- * Created by mrAppleXZ on 07.07.17 9:00.
+ * Created by mrAppleXZ on 22.07.17 18:03.
  */
 @SideOnly(Side.CLIENT)
-public interface IQuadProcessor
+public interface IVertexProcessor
 {
-    void process(List<BakedQuad> quads, @Nullable IBlockState state, @Nullable EnumFacing side, long rand, IPXModel model);
+    void preProcess(List<BakedQuad> quads, @Nullable IBlockState state, @Nullable EnumFacing side, long rand, IPXModel model);
+    float[] process(BakedQuad quad, float[] data, int vert, int element, @Nullable IBlockState state, @Nullable EnumFacing side, long rand, IPXModel model);
     boolean processState();
     boolean processStack();
 }

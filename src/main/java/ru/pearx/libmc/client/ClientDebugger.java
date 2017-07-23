@@ -1,10 +1,12 @@
 package ru.pearx.libmc.client;
 
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
 
 /**
  * Created by mrAppleXZ on 05.06.17 21:43.
@@ -60,6 +62,6 @@ public class ClientDebugger
             y = 0;
             z = 0;
         }
-        return new Quat4f((float)Math.toRadians(x), (float)Math.toRadians(y), (float)Math.toRadians(z), 1);
+        return TRSRTransformation.quatFromXYZDegrees(new Vector3f(x, y, z));
     }
 }
