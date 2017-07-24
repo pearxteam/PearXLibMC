@@ -4,15 +4,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.LightUtil;
@@ -26,6 +25,7 @@ import ru.pearx.libmc.client.models.processors.IVertexProcessor;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,6 +43,16 @@ public class OvModel implements IPXModel
     private boolean disableSides = true;
 
     protected static final ImmutableList<BakedQuad> DUMMY_LIST = ImmutableList.of();
+    public static final ItemOverrideList OVERRIDE_LIST = new ItemOverrideList(Collections.emptyList())
+    {
+        @Override
+        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+        {
+            if(originalModel instanceof IPXModel)
+                ((IPXModel) originalModel).setStack(stack);
+            return originalModel;
+        }
+    };
 
     @Override
     public void bake()
@@ -79,19 +89,19 @@ public class OvModel implements IPXModel
     protected void process(List<BakedQuad> quads, @Nullable IBlockState state, @Nullable EnumFacing side, long rand)
     {
         for(IQuadProcessor proc : quadProcessors)
-            if((proc.processState() && state != null) || (proc.processStack() && getStack() != null))
+            if((proc.processState() && state != null) || (proc.processStack() && state == null))
                 proc.process(quads, state, side, rand, this);
 
         boolean flag = false;
         for(IVertexProcessor proc : vertexProcessors)
         {
-            if((proc.processState() && state != null) || (proc.processStack() && getStack() != null))
+            if((proc.processState() && state != null) || (proc.processStack() && state == null))
                 flag = true;
         }
         if(flag)
         {
             for(IVertexProcessor proc : vertexProcessors)
-                if((proc.processState() && state != null) || (proc.processStack() && getStack() != null))
+                if((proc.processState() && state != null) || (proc.processStack() && state == null))
                     proc.preProcess(quads, state, side, rand, this);
             for (int iq = 0; iq < quads.size(); iq++)
             {
@@ -108,7 +118,7 @@ public class OvModel implements IPXModel
                         float[] lst = new float[q.getFormat().getElement(e).getElementCount()];
                         LightUtil.unpack(q.getVertexData(), lst, q.getFormat(), i, e);
                         for(IVertexProcessor proc : vertexProcessors)
-                            if((proc.processState() && state != null) || (proc.processStack() && getStack() != null))
+                            if((proc.processState() && state != null) || (proc.processStack() && state == null))
                                 lst = proc.process(q, lst, i, e, state, side, rand, this);
                         bld.put(e, lst);
                     }
@@ -151,7 +161,7 @@ public class OvModel implements IPXModel
     @Override
     public ItemOverrideList getOverrides()
     {
-        return getBaked().getOverrides();
+        return OVERRIDE_LIST;
     }
 
     public boolean shouldFlipV()
