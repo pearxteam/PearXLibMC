@@ -15,8 +15,8 @@ public class ItemBlockBase extends ItemBlock implements IModelProvider
     public ItemBlockBase(Block block)
     {
         super(block);
-        setRegistryName(block.getRegistryName());
         setUnlocalizedName(block.getUnlocalizedName());
+        setRegistryName(block.getRegistryName());
     }
 
     @Override
