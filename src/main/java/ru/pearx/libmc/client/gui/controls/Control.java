@@ -22,12 +22,9 @@ public class Control
     private int x;
     private int y;
     private boolean visible = true;
-    private boolean selected;
     private boolean focused;
 
     public boolean initialized;
-    public boolean keyEventsRS = true;
-    public SelectType selectType = SelectType.CLICK;
 
     public Control getParent()
     {
@@ -101,11 +98,6 @@ public class Control
         this.visible = visible;
     }
 
-    public boolean isSelected()
-    {
-        return selected;
-    }
-
     public boolean isFocused()
     {
         return focused;
@@ -114,12 +106,6 @@ public class Control
     public void setFocused(boolean val)
     {
         focused = val;
-    }
-
-
-    public void selectionChanged()
-    {
-
     }
 
     public void render()
@@ -182,11 +168,6 @@ public class Control
 
     }
 
-    public void invokeSelectionChanged()
-    {
-        selectionChanged();
-    }
-
     public void invokeRender()
     {
         GlStateManager.pushMatrix();
@@ -209,24 +190,21 @@ public class Control
     {
         for (Control cont : controls)
             cont.invokeKeyDown(keycode);
-        if (!keyEventsRS || isSelected())
-            keyDown(keycode);
+        keyDown(keycode);
     }
 
     public void invokeKeyUp(int keycode)
     {
         for (Control cont : controls)
             cont.invokeKeyUp(keycode);
-        if (!keyEventsRS || isSelected())
-            keyUp(keycode);
+        keyUp(keycode);
     }
 
     public void invokeKeyPress(char key, int keycode)
     {
         for (Control cont : controls)
             cont.invokeKeyPress(key, keycode);
-        if (!keyEventsRS || isSelected())
-            keyPress(key, keycode);
+        keyPress(key, keycode);
     }
 
     public void invokeMouseDown(int button, int x, int y)
@@ -238,8 +216,6 @@ public class Control
                 cont.invokeMouseDown(button, x - cont.getX(), y - cont.getY());
             }
         }
-        if(selectType == SelectType.CLICK)
-            select();
         mouseDown(button, x, y);
     }
 
@@ -268,7 +244,7 @@ public class Control
         }
         mouseMove(x, y, dx, dy);
         if(last)
-            setSelected(getMainParent(this), this);
+            setFocused(getMainParent(this), this);
 
     }
 
@@ -303,19 +279,6 @@ public class Control
             parent.invokeMouseMove(parent.getGuiScreen().getMouseX(), parent.getGuiScreen().getMouseY(), 0, 0);
     }
 
-    public void select()
-    {
-        unselectAll(getMainParent(this));
-        selected = true;
-        invokeSelectionChanged();
-    }
-
-    public void unselect()
-    {
-        selected = false;
-        invokeSelectionChanged();
-    }
-
     public IGuiScreen getGuiScreen()
     {
         Control parent = getMainParent(this);
@@ -327,16 +290,7 @@ public class Control
         return null;
     }
 
-    public static void unselectAll(Control c)
-    {
-        c.unselect();
-        for (Control cont : c.controls)
-        {
-            unselectAll(cont);
-        }
-    }
-
-    public static void setSelected(Control c, Control select)
+    public static void setFocused(Control c, Control select)
     {
         if(c.isFocused() && c != select)
         {
@@ -349,7 +303,7 @@ public class Control
             c.invokeMouseEnter();
         }
         for (Control cont : c.controls)
-            setSelected(cont, select);
+            setFocused(cont, select);
     }
 
     public static Control getMainParent(Control c)
