@@ -6,6 +6,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.List;
+
 /*
  * Created by mrAppleXZ on 10.07.17 22:12.
  */
