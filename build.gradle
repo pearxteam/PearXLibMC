@@ -25,6 +25,7 @@ minecraft {
 
     replace("@VERSION@", mod_version)
     replace("@MCVERSION@", mc_version)
+    replace("acceptedMinecraftVersions = \"\"", "acceptedMinecraftVersions = \"" + accepted_mc_versions + "\"")
     replaceIn("PXLMC.java")
 }
 
