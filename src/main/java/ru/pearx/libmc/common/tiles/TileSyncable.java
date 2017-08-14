@@ -1,5 +1,6 @@
 package ru.pearx.libmc.common.tiles;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -33,5 +34,11 @@ public class TileSyncable extends TileEntity
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         return new SPacketUpdateTileEntity(getPos(), 1, getUpdateTag());
+    }
+
+    public void sendUpdatesToClients()
+    {
+        IBlockState ibs = getWorld().getBlockState(getPos());
+        getWorld().notifyBlockUpdate(getPos(), ibs, ibs, 2);
     }
 }
