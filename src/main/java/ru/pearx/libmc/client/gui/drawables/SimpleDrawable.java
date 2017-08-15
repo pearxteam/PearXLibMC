@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.libmc.client.gui.IGuiScreen;
 
 /**
  * Created by mrAppleXZ on 26.05.17 14:18.
@@ -39,7 +40,7 @@ public class SimpleDrawable implements IGuiDrawable
     }
 
     @Override
-    public void draw(int x, int y)
+    public void draw(IGuiScreen screen, int x, int y)
     {
         GlStateManager.enableBlend();
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);

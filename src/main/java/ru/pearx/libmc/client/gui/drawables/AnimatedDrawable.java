@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.libmc.client.gui.IGuiScreen;
 
 /**
  * Created by mrAppleXZ on 23.04.17 12:55.
@@ -51,7 +52,7 @@ public class AnimatedDrawable implements IGuiDrawable
     }
 
     @Override
-    public void draw(int x, int y)
+    public void draw(IGuiScreen screen, int x, int y)
     {
         x += xOfffset;
         y += yOffset;

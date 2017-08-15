@@ -7,6 +7,9 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.libmc.client.gui.IGuiScreen;
+
+import java.awt.*;
 
 /**
  * Created by mrAppleXZ on 15.04.17 9:49.
@@ -29,7 +32,7 @@ public class ItemDrawable implements IGuiDrawable
     }
 
     @Override
-    public void draw(int x, int y)
+    public void draw(IGuiScreen screen, int x, int y)
     {
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0);
@@ -39,6 +42,15 @@ public class ItemDrawable implements IGuiDrawable
         rend.renderItemAndEffectIntoGUI(stack, 0, 0);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.popMatrix();
+    }
+
+    public void drawWithTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY)
+    {
+        draw(screen, x, y);
+        if(mouseX >= x && mouseX <= x + getWidth() && mouseY >= y && mouseY <= y + getHeight())
+        {
+            screen.drawTooltip(stack, mouseX, mouseY);
+        }
     }
 
     @Override
