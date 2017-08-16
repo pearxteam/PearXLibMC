@@ -9,8 +9,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
-import java.awt.*;
-
 /**
  * Created by mrAppleXZ on 15.04.17 9:49.
  */

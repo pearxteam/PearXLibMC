@@ -13,8 +13,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-
 /**
  * Created by mrAppleXZ on 16.04.17 20:45.
  */
@@ -126,6 +124,25 @@ public class DrawingTools
         bld.pos((double) right, (double) bottom, 0).color(f5, f6, f7, f4).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+    }
+
+    public static void drawLine(int x1, int y1, int x2, int y2, int width, Color c1, Color c2)
+    {
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bld = tessellator.getBuffer();
+        bld.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        bld.pos(x1, y1, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+        bld.pos(x2, y2, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();

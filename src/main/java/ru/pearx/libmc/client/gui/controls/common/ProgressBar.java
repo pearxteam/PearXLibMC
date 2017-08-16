@@ -13,7 +13,6 @@ import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.controls.Control;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
