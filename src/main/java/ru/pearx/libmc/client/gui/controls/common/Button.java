@@ -4,6 +4,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.lib.Color;
+import ru.pearx.lib.Colors;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.TexturePart;
 import ru.pearx.libmc.client.gui.controls.Control;
@@ -25,7 +27,7 @@ public class Button extends Control
 
     private String text;
     public Runnable clickAction;
-    private Color textColor = Color.WHITE;
+    private Color textColor = Colors.WHITE;
 
     public Button(ResourceLocation textures, String str, Runnable run)
     {

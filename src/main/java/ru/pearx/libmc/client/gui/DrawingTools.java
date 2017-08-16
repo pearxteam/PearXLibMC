@@ -12,6 +12,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import ru.pearx.lib.Color;
 
 /**
  * Created by mrAppleXZ on 16.04.17 20:45.
@@ -36,7 +37,7 @@ public class DrawingTools
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(scale, scale, 0);
-        rend.drawString(str, 0, 0, col.getRGB(), shadow);
+        rend.drawString(str, 0, 0, col.toARGB(), shadow);
         GlStateManager.popMatrix();
     }
 
@@ -59,7 +60,7 @@ public class DrawingTools
     {
         GlStateManager.pushMatrix();
         rend.resetStyles();
-        rend.textColor = col.getRGB();
+        rend.textColor = col.toARGB();
         str = rend.trimStringNewline(str);
         if(shadow)
             rend.renderSplitString(str, x + 1, y + 1, width, true);
@@ -96,20 +97,10 @@ public class DrawingTools
         GlStateManager.popMatrix();
     }
 
-    public static void drawGradientRect(int x, int y, int width, int height, Color start, Color end)
+    public static void drawGradientRect(int x, int y, int width, int height, Color c1, Color c2)
     {
         int right = x + width;
         int bottom = y + height;
-        int startColor = start.getRGB();
-        int endColor = end.getRGB();
-        float f = (float) (startColor >> 24 & 255) / 255.0F;
-        float f1 = (float) (startColor >> 16 & 255) / 255.0F;
-        float f2 = (float) (startColor >> 8 & 255) / 255.0F;
-        float f3 = (float) (startColor & 255) / 255.0F;
-        float f4 = (float) (endColor >> 24 & 255) / 255.0F;
-        float f5 = (float) (endColor >> 16 & 255) / 255.0F;
-        float f6 = (float) (endColor >> 8 & 255) / 255.0F;
-        float f7 = (float) (endColor & 255) / 255.0F;
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -118,10 +109,10 @@ public class DrawingTools
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bld = tessellator.getBuffer();
         bld.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        bld.pos((double) right, (double) y, 0).color(f1, f2, f3, f).endVertex();
-        bld.pos((double) x, (double) y, 0).color(f1, f2, f3, f).endVertex();
-        bld.pos((double) x, (double) bottom, 0).color(f5, f6, f7, f4).endVertex();
-        bld.pos((double) right, (double) bottom, 0).color(f5, f6, f7, f4).endVertex();
+        bld.pos(right, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+        bld.pos(x, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+        bld.pos(x, bottom, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+        bld.pos(right, bottom, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
@@ -131,6 +122,7 @@ public class DrawingTools
 
     public static void drawLine(int x1, int y1, int x2, int y2, int width, Color c1, Color c2)
     {
+        GlStateManager.glLineWidth(width);
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -146,6 +138,7 @@ public class DrawingTools
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+        GlStateManager.glLineWidth(1);
     }
 
     public static void drawRectangle(int x, int y, int width, int height)

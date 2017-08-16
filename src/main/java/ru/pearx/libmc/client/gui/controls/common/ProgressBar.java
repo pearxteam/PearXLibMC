@@ -9,6 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import ru.pearx.lib.Color;
+import ru.pearx.lib.Colors;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.controls.Control;
@@ -24,9 +26,9 @@ public class ProgressBar extends Control
 {
     private int maxValue;
     private int value;
-    private Color color = Color.WHITE;
-    private Color textColor = Color.BLACK;
-    private Color backgroundColor = Color.GRAY;
+    private Color color = Colors.WHITE;
+    private Color textColor = Colors.BLACK;
+    private Color backgroundColor = Colors.GREY_500;
     private String text;
     private List<Mark> marks = new ArrayList<>();
 
