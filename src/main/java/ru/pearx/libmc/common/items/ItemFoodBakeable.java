@@ -53,10 +53,4 @@ public class ItemFoodBakeable extends ItemFoodBase
         ClientUtils.setModelLocation(this, 0, "");
         ClientUtils.setModelLocation(this, 1, ".baked");
     }
-
-    @Override
-    public String getUnlocalizedName(ItemStack stack)
-    {
-        return stack.getMetadata() == 1 ? getUnlocalizedName() + ".baked" : getUnlocalizedName();
-    }
 }

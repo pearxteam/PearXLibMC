@@ -15,14 +15,7 @@ public class ItemBlockBase extends ItemBlock implements IModelProvider
     public ItemBlockBase(Block block)
     {
         super(block);
-        setUnlocalizedName(block.getUnlocalizedName());
         setRegistryName(block.getRegistryName());
-    }
-
-    @Override
-    public int getMetadata(int damage)
-    {
-        return damage;
     }
 
     @Override

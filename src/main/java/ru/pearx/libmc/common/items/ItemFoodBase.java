@@ -23,16 +23,4 @@ public class ItemFoodBase extends ItemFood implements IModelProvider
     {
         ClientUtils.setModelLocation(this);
     }
-
-    @Override
-    public String getUnlocalizedName()
-    {
-        return super.unlocalizedName == null ? "item." + getRegistryName().getResourcePath() : super.getUnlocalizedName();
-    }
-
-    @Override
-    public String getUnlocalizedName(ItemStack stack)
-    {
-        return getUnlocalizedName();
-    }
 }
