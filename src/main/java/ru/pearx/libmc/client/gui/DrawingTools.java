@@ -37,7 +37,7 @@ public class DrawingTools
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(scale, scale, 0);
-        rend.drawString(str, 0, 0, col.toARGB(), shadow);
+        rend.drawString(str, 0, 0, col.getARGB(), shadow);
         GlStateManager.popMatrix();
     }
 
@@ -60,7 +60,7 @@ public class DrawingTools
     {
         GlStateManager.pushMatrix();
         rend.resetStyles();
-        rend.textColor = col.toARGB();
+        rend.textColor = col.getARGB();
         str = rend.trimStringNewline(str);
         if(shadow)
             rend.renderSplitString(str, x + 1, y + 1, width, true);
