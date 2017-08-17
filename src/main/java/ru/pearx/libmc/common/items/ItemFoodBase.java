@@ -1,7 +1,6 @@
 package ru.pearx.libmc.common.items;
 
 import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.client.ClientUtils;
