@@ -17,7 +17,7 @@ import javax.vecmath.Vector3f;
  */
 public class ClientDebugger
 {
-    private static int x, y, z;
+    private static int rotX, rotY, rotZ;
 
     public static Quat4f getRotation()
     {
@@ -25,43 +25,73 @@ public class ClientDebugger
         boolean min = Keyboard.isKeyDown(Keyboard.KEY_Z);
         if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
         {
-            if(plus && y < 360)
+            if(plus && rotY < 360)
             {
-                y++;
+                rotY++;
             }
-            if(min && y > -360)
+            if(min && rotY > -360)
             {
-                y--;
+                rotY--;
             }
         }
         else if(Keyboard.isKeyDown(Keyboard.KEY_LMENU))
         {
-            if(plus && z < 360)
+            if(plus && rotZ < 360)
             {
-                z++;
+                rotZ++;
             }
-            if(min && z > -360)
+            if(min && rotZ > -360)
             {
-                z--;
+                rotZ--;
             }
         }
         else
         {
-            if(plus && x < 360)
+            if(plus && rotX < 360)
             {
-                x++;
+                rotX++;
             }
-            if(min && x > -360)
+            if(min && rotX > -360)
             {
-                x--;
+                rotX--;
             }
         }
         if(Keyboard.isKeyDown(Keyboard.KEY_C))
         {
-            x = 0;
-            y = 0;
-            z = 0;
+            rotX = 0;
+            rotY = 0;
+            rotZ = 0;
         }
-        return TRSRTransformation.quatFromXYZDegrees(new Vector3f(x, y, z));
+        return TRSRTransformation.quatFromXYZDegrees(new Vector3f(rotX, rotY, rotZ));
+    }
+
+    private static float traX, traY, traZ;
+
+    public static Vector3f getTranslation()
+    {
+        if (Keyboard.isKeyDown(Keyboard.KEY_Z))
+        {
+            traX-= 0.01f;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_X))
+        {
+            traX+= 0.01f;
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_C))
+        {
+            traY-= 0.01f;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_V))
+        {
+            traY+= 0.01f;
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_B))
+        {
+            traZ-= 0.01f;
+        } else if (Keyboard.isKeyDown(Keyboard.KEY_N))
+        {
+            traZ+= 0.01f;
+        }
+        return new Vector3f(traX, traY, traZ);
     }
 }
