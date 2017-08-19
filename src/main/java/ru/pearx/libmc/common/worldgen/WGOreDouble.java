@@ -1,10 +1,12 @@
 package ru.pearx.libmc.common.worldgen;
 
+import com.google.common.base.Predicate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -16,14 +18,14 @@ public class WGOreDouble extends WGOre
 
     public WGOreDouble(int minVeinSize, int maxVeinSize, int minY, int maxY, float chance, IBlockState up, IBlockState down, List<Integer> dims, boolean whitelist)
     {
-        super(minVeinSize, maxVeinSize, minY, maxY, chance, down, dims, whitelist);
+        super(minVeinSize, maxVeinSize, minY, maxY, chance, down, dims, whitelist, 0, 0, new Predicate<IBlockState>()
+        {
+            @Override
+            public boolean apply(@Nullable IBlockState input)
+            {
+                return true;
+            }
+        });
         this.up = up;
-    }
-
-    @Override
-    public void setState(World world, BlockPos pos, IBlockState state)
-    {
-        super.setState(world, pos, state);
-        world.setBlockState(pos.offset(EnumFacing.UP), up, 2);
     }
 }
