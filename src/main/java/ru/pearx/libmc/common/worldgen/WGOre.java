@@ -61,7 +61,6 @@ public class WGOre implements IWorldGenerator
 
     public static class StonePredicate implements Predicate<IBlockState>
     {
-
         @Override
         public boolean apply(@Nullable IBlockState state)
         {
