@@ -1,0 +1,3 @@
+tile.structure_nothing.name=Structure Nothing
+command.pxlmc_structure.usage=Usage: /pxlmc_structure <name> <fromX> <fromY> <fromZ> <toX> <toY> <toZ>
+command.pxlmc_structure.nan=One of the position arguments is not a number!

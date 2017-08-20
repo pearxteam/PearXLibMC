@@ -3,6 +3,9 @@ package ru.pearx.libmc;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import org.apache.logging.log4j.Logger;
+import ru.pearx.libmc.common.structure.CommandStructure;
 
 import java.util.Collections;
 
@@ -16,6 +19,8 @@ public class PXLMC
     public static final String MODID = "pxlmc";
     public static final String VERSION = "@VERSION@";
 
+    private static Logger log;
+
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent e)
     {
@@ -27,5 +32,18 @@ public class PXLMC
         data.version = VERSION;
         data.modId = MODID;
         data.name = NAME;
+
+        log = e.getModLog();
+    }
+
+    @Mod.EventHandler
+    public static void onServerStart(FMLServerStartingEvent e)
+    {
+        e.registerServerCommand(new CommandStructure());
+    }
+
+    public static Logger getLog()
+    {
+        return log;
     }
 }
