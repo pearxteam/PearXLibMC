@@ -24,4 +24,11 @@ public class ItemBlockBase extends ItemBlock implements IModelProvider
     {
         ClientUtils.setModelLocation(this);
     }
+
+    //Don't remove this! It will break everything just 'cos Item#getMetadata returns zero by default!
+    @Override
+    public int getMetadata(int damage)
+    {
+        return damage;
+    }
 }
