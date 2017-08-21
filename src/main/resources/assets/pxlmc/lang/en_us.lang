@@ -1,3 +1,5 @@
 tile.structure_nothing.name=Structure Nothing
-command.pxlmc_structure.usage=Usage: /pxlmc_structure <name> <fromX> <fromY> <fromZ> <toX> <toY> <toZ>
+command.pxlmc_structure.usage=Usage: /pxlmc_structure create <name> <fromX> <fromY> <fromZ> <toX> <toY> <toZ> | /pxlmc_structure spawn <name> <x> <y> <z>
 command.pxlmc_structure.nan=One of the position arguments is not a number!
+command.pxlmc_structure.success=Success!
+command.pxlmc_structure.ioexception=An error occurred when reading the structure file! %s.

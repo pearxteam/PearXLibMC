@@ -1,11 +1,16 @@
 package ru.pearx.libmc.common.structure;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import com.sun.jna.Structure;
+import net.minecraft.command.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import ru.pearx.libmc.PXLMC;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /*
  * Created by mrAppleXZ on 21.08.17 0:24.
@@ -27,18 +32,73 @@ public class CommandStructure extends CommandBase
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        if(args.length < 7)
-            throw new WrongUsageException(getUsage(sender));
-        try
+        if(args.length >= 1)
         {
-            String name = args[0];
-            BlockPos from = new BlockPos(Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-            BlockPos to = new BlockPos(Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]));
-            StructureApi.createStructure(name, from, to, sender.getEntityWorld());
+            switch (args[0])
+            {
+                case "create":
+                {
+                    if(args.length >= 8)
+                    {
+                            String name = args[1];
+                            BlockPos from = parseBlockPos(sender, args, 2, false);
+                            BlockPos to = parseBlockPos(sender, args, 5, false);
+                            StructureApi.createStructure(name, from, to, sender.getEntityWorld());
+                            notifyCommandListener(sender, this, "command.pxlmc_structure.success");
+                            return;
+                    }
+                    break;
+                }
+                case "spawn":
+                {
+                    if (args.length >= 5)
+                    {
+                        String name = args[1];
+                        BlockPos pos = parseBlockPos(sender, args, 2, false);
+                        try
+                        {
+                            StructureApi.spawnStructure(StructureApi.getStructureNbt(name), pos, sender.getEntityWorld());
+                            notifyCommandListener(sender, this, "command.pxlmc_structure.success");
+                            return;
+                        }
+                        catch (IOException e)
+                        {
+                            PXLMC.getLog().error("An IOException occurred when spawning a structure.", e);
+                            throw new CommandException("command.pxlmc_structure.ioexception", e.getMessage());
+                        }
+                    }
+                }
+            }
         }
-        catch (NumberFormatException e)
+        throw new WrongUsageException(getUsage(sender));
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    {
+        if(args.length == 1)
         {
-            throw new CommandException("command.pxlmc_structure.nan");
+            return Arrays.asList("create", "spawn");
         }
+        switch (args[0])
+        {
+            case "create":
+                if(args.length >= 3 && args.length <= 5)
+                {
+                    return getTabCompletionCoordinate(args, 2, targetPos);
+                }
+                if(args.length >= 6 && args.length <= 8)
+                {
+                    return getTabCompletionCoordinate(args, 5, targetPos);
+                }
+                break;
+            case "spawn":
+                if(args.length >= 3 && args.length <= 5)
+                {
+                    return getTabCompletionCoordinate(args, 2, targetPos);
+                }
+                break;
+        }
+        return Collections.emptyList();
     }
 }
