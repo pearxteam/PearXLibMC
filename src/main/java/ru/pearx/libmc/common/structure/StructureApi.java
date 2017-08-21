@@ -23,6 +23,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 /*
@@ -161,11 +164,16 @@ public class StructureApi
         {
             NBTTagList blocks = tag.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
             BlockPos.MutableBlockPos absPos = new BlockPos.MutableBlockPos();
+            Map<String, Block> bcache = new HashMap<>();
             for (NBTBase base : blocks)
             {
+                long l = System.currentTimeMillis();
                 NBTTagCompound block = (NBTTagCompound) base;
                 absPos.setPos(at.getX() + block.getInteger("x"), at.getY() + block.getInteger("y"), at.getZ() + block.getInteger("z"));
-                Block b = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(block.getString("id")));
+                String id = block.getString("id");
+                if(!bcache.containsKey(id))
+                    bcache.put(id, ForgeRegistries.BLOCKS.getValue(new ResourceLocation(id)));
+                Block b = bcache.get(id);
                 IBlockState state = b.getStateFromMeta(block.getInteger("meta"));
                 w.setBlockState(absPos, state, 2);
                 if (block.hasKey("tile"))
