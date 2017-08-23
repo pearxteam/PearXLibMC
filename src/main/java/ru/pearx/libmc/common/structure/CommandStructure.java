@@ -1,13 +1,21 @@
 package ru.pearx.libmc.common.structure;
 
 import com.sun.jna.Structure;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.*;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootTableList;
+import net.minecraft.world.storage.loot.LootTableManager;
 import ru.pearx.libmc.PXLMC;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -40,12 +48,25 @@ public class CommandStructure extends CommandBase
                 {
                     if(args.length >= 8)
                     {
-                            String name = args[1];
-                            BlockPos from = parseBlockPos(sender, args, 2, false);
-                            BlockPos to = parseBlockPos(sender, args, 5, false);
-                            StructureApi.createStructure(name, from, to, sender.getEntityWorld());
-                            notifyCommandListener(sender, this, "command.pxlmc_structure.success");
-                            return;
+                        String name = args[1];
+                        BlockPos from = parseBlockPos(sender, args, 2, false);
+                        BlockPos to = parseBlockPos(sender, args, 5, false);
+                        List<StructureApi.StructureLootEntry> loots = new ArrayList<>();
+                        for(int i = 8; i < args.length; i++)
+                        {
+                            try
+                            {
+                                String[] ss = args[i].split(",");
+                                loots.add(new StructureApi.StructureLootEntry(new BlockPos(Integer.parseInt(ss[0]), Integer.parseInt(ss[1]), Integer.parseInt(ss[2])), EnumFacing.byName(ss[4]), new ResourceLocation(ss[3])));
+                            }
+                            catch (Exception e)
+                            {
+                                throw new CommandException("command.pxlmc_structure.lootParsingError", e.getMessage());
+                            }
+                        }
+                        StructureApi.createStructure(name, from, to, sender.getEntityWorld(), loots.toArray(new StructureApi.StructureLootEntry[]{}));
+                        notifyCommandListener(sender, this, "command.pxlmc_structure.success");
+                        return;
                     }
                     break;
                 }
@@ -57,7 +78,7 @@ public class CommandStructure extends CommandBase
                         BlockPos pos = parseBlockPos(sender, args, 2, false);
                         try
                         {
-                            StructureApi.spawnStructure(StructureApi.getStructureNbt(name), pos, sender.getEntityWorld());
+                            StructureApi.spawnStructure(StructureApi.getStructureNbt(name), pos, (WorldServer)sender.getEntityWorld(), sender.getEntityWorld().rand);
                             notifyCommandListener(sender, this, "command.pxlmc_structure.success");
                             return;
                         }

@@ -5,15 +5,23 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.Size;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
@@ -26,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.zip.GZIPInputStream;
 
 /*
@@ -33,7 +42,55 @@ import java.util.zip.GZIPInputStream;
  */
 public class StructureApi
 {
-    public static void createStructure(String name, BlockPos from, BlockPos to, World world)
+    public static class StructureLootEntry
+    {
+        private BlockPos pos;
+        private EnumFacing facing;
+        private ResourceLocation table;
+
+        public StructureLootEntry(BlockPos pos, EnumFacing facing, ResourceLocation table)
+        {
+            this.pos = pos;
+            this.facing = facing;
+            this.table = table;
+        }
+
+        public StructureLootEntry()
+        {
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public void setPos(BlockPos pos)
+        {
+            this.pos = pos;
+        }
+
+        public EnumFacing getFacing()
+        {
+            return facing;
+        }
+
+        public void setFacing(EnumFacing facing)
+        {
+            this.facing = facing;
+        }
+
+        public ResourceLocation getTable()
+        {
+            return table;
+        }
+
+        public void setTable(ResourceLocation table)
+        {
+            this.table = table;
+        }
+    }
+
+    public static void createStructure(String name, BlockPos from, BlockPos to, World world, StructureLootEntry... loot)
     {
         int frx = from.getX(), fry = from.getY(), frz = from.getZ(), tx = to.getX(), ty = to.getY(), tz = to.getZ();
         if (from.getX() > to.getX())
@@ -76,11 +133,11 @@ public class StructureApi
 
                         IBlockState state = world.getBlockState(pos);
                         if (state.getBlock() == PXLBlocks.structure_nothing)
-                            break;
+                            continue;
                         NBTTagCompound block = new NBTTagCompound();
                         block.setInteger("x", relativePos.getX());
                         block.setInteger("y", relativePos.getY());
-                        block.setInteger("z", relativePos.getZ());
+                        block.setInteger("z", relativePos.getZ());//
                         block.setString("id", state.getBlock().getRegistryName().toString());
                         block.setInteger("meta", state.getBlock().getMetaFromState(state));
 
@@ -125,6 +182,20 @@ public class StructureApi
             }
             root.setTag("entities", entities);
         }
+        {
+            NBTTagList lst = new NBTTagList();
+            for(StructureLootEntry e : loot)
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setInteger("x", e.getPos().getX() - centerPos.getX());
+                tag.setInteger("y", e.getPos().getY() - centerPos.getY());
+                tag.setInteger("z", e.getPos().getZ() - centerPos.getZ());
+                tag.setString("table", e.getTable().toString());
+                tag.setInteger("facing", e.getFacing().getIndex());
+                lst.appendTag(tag);
+            }
+            root.setTag("loot", lst);
+        }
 
         Path p = Paths.get(".", "pxlmc_structures", name + ".dat");
         if(Files.notExists(p.getParent()))
@@ -159,7 +230,7 @@ public class StructureApi
         return new Vec3i(tag.getInteger("sizeX"), tag.getInteger("sizeY"), tag.getInteger("sizeZ"));
     }
 
-    public static void spawnStructure(NBTTagCompound tag, BlockPos at, World w)
+    public static void spawnStructure(NBTTagCompound tag, BlockPos at, WorldServer w, Random rand)
     {
         {
             NBTTagList blocks = tag.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
@@ -167,7 +238,6 @@ public class StructureApi
             Map<String, Block> bcache = new HashMap<>();
             for (NBTBase base : blocks)
             {
-                long l = System.currentTimeMillis();
                 NBTTagCompound block = (NBTTagCompound) base;
                 absPos.setPos(at.getX() + block.getInteger("x"), at.getY() + block.getInteger("y"), at.getZ() + block.getInteger("z"));
                 String id = block.getString("id");
@@ -206,6 +276,39 @@ public class StructureApi
                 Entity e = EntityList.createEntityFromNBT(entity, w);
                 if(e != null)
                     w.spawnEntity(e);
+            }
+        }
+        {
+            NBTTagList loots = tag.getTagList("loot", Constants.NBT.TAG_COMPOUND);
+            for(NBTBase nbt : loots)
+            {
+                NBTTagCompound loot = (NBTTagCompound) nbt;
+                BlockPos pos = new BlockPos(loot.getInteger("x") + at.getX(), loot.getInteger("y") + at.getY(), loot.getInteger("z") + at.getZ());
+                EnumFacing face = EnumFacing.getFront(loot.getInteger("facing"));
+                TileEntity te = w.getTileEntity(pos);
+                if(te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face) instanceof IItemHandlerModifiable)
+                {
+                    IItemHandlerModifiable hand = (IItemHandlerModifiable)te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+                    LootTable table = w.getLootTableManager().getLootTableFromLocation(new ResourceLocation(loot.getString("table")));
+                    List<ItemStack> items = table.generateLootForPools(rand, new LootContext(0, w, w.getLootTableManager(), null, null, null));
+                    int emptyCount = 0;
+                    for(int i = 0; i < hand.getSlots(); i++)
+                    {
+                        if(rand.nextFloat() <= 0.2f && emptyCount < hand.getSlots() / 2)
+                        {
+                            hand.setStackInSlot(i, ItemStack.EMPTY);
+                            emptyCount++;
+                        }
+                        else
+                        {
+                            if(items.size() <= 0)
+                                break;
+                            int index = rand.nextInt(items.size());
+                            hand.setStackInSlot(i, items.get(index));
+                            items.remove(index);
+                        }
+                    }
+                }
             }
         }
     }

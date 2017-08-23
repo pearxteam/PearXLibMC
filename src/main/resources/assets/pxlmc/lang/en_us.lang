@@ -3,3 +3,4 @@ command.pxlmc_structure.usage=Usage: /pxlmc_structure create <name> <fromX> <fro
 command.pxlmc_structure.nan=One of the position arguments is not a number!
 command.pxlmc_structure.success=Success!
 command.pxlmc_structure.ioexception=An error occurred when reading the structure file! %s.
+command.pxlmc_structure.lootParsingError=An error occurred when parsing loot entry! %s.
