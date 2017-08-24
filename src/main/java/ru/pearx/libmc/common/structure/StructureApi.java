@@ -291,22 +291,13 @@ public class StructureApi
                     IItemHandlerModifiable hand = (IItemHandlerModifiable)te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
                     LootTable table = w.getLootTableManager().getLootTableFromLocation(new ResourceLocation(loot.getString("table")));
                     List<ItemStack> items = table.generateLootForPools(rand, new LootContext(0, w, w.getLootTableManager(), null, null, null));
-                    int emptyCount = 0;
                     for(int i = 0; i < hand.getSlots(); i++)
                     {
-                        if(rand.nextFloat() <= 0.2f && emptyCount < hand.getSlots() / 2)
-                        {
-                            hand.setStackInSlot(i, ItemStack.EMPTY);
-                            emptyCount++;
-                        }
-                        else
-                        {
-                            if(items.size() <= 0)
-                                break;
-                            int index = rand.nextInt(items.size());
-                            hand.setStackInSlot(i, items.get(index));
-                            items.remove(index);
-                        }
+                        if (items.size() <= 0)
+                            break;
+                        int index = rand.nextInt(items.size());
+                        hand.setStackInSlot(i, items.get(index));
+                        items.remove(index);
                     }
                 }
             }
