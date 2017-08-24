@@ -21,6 +21,6 @@ public class PXLBlocks
     @SubscribeEvent
     public static void onBlockRegistry(RegistryEvent.Register<Block> e)
     {
-        e.getRegistry().register(new BlockBase(Material.ROCK).setRegistryName("structure_nothing").setUnlocalizedName("structure_nothing"));
+        e.getRegistry().register(new BlockStructureNothing());
     }
 }

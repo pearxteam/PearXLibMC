@@ -57,7 +57,7 @@ public class CommandStructure extends CommandBase
                             try
                             {
                                 String[] ss = args[i].split(",");
-                                loots.add(new StructureApi.StructureLootEntry(new BlockPos(Integer.parseInt(ss[0]), Integer.parseInt(ss[1]), Integer.parseInt(ss[2])), EnumFacing.byName(ss[4]), new ResourceLocation(ss[3])));
+                                loots.add(new StructureApi.StructureLootEntry(new BlockPos(Integer.parseInt(ss[0]), Integer.parseInt(ss[1]), Integer.parseInt(ss[2])), EnumFacing.byName(ss[3]), new ResourceLocation(ss[4])));
                             }
                             catch (Exception e)
                             {
@@ -121,5 +121,11 @@ public class CommandStructure extends CommandBase
                 break;
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public int getRequiredPermissionLevel()
+    {
+        return 2;
     }
 }
