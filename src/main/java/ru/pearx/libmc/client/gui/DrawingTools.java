@@ -37,7 +37,12 @@ public class DrawingTools
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(scale, scale, 0);
-        rend.drawString(str, 0, 0, col.getARGB(), shadow);
+        int ytr = 0;
+        for(String s : str.split(System.lineSeparator()))
+        {
+            rend.drawString(s, 0, ytr, col.getARGB(), shadow);
+            ytr += getFontHeight();
+        }
         GlStateManager.popMatrix();
     }
 
@@ -60,11 +65,12 @@ public class DrawingTools
     {
         GlStateManager.pushMatrix();
         rend.resetStyles();
-        rend.textColor = col.getARGB();
         str = rend.trimStringNewline(str);
-        if(shadow)
-            rend.renderSplitString(str, x + 1, y + 1, width, true);
-        rend.renderSplitString(str, x, y, width, false);
+        for(String s : rend.wrapFormattedStringToWidth(str, width).split("\n|" + System.lineSeparator()))
+        {
+            rend.renderStringAligned(s, x, y, width, col.getARGB(), shadow);
+            y += getFontHeight();
+        }
         GlStateManager.color(1, 1, 1);
         GlStateManager.popMatrix();
     }
