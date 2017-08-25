@@ -68,7 +68,9 @@ public class DrawingTools
         str = rend.trimStringNewline(str);
         for(String s : rend.wrapFormattedStringToWidth(str, width).split("\n|" + System.lineSeparator()))
         {
-            rend.renderStringAligned(s, x, y, width, col.getARGB(), shadow);
+            if(shadow)
+                rend.renderStringAligned(s, x + 1, y + 1, width, col.getARGB(), true);
+            rend.renderStringAligned(s, x, y, width, col.getARGB(), false);
             y += getFontHeight();
         }
         GlStateManager.color(1, 1, 1);

@@ -197,7 +197,7 @@ public class StructureApi
             root.setTag("loot", lst);
         }
 
-        Path p = Paths.get(".", "pxlmc_structures", name + ".dat");
+        Path p = Paths.get("pxlmc_structures", name + ".dat");
         if(Files.notExists(p.getParent()))
             try
             {
@@ -219,7 +219,7 @@ public class StructureApi
 
     public static NBTTagCompound getStructureNbt(String fileName) throws IOException
     {
-        try(InputStream str = Files.newInputStream(Paths.get(".", "pxlmc_structures", fileName + ".dat")))
+        try(InputStream str = Files.newInputStream(Paths.get("pxlmc_structures", fileName + ".dat")))
         {
             return CompressedStreamTools.readCompressed(str);
         }
