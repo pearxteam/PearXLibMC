@@ -47,7 +47,8 @@ public class WGOre implements IWorldGenerator
         if (dims.contains(world.provider.getDimension()) == whitelist)
         {
             //for each vein
-            for (int i = 0; i < random.nextInt(maxVeins - minVeins + 1) + minVeins; i++)
+            int veins = random.nextInt(maxVeins - minVeins + 1) + minVeins;
+            for (int i = 0; i < veins; i++)
             {
                 //if we're lucky
                 if (random.nextFloat() <= chance)
