@@ -3,6 +3,7 @@ package ru.pearx.libmc.common.structure;
 import com.sun.jna.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.*;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -13,6 +14,7 @@ import net.minecraft.world.storage.loot.LootTableManager;
 import ru.pearx.libmc.PXLMC;
 
 import javax.annotation.Nullable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -61,10 +63,10 @@ public class CommandStructure extends CommandBase
                             }
                             catch (Exception e)
                             {
-                                throw new CommandException("command.pxlmc_structure.lootParsingError", e.getMessage());
+                                throw new CommandException("command.pxlmc_structure.lootParsingError", e.toString());
                             }
                         }
-                        StructureApi.createStructure(name, from, to, sender.getEntityWorld(), loots.toArray(new StructureApi.StructureLootEntry[]{}));
+                        StructureApi.INSTANCE.createStructure(name, from, to, sender.getEntityWorld(), loots.toArray(new StructureApi.StructureLootEntry[]{}));
                         notifyCommandListener(sender, this, "command.pxlmc_structure.success");
                         return;
                     }
@@ -76,17 +78,26 @@ public class CommandStructure extends CommandBase
                     {
                         String name = args[1];
                         BlockPos pos = parseBlockPos(sender, args, 2, false);
+                        NBTTagCompound tag;
                         try
                         {
-                            StructureApi.spawnStructure(StructureApi.getStructureNbt(name), pos, (WorldServer)sender.getEntityWorld(), sender.getEntityWorld().rand);
-                            notifyCommandListener(sender, this, "command.pxlmc_structure.success");
-                            return;
+                            try
+                            {
+                                tag = StructureApi.INSTANCE.getStructureNbt(new ResourceLocation(name));
+                            }
+                            catch(FileNotFoundException e)
+                            {
+                                tag = StructureApi.INSTANCE.getStructureNbt(name);
+                            }
                         }
                         catch (IOException e)
                         {
                             PXLMC.getLog().error("An IOException occurred when spawning a structure.", e);
-                            throw new CommandException("command.pxlmc_structure.ioexception", e.getMessage());
+                            throw new CommandException("command.pxlmc_structure.ioexception", e.toString());
                         }
+                        StructureApi.INSTANCE.spawnStructure(tag, pos, (WorldServer)sender.getEntityWorld(), sender.getEntityWorld().rand);
+                        notifyCommandListener(sender, this, "command.pxlmc_structure.success");
+                        return;
                     }
                 }
             }

@@ -2,6 +2,8 @@ package ru.pearx.libmc.common.structure;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +24,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.Pair;
+import ru.pearx.lib.ResourceUtils;
 import ru.pearx.lib.Size;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
@@ -40,57 +43,11 @@ import java.util.zip.GZIPInputStream;
 /*
  * Created by mrAppleXZ on 20.08.17 23:19.
  */
-public class StructureApi
+public enum StructureApi
 {
-    public static class StructureLootEntry
-    {
-        private BlockPos pos;
-        private EnumFacing facing;
-        private ResourceLocation table;
+    INSTANCE;
 
-        public StructureLootEntry(BlockPos pos, EnumFacing facing, ResourceLocation table)
-        {
-            this.pos = pos;
-            this.facing = facing;
-            this.table = table;
-        }
-
-        public StructureLootEntry()
-        {
-        }
-
-        public BlockPos getPos()
-        {
-            return pos;
-        }
-
-        public void setPos(BlockPos pos)
-        {
-            this.pos = pos;
-        }
-
-        public EnumFacing getFacing()
-        {
-            return facing;
-        }
-
-        public void setFacing(EnumFacing facing)
-        {
-            this.facing = facing;
-        }
-
-        public ResourceLocation getTable()
-        {
-            return table;
-        }
-
-        public void setTable(ResourceLocation table)
-        {
-            this.table = table;
-        }
-    }
-
-    public static void createStructure(String name, BlockPos from, BlockPos to, World world, StructureLootEntry... loot)
+    public void createStructure(String name, BlockPos from, BlockPos to, World world, StructureLootEntry... loot)
     {
         int frx = from.getX(), fry = from.getY(), frz = from.getZ(), tx = to.getX(), ty = to.getY(), tz = to.getZ();
         if (from.getX() > to.getX())
@@ -116,7 +73,7 @@ public class StructureApi
         root.setInteger("sizeX", size.getX());
         root.setInteger("sizeY", size.getY());
         root.setInteger("sizeZ", size.getZ());
-        BlockPos centerPos = new BlockPos((to.getX() - from.getX()) / 2 + from.getX(), (to.getY() - from.getY()) / 2 + from.getY(), (to.getZ() - from.getZ()) / 2 + from.getZ());
+        BlockPos centerPos = new BlockPos((to.getX() - from.getX()) / 2 + from.getX(), from.getY(), (to.getZ() - from.getZ()) / 2 + from.getZ());
 
         {
             NBTTagList blocks = new NBTTagList();
@@ -217,7 +174,7 @@ public class StructureApi
         }
     }
 
-    public static NBTTagCompound getStructureNbt(String fileName) throws IOException
+    public NBTTagCompound getStructureNbt(String fileName) throws IOException
     {
         try(InputStream str = Files.newInputStream(Paths.get("pxlmc_structures", fileName + ".dat")))
         {
@@ -225,12 +182,23 @@ public class StructureApi
         }
     }
 
-    public static Vec3i getStructureSize(NBTTagCompound tag)
+    public NBTTagCompound getStructureNbt(ResourceLocation loc) throws IOException
+    {
+        String s = "assets/" + loc.getResourceDomain() + "/structures/" + loc.getResourcePath() + ".dat";
+        try(InputStream str = ResourceUtils.getResource(s))
+        {
+            if(str == null)
+                throw new FileNotFoundException("Can't find the structure file at " + s + "!");
+            return CompressedStreamTools.readCompressed(str);
+        }
+    }
+
+    public Vec3i getStructureSize(NBTTagCompound tag)
     {
         return new Vec3i(tag.getInteger("sizeX"), tag.getInteger("sizeY"), tag.getInteger("sizeZ"));
     }
 
-    public static void spawnStructure(NBTTagCompound tag, BlockPos at, WorldServer w, Random rand)
+    public void spawnStructure(NBTTagCompound tag, BlockPos at, WorldServer w, Random rand)
     {
         {
             NBTTagList blocks = tag.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
@@ -301,6 +269,54 @@ public class StructureApi
                     }
                 }
             }
+        }
+    }
+
+    public static class StructureLootEntry
+    {
+        private BlockPos pos;
+        private EnumFacing facing;
+        private ResourceLocation table;
+
+        public StructureLootEntry(BlockPos pos, EnumFacing facing, ResourceLocation table)
+        {
+            this.pos = pos;
+            this.facing = facing;
+            this.table = table;
+        }
+
+        public StructureLootEntry()
+        {
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        public void setPos(BlockPos pos)
+        {
+            this.pos = pos;
+        }
+
+        public EnumFacing getFacing()
+        {
+            return facing;
+        }
+
+        public void setFacing(EnumFacing facing)
+        {
+            this.facing = facing;
+        }
+
+        public ResourceLocation getTable()
+        {
+            return table;
+        }
+
+        public void setTable(ResourceLocation table)
+        {
+            this.table = table;
         }
     }
 }
