@@ -10,12 +10,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ru.pearx.lib.Colors;
 import ru.pearx.libmc.PXLMC;
-import ru.pearx.libmc.client.gui.DrawingTools;
 
+import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /*
  * Created by mrAppleXZ on 27.08.17 12:15.

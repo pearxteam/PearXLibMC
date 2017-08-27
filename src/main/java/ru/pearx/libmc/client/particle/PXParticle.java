@@ -1,8 +1,12 @@
 package ru.pearx.libmc.client.particle;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 /*
  * Created by mrAppleXZ on 27.08.17 14:39.
  */
+@SideOnly(Side.CLIENT)
 public abstract class PXParticle
 {
     private double x, y, z;
