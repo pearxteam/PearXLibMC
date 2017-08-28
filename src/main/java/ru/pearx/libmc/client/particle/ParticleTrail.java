@@ -20,7 +20,7 @@ public class ParticleTrail extends PXParticle
     private ResourceLocation texture;
     private int width, height;
     private float scale;
-    private float alpha;
+    private float alpha, baseAlpha;
 
     public ParticleTrail(double x, double y, double z, Color col, float alpha, ResourceLocation texture, int width, int height, float scale, int age)
     {
@@ -28,7 +28,7 @@ public class ParticleTrail extends PXParticle
         this.color = col;
         this.texture = texture;
         this.scale = scale;
-        this.alpha = alpha;
+        this.baseAlpha = alpha;
         this.width = width;
         this.height = height;
         setMaxAge(age);
@@ -66,7 +66,7 @@ public class ParticleTrail extends PXParticle
     @Override
     public void onUpdate()
     {
-        alpha = alpha * (1f / 100 * (100f / getMaxAge() * (getMaxAge() - getAge())));
+        alpha = baseAlpha * (1 - ((float)getAge() / getMaxAge()));
         super.onUpdate();
     }
 }

@@ -69,9 +69,10 @@ public abstract class PXParticle
         this.z = z;
     }
 
+    //that's another magic number, yea
     public float getScaleFactor()
     {
-        return 0.05f;
+        return 0.01875f;
     }
 
     public int getAge()

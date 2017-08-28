@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class ParticleEngine
 {
     private static WorldClient lastWorld;
-    private static List<PXParticle> particles = new ArrayList<>();
+    private static ConcurrentLinkedQueue<PXParticle> particles = new ConcurrentLinkedQueue<>();
 
     @SubscribeEvent
     public static void onRenderWorldLast(RenderWorldLastEvent e)
