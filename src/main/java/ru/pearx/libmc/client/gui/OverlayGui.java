@@ -1,6 +1,7 @@
 package ru.pearx.libmc.client.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,6 +37,12 @@ public class OverlayGui implements IGuiScreen
     public int getMouseY()
     {
         return getHeight() - Mouse.getEventY() - 1;
+    }
+
+    @Override
+    public RenderItem getRenderItem()
+    {
+        return Minecraft.getMinecraft().getRenderItem();
     }
 
     @Override

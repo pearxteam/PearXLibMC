@@ -3,6 +3,7 @@ package ru.pearx.libmc.client.gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -136,6 +137,12 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     public int getMouseY()
     {
         return height - Mouse.getEventY() * height / mc.displayHeight - 1;
+    }
+
+    @Override
+    public RenderItem getRenderItem()
+    {
+        return itemRender;
     }
 
     @Override

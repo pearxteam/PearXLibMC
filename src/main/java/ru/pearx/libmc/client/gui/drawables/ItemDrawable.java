@@ -36,10 +36,17 @@ public class ItemDrawable implements IGuiDrawable
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(scale, scale, scale);
         RenderHelper.enableGUIStandardItemLighting();
-        RenderItem rend = Minecraft.getMinecraft().getRenderItem();
-        rend.renderItemAndEffectIntoGUI(stack, 0, 0);
+        screen.getRenderItem().renderItemAndEffectIntoGUI(stack, 0, 0);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.popMatrix();
+    }
+
+    public void drawTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY)
+    {
+        if(mouseX >= x && mouseX <= x + getWidth() && mouseY >= y && mouseY <= y + getHeight())
+        {
+            screen.drawTooltip(stack, mouseX, mouseY);
+        }
     }
 
     public void drawWithTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY)
