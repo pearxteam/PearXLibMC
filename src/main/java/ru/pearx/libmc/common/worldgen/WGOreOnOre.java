@@ -60,7 +60,7 @@ public class WGOreOnOre implements IWorldGenerator
                         {
                             if (random.nextFloat() <= chance)
                             {
-                                world.setBlockState(upper, state);
+                                world.setBlockState(upper, state, 2);
                             }
                         }
                     }
