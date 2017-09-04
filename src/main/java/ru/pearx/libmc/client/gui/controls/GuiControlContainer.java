@@ -12,6 +12,7 @@ public class GuiControlContainer extends Control
 {
     public GuiControlContainer(Control cont)
     {
+        initialized = true;
         controls.add(cont);
     }
 

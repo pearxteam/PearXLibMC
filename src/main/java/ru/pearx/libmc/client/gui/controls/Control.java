@@ -170,6 +170,8 @@ public class Control
 
     public void invokeRender()
     {
+        if(!initialized)
+            return;
         GlStateManager.pushMatrix();
         GlStateManager.translate(getX(), getY(), 0);
         if(isVisible())
@@ -188,6 +190,8 @@ public class Control
 
     public void invokeKeyDown(int keycode)
     {
+        if(!initialized)
+            return;
         for (Control cont : controls)
             cont.invokeKeyDown(keycode);
         keyDown(keycode);
@@ -195,6 +199,8 @@ public class Control
 
     public void invokeKeyUp(int keycode)
     {
+        if(!initialized)
+            return;
         for (Control cont : controls)
             cont.invokeKeyUp(keycode);
         keyUp(keycode);
@@ -202,6 +208,8 @@ public class Control
 
     public void invokeKeyPress(char key, int keycode)
     {
+        if(!initialized)
+            return;
         for (Control cont : controls)
             cont.invokeKeyPress(key, keycode);
         keyPress(key, keycode);
@@ -209,6 +217,8 @@ public class Control
 
     public void invokeMouseDown(int button, int x, int y)
     {
+        if(!initialized)
+            return;
         for (Control cont : controls)
         {
             if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
@@ -221,6 +231,8 @@ public class Control
 
     public void invokeMouseUp(int button, int x, int y)
     {
+        if(!initialized)
+            return;
         for (Control cont : controls)
         {
             if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
@@ -233,6 +245,8 @@ public class Control
 
     public void invokeMouseMove(int x, int y, int dx, int dy)
     {
+        if(!initialized)
+            return;
         boolean last = true;
         for (Control cont : controls)
         {
@@ -250,16 +264,22 @@ public class Control
 
     public void invokeMouseEnter()
     {
+        if(!initialized)
+            return;
         mouseEnter();
     }
 
     public void invokeMouseLeave()
     {
+        if(!initialized)
+            return;
         mouseLeave();
     }
 
     public void invokeMouseWheel(int delta)
     {
+        if(!initialized)
+            return;
         for (Control cont : controls)
         {
             cont.invokeMouseWheel(delta);
