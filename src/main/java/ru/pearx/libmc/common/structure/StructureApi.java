@@ -2,8 +2,6 @@ package ru.pearx.libmc.common.structure;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,13 +21,10 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.ResourceUtils;
-import ru.pearx.lib.Size;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
 
-import javax.vecmath.Vector3f;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.zip.GZIPInputStream;
 
 /*
  * Created by mrAppleXZ on 20.08.17 23:19.

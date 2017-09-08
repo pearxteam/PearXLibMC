@@ -1,8 +1,6 @@
 package ru.pearx.libmc.client.particle;
 
-import net.minecraft.client.particle.Particle;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
