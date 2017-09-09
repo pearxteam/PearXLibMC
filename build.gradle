@@ -9,9 +9,9 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "${mc_version}-${mod_version}"
+version = "${mod_version}.${build_number}"
 group = "ru.pearx.libmc"
-archivesBaseName = "PearXLibMC"
+archivesBaseName = "PearXLibMC-${mc_version}"
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
@@ -23,7 +23,7 @@ minecraft {
     runDir = "run"
     mappings = "${mappings_version}"
 
-    replace("@VERSION@", mod_version)
+    replace("@VERSION@", version)
     replace("@MCVERSION@", mc_version)
     replace("acceptedMinecraftVersions = \"\"", "acceptedMinecraftVersions = \"" + accepted_mc_versions + "\"")
     replaceIn("PXLMC.java")
