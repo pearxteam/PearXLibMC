@@ -19,6 +19,7 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.models.processors.IQuadProcessor;
 import ru.pearx.libmc.client.models.processors.IVertexProcessor;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by mrAppleXZ on 10.04.17 8:55.
@@ -38,6 +40,7 @@ import java.util.List;
 public class OvModel implements IPXModel
 {
     public static Field unpQuadData;
+
     static
     {
         try
@@ -65,7 +68,7 @@ public class OvModel implements IPXModel
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
         {
-            if(originalModel instanceof IPXModel)
+            if (originalModel instanceof IPXModel)
                 ((IPXModel) originalModel).setStack(stack);
             return originalModel;
         }
@@ -78,13 +81,14 @@ public class OvModel implements IPXModel
         try
         {
             mdl = ModelLoaderRegistry.getModel(getBaseModel());
-            if(flipV)
+            if (flipV)
             {
                 mdl = mdl.process(ImmutableMap.of("flip-v", "true"));
             }
             baked = mdl.bake(state, DefaultVertexFormats.ITEM,
                     location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -93,46 +97,37 @@ public class OvModel implements IPXModel
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
     {
-        if(shouldDisableSides() && side != null)
+        if (shouldDisableSides() && side != null)
             return DUMMY_LIST;
 
         List<BakedQuad> l = new ArrayList<>();
-        for(BakedQuad quad : getBaked().getQuads(state, side, rand))
-            l.add(quad);
+        l.addAll(getBaked().getQuads(state, side, rand));
         process(l, state, side, rand);
         return l;
     }
 
     protected void process(List<BakedQuad> quads, @Nullable IBlockState state, @Nullable EnumFacing side, long rand)
     {
-        //todo: make multithreaded model processing
-        for(IQuadProcessor proc : quadProcessors)
-            if((proc.processState() && state != null) || (proc.processStack() && state == null))
+        for (IQuadProcessor proc : quadProcessors)
+            if ((proc.processState() && state != null) || (proc.processStack() && state == null))
                 proc.process(quads, state, side, rand, this);
-
-        boolean flag = false;
-        for(IVertexProcessor proc : vertexProcessors)
+        List<IVertexProcessor> validVertexProcs = vertexProcessors.parallelStream()
+                .filter(proc -> (proc.processState() && state != null) || (proc.processStack() && state == null))
+                .collect(Collectors.toList());
+        if (!validVertexProcs.isEmpty())
         {
-            if((proc.processState() && state != null) || (proc.processStack() && state == null))
-                flag = true;
-        }
-        if(flag)
-        {
-            for(IVertexProcessor proc : vertexProcessors)
-                if((proc.processState() && state != null) || (proc.processStack() && state == null))
-                    proc.preProcess(quads, state, side, rand, this);
-            for (int iq = 0; iq < quads.size(); iq++)
+            for (IVertexProcessor proc : validVertexProcs)
+                proc.preProcess(quads, state, side, rand, this);
+            List<BakedQuad> processed = quads.parallelStream().map(q ->
             {
-                BakedQuad q = quads.get(iq);
                 UnpackedBakedQuad.Builder bld = new UnpackedBakedQuad.Builder(q.getFormat());
                 bld.setQuadTint(q.getTintIndex());
                 bld.setQuadOrientation(q.getFace());
                 bld.setTexture(q.getSprite());
                 bld.setApplyDiffuseLighting(q.shouldApplyDiffuseLighting());
-                for(IVertexProcessor proc : vertexProcessors)
-                    if((proc.processState() && state != null) || (proc.processStack() && state == null))
-                        proc.processQuad(bld, q, state, side, rand, this);
-                if(q instanceof UnpackedBakedQuad)
+                for (IVertexProcessor proc : validVertexProcs)
+                    proc.processQuad(bld, q, state, side, rand, this);
+                if (q instanceof UnpackedBakedQuad)
                 {
                     try
                     {
@@ -142,19 +137,18 @@ public class OvModel implements IPXModel
                             for (int e = 0; e < q.getFormat().getElementCount(); e++)
                             {
                                 float[] lst = Arrays.copyOf(data[i][e], data[i][e].length);
-                                for (IVertexProcessor proc : vertexProcessors)
-                                    if ((proc.processState() && state != null) || (proc.processStack() && state == null))
-                                        lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
+                                for (IVertexProcessor proc : validVertexProcs)
+                                    lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
                                 bld.put(e, lst);
                             }
                         }
+
                     }
                     catch (IllegalAccessException e)
                     {
                         e.printStackTrace();
                     }
-                }
-                else
+                } else
                 {
                     for (int i = 0; i < 4; i++)
                     {
@@ -162,15 +156,16 @@ public class OvModel implements IPXModel
                         {
                             float[] lst = new float[q.getFormat().getElement(e).getElementCount()];
                             LightUtil.unpack(q.getVertexData(), lst, q.getFormat(), i, e);
-                            for (IVertexProcessor proc : vertexProcessors)
-                                if ((proc.processState() && state != null) || (proc.processStack() && state == null))
-                                    lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
+                            for (IVertexProcessor proc : validVertexProcs)
+                                lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
                             bld.put(e, lst);
                         }
                     }
                 }
-                quads.set(iq, bld.build());
-            }
+                return bld.build();
+            }).collect(Collectors.toList());
+            quads.clear();
+            quads.addAll(processed);
         }
     }
 
@@ -229,7 +224,7 @@ public class OvModel implements IPXModel
     @Override
     public ItemStack getStack()
     {
-        if(stack != null)
+        if (stack != null)
             return stack.get();
         return null;
     }
