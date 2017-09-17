@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,9 +34,9 @@ public class FacingProcessor implements IVertexProcessor
     }
 
     @Override
-    public float[] process(BakedQuad quad, float[] data, int vert, int element, @Nullable IBlockState state, @Nullable EnumFacing side, long rand, IPXModel model)
+    public float[] process(UnpackedBakedQuad.Builder bld, float[] data, int vert, int element, @Nullable IBlockState state, @Nullable EnumFacing side, long rand, IPXModel model)
     {
-        if (quad.getFormat().getElement(element).getUsage() == VertexFormatElement.EnumUsage.POSITION)
+        if (bld.getVertexFormat().getElement(element).getUsage() == VertexFormatElement.EnumUsage.POSITION)
         {
             Vector3f vec = new Vector3f(data[0], data[1], data[2]);
             ForgeHooksClient.transform(vec, mat);

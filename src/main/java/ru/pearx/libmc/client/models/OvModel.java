@@ -19,14 +19,18 @@ import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.models.processors.IQuadProcessor;
 import ru.pearx.libmc.client.models.processors.IVertexProcessor;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,6 +40,20 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class OvModel implements IPXModel
 {
+    private static Field unpQuadData;
+    static
+    {
+        try
+        {
+            unpQuadData = UnpackedBakedQuad.class.getDeclaredField("unpackedData");
+            unpQuadData.setAccessible(true);
+        }
+        catch (NoSuchFieldException e)
+        {
+            PXLMC.getLog().error("Can't locate the 'unpackedData' field!");
+        }
+    }
+
     protected List<IQuadProcessor> quadProcessors = new ArrayList<>();
     protected List<IVertexProcessor> vertexProcessors = new ArrayList<>();
     private ResourceLocation baseModel;
@@ -113,16 +131,41 @@ public class OvModel implements IPXModel
                 bld.setQuadOrientation(q.getFace());
                 bld.setTexture(q.getSprite());
                 bld.setApplyDiffuseLighting(q.shouldApplyDiffuseLighting());
-                for (int i = 0; i < 4; i++)
+                if(q instanceof UnpackedBakedQuad)
                 {
-                    for (int e = 0; e < q.getFormat().getElementCount(); e++)
+                    try
                     {
-                        float[] lst = new float[q.getFormat().getElement(e).getElementCount()];
-                        LightUtil.unpack(q.getVertexData(), lst, q.getFormat(), i, e);
-                        for(IVertexProcessor proc : vertexProcessors)
-                            if((proc.processState() && state != null) || (proc.processStack() && state == null))
-                                lst = proc.process(q, lst, i, e, state, side, rand, this);
-                        bld.put(e, lst);
+                        float[][][] data = (float[][][]) unpQuadData.get(q);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            for (int e = 0; e < q.getFormat().getElementCount(); e++)
+                            {
+                                float[] lst = Arrays.copyOf(data[i][e], data[i][e].length);
+                                for (IVertexProcessor proc : vertexProcessors)
+                                    if ((proc.processState() && state != null) || (proc.processStack() && state == null))
+                                        lst = proc.process(bld, lst, i, e, state, side, rand, this);
+                                bld.put(e, lst);
+                            }
+                        }
+                    }
+                    catch (IllegalAccessException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        for (int e = 0; e < q.getFormat().getElementCount(); e++)
+                        {
+                            float[] lst = new float[q.getFormat().getElement(e).getElementCount()];
+                            LightUtil.unpack(q.getVertexData(), lst, q.getFormat(), i, e);
+                            for (IVertexProcessor proc : vertexProcessors)
+                                if ((proc.processState() && state != null) || (proc.processStack() && state == null))
+                                    lst = proc.process(bld, lst, i, e, state, side, rand, this);
+                            bld.put(e, lst);
+                        }
                     }
                 }
                 quads.set(iq, bld.build());

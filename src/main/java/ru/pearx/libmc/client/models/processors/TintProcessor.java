@@ -28,8 +28,9 @@ public class TintProcessor implements IQuadProcessor
     {
         for(int i = 0; i < quads.size(); i++)
         {
-            BakedQuad q = quads.get(i);
-            quads.set(i, new BakedQuad(q.getVertexData(), index, q.getFace(), q.getSprite(), q.shouldApplyDiffuseLighting(), q.getFormat()));
+            //fixme
+            //BakedQuad q = quads.get(i);
+            //quads.set(i, new BakedQuad(q.getVertexData(), index, q.getFace(), q.getSprite(), q.shouldApplyDiffuseLighting(), q.getFormat()));
         }
     }
 
