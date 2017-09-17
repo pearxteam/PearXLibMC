@@ -1,42 +1,44 @@
-package ru.pearx.libmc.client.gui;
+package ru.pearx.libmc.client.gui.inventory;
 
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import ru.pearx.libmc.client.gui.IGuiScreen;
+import ru.pearx.libmc.client.gui.SharedGuiMethods;
 import ru.pearx.libmc.client.gui.controls.Control;
 import ru.pearx.libmc.client.gui.controls.GuiControlContainer;
 
 import java.io.IOException;
 
-/**
- * Created by mrAppleXZ on 16.04.17 20:02.
+/*
+ * Created by mrAppleXZ on 17.09.17 15:53.
  */
 @SideOnly(Side.CLIENT)
-public class PXLGui extends GuiScreen implements IGuiScreen
+public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScreen
 {
     public GuiControlContainer gui;
 
-    public PXLGui(GuiControlContainer cg)
+    public PXLGuiContainerControls(Container cont, GuiControlContainer cg)
     {
+        super(cont);
         gui = cg;
         gui.setGs(this);
     }
 
-    public PXLGui(Control cont)
+    public PXLGuiContainerControls(Container cont, Control contr)
     {
-        this(new GuiControlContainer(cont));
+        this(cont, new GuiControlContainer(contr));
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
-        drawDefaultBackground();
         if(gui != null)
             gui.invokeRender();
     }
@@ -60,6 +62,8 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     @Override
     public void handleMouseInput() throws IOException
     {
+        super.handleMouseInput();
+
         SharedGuiMethods.handleMouseInput(this, gui);
     }
 
@@ -103,11 +107,5 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     public RenderItem getRenderItem()
     {
         return itemRender;
-    }
-
-    @Override
-    public boolean doesGuiPauseGame()
-    {
-        return false;
     }
 }
