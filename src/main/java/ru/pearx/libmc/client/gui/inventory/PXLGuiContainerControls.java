@@ -39,8 +39,11 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-guiLeft, -guiTop, 0);
         if(gui != null)
             gui.invokeRender();
+        GlStateManager.popMatrix();
     }
 
     @Override

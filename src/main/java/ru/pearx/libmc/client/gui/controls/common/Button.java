@@ -56,7 +56,7 @@ public class Button extends Control
         int w = getWidth();
         int h = getHeight();
         if(isFocused())
-            GlStateManager.color(.8f, .8f, .8f, .8f);
+            GlStateManager.color(.8f, .8f, .8f, 1);
         //upper and bottom
         for(int i = 1; i < (w - 8) / 8; i++)
         {

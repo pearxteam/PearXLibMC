@@ -1,4 +1,4 @@
-package ru.pearx.libmc.client.gui;
+package ru.pearx.libmc.client.gui.controls;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

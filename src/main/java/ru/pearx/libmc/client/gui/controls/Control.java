@@ -23,6 +23,8 @@ public class Control
     private int y;
     private boolean visible = true;
     private boolean focused;
+    private boolean canBeSelected;
+    private boolean selected;
 
     public boolean initialized;
 
@@ -106,6 +108,26 @@ public class Control
     public void setFocused(boolean val)
     {
         focused = val;
+    }
+
+    public boolean canBeSelected()
+    {
+        return canBeSelected;
+    }
+
+    public void setCanBeSelected(boolean canBeSelected)
+    {
+        this.canBeSelected = canBeSelected;
+    }
+
+    public boolean isSelected()
+    {
+        return selected;
+    }
+
+    public void setSelected(boolean selected)
+    {
+        this.selected = selected;
     }
 
     public void render()
