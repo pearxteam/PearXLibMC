@@ -14,12 +14,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.PXLMC;
@@ -40,7 +37,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class OvModel implements IPXModel
 {
-    private static Field unpQuadData;
+    public static Field unpQuadData;
     static
     {
         try
@@ -108,6 +105,7 @@ public class OvModel implements IPXModel
 
     protected void process(List<BakedQuad> quads, @Nullable IBlockState state, @Nullable EnumFacing side, long rand)
     {
+        //todo: make multithreaded model processing
         for(IQuadProcessor proc : quadProcessors)
             if((proc.processState() && state != null) || (proc.processStack() && state == null))
                 proc.process(quads, state, side, rand, this);
@@ -131,6 +129,9 @@ public class OvModel implements IPXModel
                 bld.setQuadOrientation(q.getFace());
                 bld.setTexture(q.getSprite());
                 bld.setApplyDiffuseLighting(q.shouldApplyDiffuseLighting());
+                for(IVertexProcessor proc : vertexProcessors)
+                    if((proc.processState() && state != null) || (proc.processStack() && state == null))
+                        proc.processQuad(bld, q, state, side, rand, this);
                 if(q instanceof UnpackedBakedQuad)
                 {
                     try
@@ -143,7 +144,7 @@ public class OvModel implements IPXModel
                                 float[] lst = Arrays.copyOf(data[i][e], data[i][e].length);
                                 for (IVertexProcessor proc : vertexProcessors)
                                     if ((proc.processState() && state != null) || (proc.processStack() && state == null))
-                                        lst = proc.process(bld, lst, i, e, state, side, rand, this);
+                                        lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
                                 bld.put(e, lst);
                             }
                         }
@@ -163,7 +164,7 @@ public class OvModel implements IPXModel
                             LightUtil.unpack(q.getVertexData(), lst, q.getFormat(), i, e);
                             for (IVertexProcessor proc : vertexProcessors)
                                 if ((proc.processState() && state != null) || (proc.processStack() && state == null))
-                                    lst = proc.process(bld, lst, i, e, state, side, rand, this);
+                                    lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
                             bld.put(e, lst);
                         }
                     }

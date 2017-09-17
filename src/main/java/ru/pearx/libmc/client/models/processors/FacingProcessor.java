@@ -34,15 +34,16 @@ public class FacingProcessor implements IVertexProcessor
     }
 
     @Override
-    public float[] process(UnpackedBakedQuad.Builder bld, float[] data, int vert, int element, @Nullable IBlockState state, @Nullable EnumFacing side, long rand, IPXModel model)
+    public float[] processVertex(UnpackedBakedQuad.Builder bld, BakedQuad quad, float[] data, int vert, int element, @Nullable IBlockState state, @Nullable EnumFacing side, long rand, IPXModel model)
     {
         if (bld.getVertexFormat().getElement(element).getUsage() == VertexFormatElement.EnumUsage.POSITION)
         {
-            Vector3f vec = new Vector3f(data[0], data[1], data[2]);
-            ForgeHooksClient.transform(vec, mat);
-            data[0] = vec.x;
-            data[1] = vec.y;
-            data[2] = vec.z;
+            float x = mat.m00*data[0] + mat.m01*data[1] + mat.m02*data[2] + mat.m03;
+            float y = mat.m10*data[0] + mat.m11*data[1] + mat.m12*data[2] + mat.m13;
+            float z = mat.m20*data[0] + mat.m21*data[1] + mat.m22*data[2] + mat.m23;
+            data[0] = x;
+            data[1] = y;
+            data[2] = z;
         }
         return data;
     }

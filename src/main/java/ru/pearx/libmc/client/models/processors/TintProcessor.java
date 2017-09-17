@@ -3,9 +3,12 @@ package ru.pearx.libmc.client.models.processors;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.models.IPXModel;
+import ru.pearx.libmc.client.models.OvModel;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -28,9 +31,22 @@ public class TintProcessor implements IQuadProcessor
     {
         for(int i = 0; i < quads.size(); i++)
         {
-            //fixme
-            //BakedQuad q = quads.get(i);
-            //quads.set(i, new BakedQuad(q.getVertexData(), index, q.getFace(), q.getSprite(), q.shouldApplyDiffuseLighting(), q.getFormat()));
+            BakedQuad q = quads.get(i);
+            if(q instanceof UnpackedBakedQuad)
+            {
+                try
+                {
+                    quads.set(i, new UnpackedBakedQuad((float[][][]) OvModel.unpQuadData.get(q), index, q.getFace(), q.getSprite(), q.shouldApplyDiffuseLighting(), q.getFormat()));
+                }
+                catch (IllegalAccessException e)
+                {
+                    PXLMC.getLog().error("Can't get UnpackedBakedQuad's data!");
+                }
+            }
+            else
+            {
+                quads.set(i, new BakedQuad(q.getVertexData(), index, q.getFace(), q.getSprite(), q.shouldApplyDiffuseLighting(), q.getFormat()));
+            }
         }
     }
 
