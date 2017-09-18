@@ -73,7 +73,7 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
     @Override
     public void drawTooltip(ItemStack stack, int x, int y)
     {
-        SharedGuiMethods.drawTooltip(stack, x, y, this::drawTooltip);
+        SharedGuiMethods.drawTooltip(stack, x, y, this::renderToolTip);
     }
 
     @Override

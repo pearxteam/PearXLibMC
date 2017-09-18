@@ -66,7 +66,7 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     @Override
     public void drawTooltip(ItemStack stack, int x, int y)
     {
-        SharedGuiMethods.drawTooltip(stack, x, y, this::drawTooltip);
+        SharedGuiMethods.drawTooltip(stack, x, y, this::renderToolTip);
     }
 
     @Override

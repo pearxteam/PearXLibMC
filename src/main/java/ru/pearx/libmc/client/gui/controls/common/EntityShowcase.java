@@ -59,9 +59,9 @@ public class EntityShowcase extends Control
         GlStateManager.popMatrix();
 
         if(act1 && new Rectangle(0, 0, 12, 12).contains(prevMouseX, prevMouseY))
-            getGuiScreen().drawHovering(I18n.format("hovering.rotatable.text"), prevMouseX, prevMouseY);
+            getGuiScreen().drawHovering(I18n.format("misc.gui.hovering.rotatable"), prevMouseX, prevMouseY);
         if(act2 && new Rectangle(12, 0, 12, 12).contains(prevMouseX, prevMouseY))
-            getGuiScreen().drawHovering(I18n.format("hovering.scalable.text"), prevMouseX, prevMouseY);
+            getGuiScreen().drawHovering(I18n.format("misc.gui.hovering.scalable"), prevMouseX, prevMouseY);
     }
 
     @Override

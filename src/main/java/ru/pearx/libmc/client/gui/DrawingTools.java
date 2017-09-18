@@ -43,6 +43,7 @@ public class DrawingTools
             rend.drawString(s, 0, ytr, col.getARGB(), shadow);
             ytr += getFontHeight();
         }
+        GlStateManager.color(1, 1, 1, 1);
         GlStateManager.popMatrix();
     }
 

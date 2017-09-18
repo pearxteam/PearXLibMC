@@ -32,7 +32,6 @@ public class TextBox extends Control
     public TextBox(ResourceLocation texture)
     {
         setTexture(texture);
-        setCanBeSelected(true);
     }
 
     public ResourceLocation getTexture()

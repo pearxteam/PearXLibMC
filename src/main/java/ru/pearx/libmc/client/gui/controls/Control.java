@@ -23,7 +23,6 @@ public class Control
     private int y;
     private boolean visible = true;
     private boolean focused;
-    private boolean canBeSelected;
     private boolean selected;
 
     public boolean initialized;
@@ -110,24 +109,28 @@ public class Control
         focused = val;
     }
 
-    public boolean canBeSelected()
-    {
-        return canBeSelected;
-    }
-
-    public void setCanBeSelected(boolean canBeSelected)
-    {
-        this.canBeSelected = canBeSelected;
-    }
-
     public boolean isSelected()
     {
         return selected;
     }
 
-    public void setSelected(boolean selected)
+    private void setSelected(boolean selected)
     {
         this.selected = selected;
+    }
+
+    public void select()
+    {
+        getMainParent(this).select(this);
+    }
+
+    private void select(Control toSelect)
+    {
+        setSelected(this == toSelect);
+        for(Control child : controls)
+        {
+            child.select(toSelect);
+        }
     }
 
     public void render()
@@ -239,23 +242,19 @@ public class Control
 
     public void invokeMouseDown(int button, int x, int y)
     {
-        if(!initialized)
-            return;
         boolean last = true;
+        if (!initialized)
+            return;
         for (Control cont : controls)
         {
             if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
             {
-                cont.invokeMouseDown(button, x - cont.getX(), y - cont.getY());
-                if(canBeSelected())
-                {
-                    setSelected(false);
-                }
                 last = false;
+                cont.invokeMouseDown(button, x - cont.getX(), y - cont.getY());
             }
         }
-        if(last && canBeSelected())
-            setSelected(true);
+        if(last)
+            select();
         mouseDown(button, x, y);
     }
 
@@ -358,22 +357,10 @@ public class Control
 
     public static Control getMainParent(Control c)
     {
-        if (c.getParent() != null)
-            return getMainParent(c.getParent());
-        return c;
-    }
-
-    public Point getPointOnGui()
-    {
-        return getPointOnGui(this, new Point());
-    }
-
-    private static Point getPointOnGui(Control c, Point now)
-    {
-        if (c != null)
+        while(c.getParent() != null)
         {
-            return getPointOnGui(c.getParent(), new Point(c.getX() + now.getX(), c.getY() + now.getY()));
+            c = c.getParent();
         }
-        return now;
+        return c;
     }
 }
