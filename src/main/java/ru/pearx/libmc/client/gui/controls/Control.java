@@ -241,13 +241,21 @@ public class Control
     {
         if(!initialized)
             return;
+        boolean last = true;
         for (Control cont : controls)
         {
             if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
             {
                 cont.invokeMouseDown(button, x - cont.getX(), y - cont.getY());
+                if(canBeSelected())
+                {
+                    setSelected(false);
+                }
+                last = false;
             }
         }
+        if(last && canBeSelected())
+            setSelected(true);
         mouseDown(button, x, y);
     }
 

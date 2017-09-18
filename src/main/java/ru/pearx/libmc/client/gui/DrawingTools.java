@@ -92,6 +92,11 @@ public class DrawingTools
         return Minecraft.getMinecraft().fontRenderer.getStringWidth(str);
     }
 
+    public static int measureChar(char ch)
+    {
+        return Minecraft.getMinecraft().fontRenderer.getCharWidth(ch);
+    }
+
     public static int getFontHeight()
     {
         return Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
