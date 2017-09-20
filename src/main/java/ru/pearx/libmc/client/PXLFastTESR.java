@@ -52,6 +52,6 @@ public abstract class PXLFastTESR<T extends TileEntity> extends TileEntitySpecia
         RenderHelper.enableStandardItemLighting();
     }
 
-    public abstract void renderPre(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha);
-    public abstract void renderPost(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha);
+    public void renderPre(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){}
+    public void renderPost(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){}
 }

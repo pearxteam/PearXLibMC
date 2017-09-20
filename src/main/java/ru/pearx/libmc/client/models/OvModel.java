@@ -14,9 +14,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -75,7 +77,7 @@ public class OvModel implements IPXModel
     };
 
     @Override
-    public void bake(IModelState state)
+    public void bake()
     {
         IModel mdl;
         try
@@ -85,7 +87,7 @@ public class OvModel implements IPXModel
             {
                 mdl = mdl.process(ImmutableMap.of("flip-v", "true"));
             }
-            baked = mdl.bake(state, DefaultVertexFormats.ITEM,
+            baked = mdl.bake(getModelState(this, mdl), DefaultVertexFormats.ITEM,
                     location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
         }
         catch (Exception e)
@@ -257,5 +259,10 @@ public class OvModel implements IPXModel
     public void setShouldDisableSides(boolean disableSides)
     {
         this.disableSides = disableSides;
+    }
+
+    public IModelState getModelState(IPXModel th, IModel model)
+    {
+        return TRSRTransformation.identity();
     }
 }
