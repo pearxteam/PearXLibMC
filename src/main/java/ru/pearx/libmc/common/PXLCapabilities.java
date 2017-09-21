@@ -31,13 +31,12 @@ public class PXLCapabilities
             @Override
             public NBTBase writeNBT(Capability<IAnimationStateManager> capability, IAnimationStateManager instance, EnumFacing side)
             {
-                return instance.serializeNBT();
+                return null;
             }
 
             @Override
             public void readNBT(Capability<IAnimationStateManager> capability, IAnimationStateManager instance, EnumFacing side, NBTBase nbt)
             {
-                instance.deserializeNBT((NBTTagCompound) nbt);
             }
         }, AnimationStateManager.class);
     }

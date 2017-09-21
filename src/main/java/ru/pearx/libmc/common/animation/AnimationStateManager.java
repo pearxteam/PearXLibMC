@@ -42,7 +42,6 @@ public class AnimationStateManager implements IAnimationStateManager
         //client
         if(tile.getWorld().isRemote)
         {
-            System.out.println("STATE CHANGED: " + state);
             this.state = state;
         }
         //server
@@ -68,19 +67,5 @@ public class AnimationStateManager implements IAnimationStateManager
     public List<String> getAvailableStates()
     {
         return states;
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT()
-    {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("state", getState());
-        return tag;
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound nbt)
-    {
-        changeState(nbt.getString("state"));
     }
 }
