@@ -2,9 +2,15 @@ package ru.pearx.libmc;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
+import ru.pearx.libmc.common.PXLCapabilities;
+import ru.pearx.libmc.common.networking.packets.CPacketSyncASMState;
 import ru.pearx.libmc.common.structure.CommandStructure;
 
 import java.util.Collections;
@@ -19,6 +25,7 @@ public class PXLMC
     public static final String MODID = "pxlmc";
     public static final String VERSION = "@VERSION@";
 
+    public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
     private static Logger log;
 
     @Mod.EventHandler
@@ -34,6 +41,14 @@ public class PXLMC
         data.name = NAME;
 
         log = e.getModLog();
+
+        PXLCapabilities.register();
+    }
+
+    @Mod.EventHandler
+    public static void init(FMLInitializationEvent e)
+    {
+        NETWORK.registerMessage(CPacketSyncASMState.Handler.class, CPacketSyncASMState.class, 0, Side.CLIENT);
     }
 
     @Mod.EventHandler

@@ -39,18 +39,27 @@ public abstract class PXLFastTESR<T extends TileEntity> extends TileEntitySpecia
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         renderPre(te, x, y, z, partialTicks, destroyStage, alpha);
-        GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
+        setTrans(te);
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        render(te, x, y, z, partialTicks, destroyStage, partialTicks, buffer, tessellator);
 
-        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partialTicks, buffer);
-
-        tessellator.draw();
         renderPost(te, x, y, z, partialTicks, destroyStage, alpha);
         GlStateManager.popMatrix();
 
         RenderHelper.enableStandardItemLighting();
     }
+
+    protected void resetTrans(TileEntity te)
+    {
+        GlStateManager.translate(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ());
+    }
+
+    protected void setTrans(TileEntity te)
+    {
+        GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
+    }
+
+    public abstract void render(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha, BufferBuilder buffer, Tessellator tes);
 
     public void renderPre(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){}
     public void renderPost(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){}
