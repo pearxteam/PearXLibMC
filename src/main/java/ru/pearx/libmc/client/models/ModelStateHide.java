@@ -33,7 +33,7 @@ public class ModelStateHide implements IModelState
                 String s = it.next();
                 for(String cond : groupsToHide)
                 {
-                    if(s.startsWith(cond + "_"))
+                    if(s.startsWith(cond + "_") || s.equals(cond))
                         return Optional.empty();
                 }
                 return Optional.of(TRSRTransformation.identity());
