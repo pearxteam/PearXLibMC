@@ -122,49 +122,65 @@ public class OvModel implements IPXModel
                 proc.preProcess(quads, state, side, rand, this);
             List<BakedQuad> processed = quads.parallelStream().map(q ->
             {
-                UnpackedBakedQuad.Builder bld = new UnpackedBakedQuad.Builder(q.getFormat());
-                bld.setQuadTint(q.getTintIndex());
-                bld.setQuadOrientation(q.getFace());
-                bld.setTexture(q.getSprite());
-                bld.setApplyDiffuseLighting(q.shouldApplyDiffuseLighting());
+                boolean flag = false;
                 for (IVertexProcessor proc : validVertexProcs)
-                    proc.processQuad(bld, q, state, side, rand, this);
-                if (q instanceof UnpackedBakedQuad)
                 {
-                    try
+                    if (proc.shouldProcess(q, state, side, rand, this))
                     {
-                        float[][][] data = (float[][][]) unpQuadData.get(q);
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag)
+                {
+                    UnpackedBakedQuad.Builder bld = new UnpackedBakedQuad.Builder(q.getFormat());
+                    bld.setQuadTint(q.getTintIndex());
+                    bld.setQuadOrientation(q.getFace());
+                    bld.setTexture(q.getSprite());
+                    bld.setApplyDiffuseLighting(q.shouldApplyDiffuseLighting());
+                    for (IVertexProcessor proc : validVertexProcs)
+                        if(proc.shouldProcess(q, state, side, rand, this))
+                            proc.processQuad(bld, q, state, side, rand, this);
+                    if (q instanceof UnpackedBakedQuad)
+                    {
+                        try
+                        {
+                            float[][][] data = (float[][][]) unpQuadData.get(q);
+                            for (int i = 0; i < 4; i++)
+                            {
+                                for (int e = 0; e < q.getFormat().getElementCount(); e++)
+                                {
+                                    float[] lst = Arrays.copyOf(data[i][e], data[i][e].length);
+                                    for (IVertexProcessor proc : validVertexProcs)
+                                        if(proc.shouldProcess(q, state, side, rand, this))
+                                            lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
+                                    bld.put(e, lst);
+                                }
+                            }
+
+                        }
+                        catch (IllegalAccessException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    } else
+                    {
                         for (int i = 0; i < 4; i++)
                         {
                             for (int e = 0; e < q.getFormat().getElementCount(); e++)
                             {
-                                float[] lst = Arrays.copyOf(data[i][e], data[i][e].length);
+                                float[] lst = new float[q.getFormat().getElement(e).getElementCount()];
+                                LightUtil.unpack(q.getVertexData(), lst, q.getFormat(), i, e);
                                 for (IVertexProcessor proc : validVertexProcs)
-                                    lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
+                                    if(proc.shouldProcess(q, state, side, rand, this))
+                                        lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
                                 bld.put(e, lst);
                             }
                         }
-
                     }
-                    catch (IllegalAccessException e)
-                    {
-                        e.printStackTrace();
-                    }
-                } else
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        for (int e = 0; e < q.getFormat().getElementCount(); e++)
-                        {
-                            float[] lst = new float[q.getFormat().getElement(e).getElementCount()];
-                            LightUtil.unpack(q.getVertexData(), lst, q.getFormat(), i, e);
-                            for (IVertexProcessor proc : validVertexProcs)
-                                lst = proc.processVertex(bld, q, lst, i, e, state, side, rand, this);
-                            bld.put(e, lst);
-                        }
-                    }
+                    return bld.build();
                 }
-                return bld.build();
+                return q;
             }).collect(Collectors.toList());
             quads.clear();
             quads.addAll(processed);
