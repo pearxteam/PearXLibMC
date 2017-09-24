@@ -1,12 +1,8 @@
 package ru.pearx.libmc.client.gui.controls.common;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.entity.minecart.MinecartCollisionEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import ru.pearx.lib.Color;
@@ -275,6 +271,13 @@ public class TextBox extends Control
         {
             changeFocus(-((focus - renderFrom) - getClicked(x)));
         }
+    }
+
+    public void setText(String s)
+    {
+        changeFocusAndSelection(-focus);
+        buffer.setLength(0);
+        buffer.append(s);
     }
 
     public void insert(String s)

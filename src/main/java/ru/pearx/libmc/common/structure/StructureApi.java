@@ -5,22 +5,16 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import ru.pearx.lib.ResourceUtils;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
@@ -30,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -41,7 +34,7 @@ public enum StructureApi
 {
     INSTANCE;
 
-    public void createStructure(String name, BlockPos from, BlockPos to, World world, StructureLootEntry... loot)
+    public void createStructure(String name, BlockPos from, BlockPos to, World world, StructureProcessorData... procs)
     {
         int frx = from.getX(), fry = from.getY(), frz = from.getZ(), tx = to.getX(), ty = to.getY(), tz = to.getZ();
         if (from.getX() > to.getX())
@@ -135,17 +128,16 @@ public enum StructureApi
         }
         {
             NBTTagList lst = new NBTTagList();
-            for(StructureLootEntry e : loot)
+            for(StructureProcessorData e : procs)
             {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setInteger("x", e.getPos().getX() - centerPos.getX());
-                tag.setInteger("y", e.getPos().getY() - centerPos.getY());
-                tag.setInteger("z", e.getPos().getZ() - centerPos.getZ());
-                tag.setString("table", e.getTable().toString());
-                tag.setInteger("facing", e.getFacing().getIndex());
+                NBTTagCompound tag = e.serialize();
+                tag.setInteger("x", e.getAbsolutePos().getX() - centerPos.getX());
+                tag.setInteger("y", e.getAbsolutePos().getY() - centerPos.getY());
+                tag.setInteger("z", e.getAbsolutePos().getZ() - centerPos.getZ());
+                tag.setString("processor", e.getProcessorId().toString());
                 lst.appendTag(tag);
             }
-            root.setTag("loot", lst);
+            root.setTag("processors", lst);
         }
 
         Path p = Paths.get("pxlmc_structures", name + ".dat");
@@ -241,76 +233,15 @@ public enum StructureApi
             }
         }
         {
-            NBTTagList loots = tag.getTagList("loot", Constants.NBT.TAG_COMPOUND);
-            for(NBTBase nbt : loots)
+            NBTTagList procs = tag.getTagList("processors", Constants.NBT.TAG_COMPOUND);
+            for(NBTBase nbt : procs)
             {
-                NBTTagCompound loot = (NBTTagCompound) nbt;
-                BlockPos pos = new BlockPos(loot.getInteger("x") + at.getX(), loot.getInteger("y") + at.getY(), loot.getInteger("z") + at.getZ());
-                EnumFacing face = EnumFacing.getFront(loot.getInteger("facing"));
-                TileEntity te = w.getTileEntity(pos);
-                if(te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face) instanceof IItemHandlerModifiable)
-                {
-                    IItemHandlerModifiable hand = (IItemHandlerModifiable)te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
-                    LootTable table = w.getLootTableManager().getLootTableFromLocation(new ResourceLocation(loot.getString("table")));
-                    List<ItemStack> items = table.generateLootForPools(rand, new LootContext(0, w, w.getLootTableManager(), null, null, null));
-                    for(int i = 0; i < hand.getSlots(); i++)
-                    {
-                        if (items.size() <= 0)
-                            break;
-                        int index = rand.nextInt(items.size());
-                        hand.setStackInSlot(i, items.get(index));
-                        items.remove(index);
-                    }
-                }
+                NBTTagCompound proc = (NBTTagCompound) nbt;
+                IStructureProcessor processor = StructureProcessorRegistry.REGISTRY.getValue(new ResourceLocation(proc.getString("processor")));
+                BlockPos absPos = new BlockPos(proc.getInteger("x") + at.getX(), proc.getInteger("y") + at.getY(), proc.getInteger("z") + at.getZ());
+                StructureProcessorData dat = processor.loadData(absPos, proc);
+                processor.process(dat, w, rand);
             }
-        }
-    }
-
-    public static class StructureLootEntry
-    {
-        private BlockPos pos;
-        private EnumFacing facing;
-        private ResourceLocation table;
-
-        public StructureLootEntry(BlockPos pos, EnumFacing facing, ResourceLocation table)
-        {
-            this.pos = pos;
-            this.facing = facing;
-            this.table = table;
-        }
-
-        public StructureLootEntry()
-        {
-        }
-
-        public BlockPos getPos()
-        {
-            return pos;
-        }
-
-        public void setPos(BlockPos pos)
-        {
-            this.pos = pos;
-        }
-
-        public EnumFacing getFacing()
-        {
-            return facing;
-        }
-
-        public void setFacing(EnumFacing facing)
-        {
-            this.facing = facing;
-        }
-
-        public ResourceLocation getTable()
-        {
-            return table;
-        }
-
-        public void setTable(ResourceLocation table)
-        {
-            this.table = table;
         }
     }
 }

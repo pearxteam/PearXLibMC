@@ -2,6 +2,7 @@ package ru.pearx.libmc;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -9,9 +10,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
+import ru.pearx.libmc.common.CommonProxy;
 import ru.pearx.libmc.common.PXLCapabilities;
+import ru.pearx.libmc.common.networking.packets.CPacketOpenStructureCreationGui;
 import ru.pearx.libmc.common.networking.packets.CPacketSyncASMState;
 import ru.pearx.libmc.common.structure.CommandStructure;
+import ru.pearx.libmc.common.structure.StructureProcessorRegistry;
+import ru.pearx.libmc.common.structure.processors.LootProcessor;
 
 import java.util.Collections;
 
@@ -24,6 +29,9 @@ public class PXLMC
     public static final String NAME = "PearXLib MC";
     public static final String MODID = "pxlmc";
     public static final String VERSION = "@VERSION@";
+
+    @SidedProxy(clientSide = "ru.pearx.libmc.client.ClientProxy", serverSide = "ru.pearx.libmc.server.ServerProxy")
+    public static CommonProxy PROXY;
 
     public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
     private static Logger log;
@@ -43,12 +51,15 @@ public class PXLMC
         log = e.getModLog();
 
         PXLCapabilities.register();
+
+        StructureProcessorRegistry.REGISTRY.register(new LootProcessor());
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent e)
     {
         NETWORK.registerMessage(CPacketSyncASMState.Handler.class, CPacketSyncASMState.class, 0, Side.CLIENT);
+        NETWORK.registerMessage(CPacketOpenStructureCreationGui.Handler.class, CPacketOpenStructureCreationGui.class, 1, Side.CLIENT);
     }
 
     @Mod.EventHandler

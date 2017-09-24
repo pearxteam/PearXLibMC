@@ -1,20 +1,12 @@
 package ru.pearx.libmc.common.animation;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.model.animation.AnimationStateMachine;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.networking.packets.CPacketSyncASMState;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
