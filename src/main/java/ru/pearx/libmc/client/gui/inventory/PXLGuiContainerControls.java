@@ -108,4 +108,10 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
     {
         return itemRender;
     }
+
+    @Override
+    public void onGuiClosed()
+    {
+        gui.invokeClose();
+    }
 }

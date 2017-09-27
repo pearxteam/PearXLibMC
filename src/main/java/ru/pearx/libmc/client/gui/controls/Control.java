@@ -23,6 +23,8 @@ public class Control
     private boolean visible = true;
     private boolean focused;
     private boolean selected;
+    private int lastMouseX;
+    private int lastMouseY;
 
     public boolean initialized;
 
@@ -56,14 +58,31 @@ public class Control
         this.height = height;
     }
 
+    private void triggerMove()
+    {
+        if(initialized)
+        {
+            Control main = getMainParent();
+            if (main.getGuiScreen() != null)
+                main.invokeMouseMove(main.getGuiScreen().getMouseX(), main.getGuiScreen().getMouseY(), 0, 0);
+        }
+    }
+
     public int getX()
     {
         return x;
     }
 
-    public void setX(int x)
+    public void setX(int x, boolean triggerMove)
     {
         this.x = x;
+        if(triggerMove)
+            triggerMove();
+    }
+
+    public void setX(int x)
+    {
+        setX(x, true);
     }
 
     public int getY()
@@ -71,15 +90,29 @@ public class Control
         return y;
     }
 
-    public void setY(int y)
+    public void setY(int y, boolean triggerMove)
     {
         this.y = y;
+        if(triggerMove)
+            triggerMove();
+    }
+
+    public void setY(int y)
+    {
+        setY(y, true);
+    }
+
+    public void setPos(int x, int y, boolean triggerMove)
+    {
+        this.x = x;
+        this.y = y;
+        if(triggerMove)
+            triggerMove();
     }
 
     public void setPos(int x, int y)
     {
-        setX(x);
-        setY(y);
+        setPos(x, y, true);
     }
 
     public void setSize(int w, int h)
@@ -120,7 +153,7 @@ public class Control
 
     public void select()
     {
-        getMainParent(this).select(this);
+        getMainParent().select(this);
     }
 
     private void select(Control toSelect)
@@ -130,6 +163,26 @@ public class Control
         {
             child.select(toSelect);
         }
+    }
+
+    public int getLastMouseX()
+    {
+        return lastMouseX;
+    }
+
+    public void setLastMouseX(int lastMouseX)
+    {
+        this.lastMouseX = lastMouseX;
+    }
+
+    public int getLastMouseY()
+    {
+        return lastMouseY;
+    }
+
+    public void setLastMouseY(int lastMouseY)
+    {
+        this.lastMouseY = lastMouseY;
     }
 
     public void render()
@@ -192,6 +245,13 @@ public class Control
 
     }
 
+    public void close()
+    {
+
+    }
+
+
+
     public void invokeRender()
     {
         if(!initialized)
@@ -253,22 +313,27 @@ public class Control
             }
         }
         if(last)
+        {
             select();
-        mouseDown(button, x, y);
+            mouseDown(button, x, y);
+        }
     }
 
     public void invokeMouseUp(int button, int x, int y)
     {
+        boolean last = true;
         if(!initialized)
             return;
         for (Control cont : controls)
         {
             if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
             {
+                last = false;
                 cont.invokeMouseUp(button, x - cont.getX(), y - cont.getY());
             }
         }
-        mouseUp(button, x, y);
+        if(last)
+            mouseUp(button, x, y);
     }
 
     public void invokeMouseMove(int x, int y, int dx, int dy)
@@ -285,8 +350,10 @@ public class Control
             }
         }
         mouseMove(x, y, dx, dy);
+        setLastMouseX(x);
+        setLastMouseY(y);
         if(last)
-            setFocused(getMainParent(this), this);
+            setFocused(getMainParent(), this);
 
     }
 
@@ -322,20 +389,47 @@ public class Control
             init();
             initialized = true;
         }
-        Control parent = getMainParent(this);
+        Control parent = getMainParent();
         if (parent.getGuiScreen() != null)
             parent.invokeMouseMove(parent.getGuiScreen().getMouseX(), parent.getGuiScreen().getMouseY(), 0, 0);
     }
 
+    public GuiControlContainer.OverlayContainer getOverlay()
+    {
+        Control c = getMainParent();
+        if(c instanceof IOverlayProvider)
+            return c.getOverlay();
+        return null;
+    }
+
+    public void invokeClose()
+    {
+        if(!initialized)
+            return;
+        for(Control cont : controls)
+            cont.invokeClose();
+        close();
+    }
+
     public IGuiScreen getGuiScreen()
     {
-        Control parent = getMainParent(this);
-        if(parent instanceof GuiControlContainer)
+        Control parent = getMainParent();
+        if(parent instanceof IGuiScreenProvider)
         {
-            GuiControlContainer cont = (GuiControlContainer) parent;
+            IGuiScreenProvider cont = (IGuiScreenProvider) parent;
             return cont.getGs();
         }
         return null;
+    }
+
+    public Control getMainParent()
+    {
+        Control c = this;
+        while(c.getParent() != null)
+        {
+            c = c.getParent();
+        }
+        return c;
     }
 
     public static void setFocused(Control c, Control select)
@@ -352,14 +446,5 @@ public class Control
         }
         for (Control cont : c.controls)
             setFocused(cont, select);
-    }
-
-    public static Control getMainParent(Control c)
-    {
-        while(c.getParent() != null)
-        {
-            c = c.getParent();
-        }
-        return c;
     }
 }

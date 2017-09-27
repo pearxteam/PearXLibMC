@@ -3,7 +3,9 @@ misc.gui.hovering.scalable=Scalable
 
 misc.gui.structure_creation.fromPos=From Position:
 misc.gui.structure_creation.toPos=To Position:
-misc.gui.structure_creation.looking_at=From the look
+misc.gui.structure_creation.looking_at=From the Look
+misc.gui.structure_creation.name=Name:
+misc.gui.structure_creation.create=Create
 
 tile.structure_nothing.name=Structure Nothing
 

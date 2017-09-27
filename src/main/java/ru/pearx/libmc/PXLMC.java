@@ -1,5 +1,6 @@
 package ru.pearx.libmc;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -9,12 +10,15 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.Logger;
 import ru.pearx.libmc.common.CommonProxy;
 import ru.pearx.libmc.common.PXLCapabilities;
 import ru.pearx.libmc.common.networking.packets.CPacketOpenStructureCreationGui;
 import ru.pearx.libmc.common.networking.packets.CPacketSyncASMState;
+import ru.pearx.libmc.common.networking.packets.SPacketCreateStructure;
 import ru.pearx.libmc.common.structure.CommandStructure;
+import ru.pearx.libmc.common.structure.IStructureProcessor;
 import ru.pearx.libmc.common.structure.StructureProcessorRegistry;
 import ru.pearx.libmc.common.structure.processors.LootProcessor;
 
@@ -60,6 +64,7 @@ public class PXLMC
     {
         NETWORK.registerMessage(CPacketSyncASMState.Handler.class, CPacketSyncASMState.class, 0, Side.CLIENT);
         NETWORK.registerMessage(CPacketOpenStructureCreationGui.Handler.class, CPacketOpenStructureCreationGui.class, 1, Side.CLIENT);
+        NETWORK.registerMessage(SPacketCreateStructure.Handler.class, SPacketCreateStructure.class, 2, Side.SERVER);
     }
 
     @Mod.EventHandler

@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.ResourceUtils;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
@@ -34,7 +35,8 @@ public enum StructureApi
 {
     INSTANCE;
 
-    public void createStructure(String name, BlockPos from, BlockPos to, World world, StructureProcessorData... procs)
+    @SafeVarargs
+    public final void createStructure(String name, BlockPos from, BlockPos to, World world, Pair<ResourceLocation, StructureProcessorData>... procs)
     {
         int frx = from.getX(), fry = from.getY(), frz = from.getZ(), tx = to.getX(), ty = to.getY(), tz = to.getZ();
         if (from.getX() > to.getX())
@@ -128,13 +130,14 @@ public enum StructureApi
         }
         {
             NBTTagList lst = new NBTTagList();
-            for(StructureProcessorData e : procs)
+            for(Pair<ResourceLocation, StructureProcessorData> p : procs)
             {
-                NBTTagCompound tag = e.serialize();
-                tag.setInteger("x", e.getAbsolutePos().getX() - centerPos.getX());
-                tag.setInteger("y", e.getAbsolutePos().getY() - centerPos.getY());
-                tag.setInteger("z", e.getAbsolutePos().getZ() - centerPos.getZ());
-                tag.setString("processor", e.getProcessorId().toString());
+                StructureProcessorData dat = p.getRight();
+                NBTTagCompound tag = dat.serialize();
+                tag.setInteger("x", dat.getAbsolutePos().getX() - centerPos.getX());
+                tag.setInteger("y", dat.getAbsolutePos().getY() - centerPos.getY());
+                tag.setInteger("z", dat.getAbsolutePos().getZ() - centerPos.getZ());
+                tag.setString("processor", p.getLeft().toString());
                 lst.appendTag(tag);
             }
             root.setTag("processors", lst);
@@ -168,7 +171,7 @@ public enum StructureApi
         }
     }
 
-    public NBTTagCompound getStructureNbt(ResourceLocation loc) throws IOException
+    public  NBTTagCompound getStructureNbt(ResourceLocation loc) throws IOException
     {
         String s = "assets/" + loc.getResourceDomain() + "/structures/" + loc.getResourcePath() + ".dat";
         try(InputStream str = ResourceUtils.getResource(s))
@@ -239,7 +242,7 @@ public enum StructureApi
                 NBTTagCompound proc = (NBTTagCompound) nbt;
                 IStructureProcessor processor = StructureProcessorRegistry.REGISTRY.getValue(new ResourceLocation(proc.getString("processor")));
                 BlockPos absPos = new BlockPos(proc.getInteger("x") + at.getX(), proc.getInteger("y") + at.getY(), proc.getInteger("z") + at.getZ());
-                StructureProcessorData dat = processor.loadData(absPos, proc);
+                StructureProcessorData dat = processor.loadData(proc, absPos);
                 processor.process(dat, w, rand);
             }
         }

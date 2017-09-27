@@ -13,5 +13,5 @@ import java.util.Random;
 public interface IStructureProcessor extends IForgeRegistryEntry<IStructureProcessor>
 {
     void process(StructureProcessorData data, WorldServer world, Random rand);
-    StructureProcessorData loadData(BlockPos pos, NBTTagCompound tag);
+    StructureProcessorData loadData(NBTTagCompound tag, BlockPos pos);
 }

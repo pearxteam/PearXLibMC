@@ -16,15 +16,23 @@ import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.structure.IStructureProcessor;
 import ru.pearx.libmc.common.structure.StructureProcessorData;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 /*
  * Created by mrAppleXZ on 24.09.17 20:59.
  */
-public class LootProcessor extends IForgeRegistryEntry.Impl<IStructureProcessor> implements IStructureProcessor
+public class LootProcessor extends StructureProcessor
 {
     public static ResourceLocation ID = new ResourceLocation(PXLMC.MODID, "loot");
+
+    public LootProcessor()
+    {
+        setRegistryName(ID);
+    }
+
 
     public static class Data extends StructureProcessorData
     {
@@ -58,43 +66,35 @@ public class LootProcessor extends IForgeRegistryEntry.Impl<IStructureProcessor>
             table = new ResourceLocation(tag.getString("table"));
             facing = EnumFacing.values()[tag.getInteger("facing")];
         }
-
-        @Override
-        public ResourceLocation getProcessorId()
-        {
-            return ID;
-        }
     }
 
     @Override
     public void process(StructureProcessorData data, WorldServer world, Random rand)
     {
-        if(data instanceof Data)
+        Data d = (Data) data;
+
+        TileEntity te = world.getTileEntity(d.getAbsolutePos());
+        if (te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, d.facing) instanceof IItemHandlerModifiable)
         {
-            Data d = (Data) data;
-            TileEntity te = world.getTileEntity(d.getAbsolutePos());
-            if(te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, d.facing) instanceof IItemHandlerModifiable)
+            IItemHandlerModifiable hand = (IItemHandlerModifiable) te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, d.facing);
+            LootTable table = world.getLootTableManager().getLootTableFromLocation(d.table);
+            List<ItemStack> items = table.generateLootForPools(rand, new LootContext(0, world, world.getLootTableManager(), null, null, null));
+            for (int i = 0; i < hand.getSlots(); i++)
             {
-                IItemHandlerModifiable hand = (IItemHandlerModifiable)te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, d.facing);
-                LootTable table = world.getLootTableManager().getLootTableFromLocation(d.table);
-                List<ItemStack> items = table.generateLootForPools(rand, new LootContext(0, world, world.getLootTableManager(), null, null, null));
-                for(int i = 0; i < hand.getSlots(); i++)
-                {
-                    if (items.size() <= 0)
-                        break;
-                    int index = rand.nextInt(items.size());
-                    hand.setStackInSlot(i, items.get(index));
-                    items.remove(index);
-                }
+                if (items.size() <= 0)
+                    break;
+                int index = rand.nextInt(items.size());
+                hand.setStackInSlot(i, items.get(index));
+                items.remove(index);
             }
         }
     }
 
     @Override
-    public StructureProcessorData loadData(BlockPos pos, NBTTagCompound tag)
+    public StructureProcessorData loadData(NBTTagCompound tag, BlockPos pos)
     {
-        Data d = new Data(pos);
-        d.deserialize(tag);
-        return d;
+        Data dat = new Data(pos);
+        dat.deserialize(tag);
+        return dat;
     }
 }

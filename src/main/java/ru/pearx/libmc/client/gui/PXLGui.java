@@ -106,4 +106,10 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     {
         return false;
     }
+
+    @Override
+    public void onGuiClosed()
+    {
+        gui.invokeClose();
+    }
 }

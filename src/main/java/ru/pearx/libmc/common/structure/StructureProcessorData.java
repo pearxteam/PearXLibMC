@@ -23,5 +23,4 @@ public abstract class StructureProcessorData
 
     public abstract NBTTagCompound serialize();
     public abstract void deserialize(NBTTagCompound tag);
-    public abstract ResourceLocation getProcessorId();
 }

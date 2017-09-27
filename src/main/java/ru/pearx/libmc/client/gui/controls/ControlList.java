@@ -70,7 +70,10 @@ public class ControlList implements Collection<Control>
     public boolean remove(Object o)
     {
         if(o instanceof Control)
-            ((Control)o).setParent(null);
+        {
+            ((Control) o).invokeClose();
+            ((Control) o).setParent(null);
+        }
         return lst.remove(o);
     }
 
@@ -93,7 +96,10 @@ public class ControlList implements Collection<Control>
     {
         for(Object o : collection)
             if(o instanceof Control)
-                ((Control)o).setParent(null);
+            {
+                ((Control) o).invokeClose();
+                ((Control) o).setParent(null);
+            }
         return lst.removeAll(collection);
     }
 
@@ -104,6 +110,7 @@ public class ControlList implements Collection<Control>
         {
             if(!collection.contains(c))
             {
+                c.invokeClose();
                 c.setParent(null);
             }
         }
@@ -114,7 +121,10 @@ public class ControlList implements Collection<Control>
     public void clear()
     {
         for (Control c : this)
+        {
+            c.invokeClose();
             c.setParent(null);
+        }
         lst.clear();
     }
 }
