@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -35,8 +36,7 @@ public enum StructureApi
 {
     INSTANCE;
 
-    @SafeVarargs
-    public final void createStructure(String name, BlockPos from, BlockPos to, World world, Pair<ResourceLocation, StructureProcessorData>... procs)
+    public final void createStructure(String name, BlockPos from, BlockPos to, World world, List<Pair<ResourceLocation, StructureProcessorData>> procs)
     {
         int frx = from.getX(), fry = from.getY(), frz = from.getZ(), tx = to.getX(), ty = to.getY(), tz = to.getZ();
         if (from.getX() > to.getX())
@@ -202,7 +202,7 @@ public enum StructureApi
                     bcache.put(id, ForgeRegistries.BLOCKS.getValue(new ResourceLocation(id)));
                 Block b = bcache.get(id);
                 IBlockState state = b.getStateFromMeta(block.getInteger("meta"));
-                w.setBlockState(absPos, state, 2);
+                    w.setBlockState(absPos, state, 2);
                 if (block.hasKey("tile"))
                 {
                     NBTTagCompound tile = block.getCompoundTag("tile");

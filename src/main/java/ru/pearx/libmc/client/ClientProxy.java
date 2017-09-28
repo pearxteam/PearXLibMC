@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.client.gui.PXLGui;
-import ru.pearx.libmc.client.gui.structure_creation.GuiStructureCreation;
+import ru.pearx.libmc.client.gui.structure.GuiStructureCreation;
 import ru.pearx.libmc.common.CommonProxy;
 
 /*

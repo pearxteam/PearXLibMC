@@ -129,14 +129,17 @@ public class ContextMenu extends Control
         for(Element e : getElements())
         {
             int w = DrawingTools.measureString(e.getName());
-            if(w > maxW)
+            if (w > maxW)
                 maxW = w;
+        }
+        setWidth(margin + maxW + margin);
+        setHeight(margin + (DrawingTools.getFontHeight() + margin) * getElements().size());
+        for(Element e : getElements())
+        {
             Button butt = new Button(0, y, e);
             controls.add(butt);
             y += butt.getHeight() + margin;
         }
-        setWidth(margin + maxW + margin);
-        setHeight(margin + (DrawingTools.getFontHeight() + margin) * getElements().size());
     }
 
     @Override

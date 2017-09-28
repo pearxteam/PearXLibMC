@@ -1,6 +1,7 @@
 package ru.pearx.libmc;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.Logger;
+import ru.pearx.libmc.client.gui.controls.common.TextBox;
 import ru.pearx.libmc.common.CommonProxy;
 import ru.pearx.libmc.common.PXLCapabilities;
 import ru.pearx.libmc.common.networking.packets.CPacketOpenStructureCreationGui;
@@ -76,5 +78,22 @@ public class PXLMC
     public static Logger getLog()
     {
         return log;
+    }
+
+    public static BlockPos parseCoords(String s)
+    {
+        try
+        {
+            String[] from = s.split(" ");
+            if (from.length == 3)
+            {
+                return new BlockPos(Integer.parseInt(from[0]), Integer.parseInt(from[1]), Integer.parseInt(from[2]));
+            }
+        }
+        catch(NumberFormatException ex)
+        {
+            return null;
+        }
+        return null;
     }
 }

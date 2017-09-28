@@ -41,6 +41,14 @@ public class SPacketCreateStructure implements IMessage
         this.processors = Arrays.asList(processors);
     }
 
+    public SPacketCreateStructure(String name, BlockPos fromPos, BlockPos toPos, List<Pair<ResourceLocation, StructureProcessorData>> processors)
+    {
+        this.fromPos = fromPos;
+        this.toPos = toPos;
+        this.name = name;
+        this.processors = processors;
+    }
+
     @Override
     public void fromBytes(ByteBuf buf)
     {
@@ -55,9 +63,9 @@ public class SPacketCreateStructure implements IMessage
             BlockPos pos = ByteBufTools.readBlockPos(buf);
             NBTTagCompound tag = ByteBufUtils.readTag(buf);
             StructureProcessorData dat = StructureProcessorRegistry.REGISTRY.getValue(loc).loadData(tag, pos);
-            lst.set(i, Pair.of(loc, dat));
+            lst.add(Pair.of(loc, dat));
         }
-
+        processors = lst;
     }
 
     @Override
@@ -84,7 +92,7 @@ public class SPacketCreateStructure implements IMessage
             {
                 if(ctx.getServerHandler().player.canUseCommand(2, "structure"))
                 {
-                    StructureApi.INSTANCE.createStructure(message.name, message.fromPos, message.toPos, ctx.getServerHandler().player.getServerWorld());
+                    StructureApi.INSTANCE.createStructure(message.name, message.fromPos, message.toPos, ctx.getServerHandler().player.getServerWorld(), message.processors);
                 }
             });
             return null;
