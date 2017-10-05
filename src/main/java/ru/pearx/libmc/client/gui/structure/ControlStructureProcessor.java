@@ -1,7 +1,6 @@
 package ru.pearx.libmc.client.gui.structure;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,7 +9,7 @@ import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.controls.Control;
 import ru.pearx.libmc.client.gui.controls.common.TextBox;
-import ru.pearx.libmc.common.structure.StructureProcessorData;
+import ru.pearx.libmc.common.structure.processors.StructureProcessorData;
 
 /*
  * Created by mrAppleXZ on 27.09.17 20:34.

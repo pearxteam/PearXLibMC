@@ -1,7 +1,14 @@
 package ru.pearx.libmc;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -11,20 +18,21 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.logging.log4j.Logger;
-import ru.pearx.libmc.client.gui.controls.common.TextBox;
 import ru.pearx.libmc.common.CommonProxy;
 import ru.pearx.libmc.common.PXLCapabilities;
 import ru.pearx.libmc.common.networking.packets.CPacketOpenStructureCreationGui;
 import ru.pearx.libmc.common.networking.packets.CPacketSyncASMState;
 import ru.pearx.libmc.common.networking.packets.SPacketCreateStructure;
 import ru.pearx.libmc.common.structure.CommandStructure;
-import ru.pearx.libmc.common.structure.IStructureProcessor;
-import ru.pearx.libmc.common.structure.StructureProcessorRegistry;
 import ru.pearx.libmc.common.structure.processors.LootProcessor;
+import ru.pearx.libmc.common.structure.processors.StructureProcessor;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 /*
  * Created by mrAppleXZ on 10.07.17 21:39.
@@ -58,7 +66,7 @@ public class PXLMC
 
         PXLCapabilities.register();
 
-        StructureProcessorRegistry.REGISTRY.register(new LootProcessor());
+        StructureProcessor.REGISTRY.register(new LootProcessor());
     }
 
     @Mod.EventHandler
@@ -95,5 +103,24 @@ public class PXLMC
             return null;
         }
         return null;
+    }
+
+    public static void fillBlockWithLoot(WorldServer world, Random rand, BlockPos pos, EnumFacing facing, ResourceLocation loot_table, float luck)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        if (te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing) instanceof IItemHandlerModifiable)
+        {
+            IItemHandlerModifiable hand = (IItemHandlerModifiable) te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+            LootTable table = world.getLootTableManager().getLootTableFromLocation(loot_table);
+            List<ItemStack> items = table.generateLootForPools(rand, new LootContext(luck, world, world.getLootTableManager(), null, null, null));
+            for (int i = 0; i < hand.getSlots(); i++)
+            {
+                if (items.size() <= 0)
+                    break;
+                int index = rand.nextInt(items.size());
+                hand.setStackInSlot(i, items.get(index));
+                items.remove(index);
+            }
+        }
     }
 }

@@ -14,16 +14,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.Colors;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.gui.DrawingTools;
-import ru.pearx.libmc.client.gui.controls.Control;
 import ru.pearx.libmc.client.gui.controls.GuiOnScreen;
 import ru.pearx.libmc.client.gui.controls.common.Button;
 import ru.pearx.libmc.client.gui.controls.common.ContextMenu;
 import ru.pearx.libmc.client.gui.controls.common.ListView;
 import ru.pearx.libmc.client.gui.controls.common.TextBox;
 import ru.pearx.libmc.common.networking.packets.SPacketCreateStructure;
-import ru.pearx.libmc.common.structure.IStructureProcessor;
-import ru.pearx.libmc.common.structure.StructureProcessorData;
-import ru.pearx.libmc.common.structure.StructureProcessorRegistry;
+import ru.pearx.libmc.common.structure.processors.IStructureProcessor;
+import ru.pearx.libmc.common.structure.processors.StructureProcessor;
+import ru.pearx.libmc.common.structure.processors.StructureProcessorData;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -84,7 +83,7 @@ public class GuiStructureCreation extends GuiOnScreen
     public Button procsAdd = new Button(new ResourceLocation(PXLMC.MODID, "textures/gui/button.png"), "+", () ->
     {
         ContextMenu menu = new ContextMenu();
-        for(IStructureProcessor proc : StructureProcessorRegistry.REGISTRY)
+        for(IStructureProcessor proc : StructureProcessor.REGISTRY)
         {
             menu.getElements().add(new ContextMenu.Element(proc.getName(), () -> addControl(proc.getName(), proc.getControl(null))));
         }
@@ -170,7 +169,7 @@ public class GuiStructureCreation extends GuiOnScreen
                 for(NBTBase nbt : lst)
                 {
                     NBTTagCompound proc = (NBTTagCompound) nbt;
-                    IStructureProcessor process = StructureProcessorRegistry.REGISTRY.getValue(new ResourceLocation(proc.getString("id")));
+                    IStructureProcessor process = StructureProcessor.REGISTRY.getValue(new ResourceLocation(proc.getString("id")));
                     BlockPos pos = proc.hasKey("x", Constants.NBT.TAG_INT) && proc.hasKey("y", Constants.NBT.TAG_INT) && proc.hasKey("z", Constants.NBT.TAG_INT) ? new BlockPos(proc.getInteger("x"), proc.getInteger("y"), proc.getInteger("z")) : null;
                     addControl(process.getName(), process.getControl(process.loadData(proc.getCompoundTag("data"), pos)));
                 }

@@ -1,4 +1,4 @@
-package ru.pearx.libmc.common.structure;
+package ru.pearx.libmc.common.structure.processors;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;

@@ -9,10 +9,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.apache.commons.lang3.tuple.Pair;
+import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.networking.ByteBufTools;
 import ru.pearx.libmc.common.structure.StructureApi;
-import ru.pearx.libmc.common.structure.StructureProcessorData;
-import ru.pearx.libmc.common.structure.StructureProcessorRegistry;
+import ru.pearx.libmc.common.structure.processors.StructureProcessor;
+import ru.pearx.libmc.common.structure.processors.StructureProcessorData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +63,7 @@ public class SPacketCreateStructure implements IMessage
             ResourceLocation loc = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
             BlockPos pos = ByteBufTools.readBlockPos(buf);
             NBTTagCompound tag = ByteBufUtils.readTag(buf);
-            StructureProcessorData dat = StructureProcessorRegistry.REGISTRY.getValue(loc).loadData(tag, pos);
+            StructureProcessorData dat = StructureProcessor.REGISTRY.getValue(loc).loadData(tag, pos);
             lst.add(Pair.of(loc, dat));
         }
         processors = lst;

@@ -19,6 +19,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.ResourceUtils;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
+import ru.pearx.libmc.common.structure.processors.IStructureProcessor;
+import ru.pearx.libmc.common.structure.processors.StructureProcessor;
+import ru.pearx.libmc.common.structure.processors.StructureProcessorData;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -240,7 +243,7 @@ public enum StructureApi
             for(NBTBase nbt : procs)
             {
                 NBTTagCompound proc = (NBTTagCompound) nbt;
-                IStructureProcessor processor = StructureProcessorRegistry.REGISTRY.getValue(new ResourceLocation(proc.getString("processor")));
+                IStructureProcessor processor = StructureProcessor.REGISTRY.getValue(new ResourceLocation(proc.getString("processor")));
                 BlockPos absPos = new BlockPos(proc.getInteger("x") + at.getX(), proc.getInteger("y") + at.getY(), proc.getInteger("z") + at.getZ());
                 StructureProcessorData dat = processor.loadData(proc, absPos);
                 processor.process(dat, w, rand);

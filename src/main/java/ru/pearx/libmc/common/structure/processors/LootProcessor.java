@@ -18,9 +18,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.Colors;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.gui.DrawingTools;
+import ru.pearx.libmc.client.gui.controls.common.ListView;
 import ru.pearx.libmc.client.gui.controls.common.TextBox;
 import ru.pearx.libmc.client.gui.structure.ControlStructureProcessor;
-import ru.pearx.libmc.common.structure.StructureProcessorData;
 
 import java.util.List;
 import java.util.Random;
@@ -74,11 +74,21 @@ public class LootProcessor extends StructureProcessor
     public static class LootControl extends ControlStructureProcessor
     {
         public TextBox table = new TextBox(new ResourceLocation(PXLMC.MODID, "textures/gui/textbox.png"));
+        public ListView faces = new ListView();
 
         public LootControl()
         {
             table.setWidth(getWidth() - pos.getWidth());
             table.setPos(pos.getX() + pos.getWidth(), pos.getY());
+            table.setMaxRenderLength(48);
+
+            faces.setSize(128, 128);
+            faces.setPos(0, fromLook.getY() + fromLook.getHeight() + 6);
+
+            for(EnumFacing face : EnumFacing.VALUES)
+            {
+                faces.getElements().add(face.getName().toUpperCase());
+            }
         }
 
         public LootControl(Data data)
@@ -86,20 +96,20 @@ public class LootProcessor extends StructureProcessor
             this();
             setPosText(data.getAbsolutePos());
             table.setText(data.table.toString());
+            faces.setSelection(data.facing.getIndex());
         }
 
         @Override
         public Pair<ResourceLocation, StructureProcessorData> getData()
         {
-            //fixme enumfacing.east
-            return Pair.of(ID, new Data(PXLMC.parseCoords(pos.getBuffer().toString()), new ResourceLocation(table.getBuffer().toString()), EnumFacing.EAST));
+            return Pair.of(ID, new Data(PXLMC.parseCoords(pos.getBuffer().toString()), new ResourceLocation(table.getBuffer().toString()), EnumFacing.VALUES[faces.getSelection() >= 0 ? faces.getSelection() : 0]));
         }
 
         @Override
         public void render()
         {
             super.render();
-            DrawingTools.drawString("misc.structure_processor.loot.table", table.getX(), 0, Colors.WHITE);
+            DrawingTools.drawString(I18n.format("misc.structure_processor.loot.table"), table.getX(), 0, Colors.WHITE);
         }
 
         @Override
@@ -107,6 +117,7 @@ public class LootProcessor extends StructureProcessor
         {
             super.init();
             controls.add(table);
+            controls.add(faces);
         }
     }
 
@@ -133,22 +144,7 @@ public class LootProcessor extends StructureProcessor
     public void process(StructureProcessorData data, WorldServer world, Random rand)
     {
         Data d = (Data) data;
-
-        TileEntity te = world.getTileEntity(d.getAbsolutePos());
-        if (te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, d.facing) instanceof IItemHandlerModifiable)
-        {
-            IItemHandlerModifiable hand = (IItemHandlerModifiable) te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, d.facing);
-            LootTable table = world.getLootTableManager().getLootTableFromLocation(d.table);
-            List<ItemStack> items = table.generateLootForPools(rand, new LootContext(0, world, world.getLootTableManager(), null, null, null));
-            for (int i = 0; i < hand.getSlots(); i++)
-            {
-                if (items.size() <= 0)
-                    break;
-                int index = rand.nextInt(items.size());
-                hand.setStackInSlot(i, items.get(index));
-                items.remove(index);
-            }
-        }
+        PXLMC.fillBlockWithLoot(world, rand, d.getAbsolutePos(), d.facing, d.table, 0);
     }
 
     @Override
