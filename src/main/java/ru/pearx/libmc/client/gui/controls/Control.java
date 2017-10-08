@@ -4,6 +4,7 @@ package ru.pearx.libmc.client.gui.controls;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.util.Point;
 import org.lwjgl.util.Rectangle;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
@@ -190,7 +191,17 @@ public class Control
 
     }
 
+    public void render2()
+    {
+
+    }
+
     public void postRender()
+    {
+
+    }
+
+    public void postRender2()
     {
 
     }
@@ -264,11 +275,25 @@ public class Control
         {
             cont.invokeRender();
         }
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0, 700);
         if(isVisible())
             postRender();
         GlStateManager.popMatrix();
+    }
+
+    public void invokeRender2()
+    {
+        if(!initialized)
+            return;
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(getX(), getY(), 0);
+        if(isVisible())
+            render2();
+        for(Control cont : controls)
+        {
+            cont.invokeRender2();
+        }
+        if(isVisible())
+            postRender2();
         GlStateManager.popMatrix();
     }
 
@@ -430,6 +455,20 @@ public class Control
             c = c.getParent();
         }
         return c;
+    }
+
+    public Point getPosOnScreen()
+    {
+        int x = getX();
+        int y = getY();
+        Control parent = getParent();
+        while(parent != null)
+        {
+            x += parent.getX();
+            y += parent.getY();
+            parent = parent.getParent();
+        }
+        return new Point(x, y);
     }
 
     public static void setFocused(Control c, Control select)

@@ -39,21 +39,21 @@ public class ItemDrawable implements IGuiDrawable
         GlStateManager.popMatrix();
     }
 
-    public void drawTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY)
+    public void drawTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY, int screenX, int screenY)
     {
         if(mouseX >= x && mouseX <= x + getWidth() && mouseY >= y && mouseY <= y + getHeight())
         {
-            screen.drawTooltip(stack, mouseX, mouseY);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(-screenX, -screenY, 0);
+            screen.drawTooltip(stack, mouseX + screenX, mouseY + screenY);
+            GlStateManager.popMatrix();
         }
     }
 
-    public void drawWithTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY)
+    public void drawWithTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY, int screenX, int screenY)
     {
         draw(screen, x, y);
-        if(mouseX >= x && mouseX <= x + getWidth() && mouseY >= y && mouseY <= y + getHeight())
-        {
-            screen.drawTooltip(stack, mouseX, mouseY);
-        }
+        drawTooltip(screen, x, y, mouseX, mouseY, screenX, screenY);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class DrawingTools
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(scale, scale, 0);
         int ytr = 0;
-        for(String s : str.split(System.lineSeparator()))
+        for(String s : str.split("\r\n|\n|\r"))
         {
             rend.drawString(s, 0, ytr, col.getARGB(), shadow);
             ytr += getFontHeight();
@@ -67,7 +67,7 @@ public class DrawingTools
         GlStateManager.pushMatrix();
         rend.resetStyles();
         str = rend.trimStringNewline(str);
-        for(String s : rend.wrapFormattedStringToWidth(str, width).split("\n|" + System.lineSeparator()))
+        for(String s : rend.wrapFormattedStringToWidth(str, width).split("\r\n|\r|\n"))
         {
             if(shadow)
                 rend.renderStringAligned(s, x + 1, y + 1, width, col.getARGB(), true);
@@ -96,6 +96,24 @@ public class DrawingTools
     public static int measureChar(char ch)
     {
         return Minecraft.getMinecraft().fontRenderer.getCharWidth(ch);
+    }
+
+    public static int getStringHeight(String str)
+    {
+        str = Minecraft.getMinecraft().fontRenderer.trimStringNewline(str);
+        int y = 0;
+        for(String s : str.split("\r\n|\r|\n"))
+            y += getFontHeight();
+        return y;
+    }
+
+    public static int getStringHeight(String str, int width)
+    {
+        str = Minecraft.getMinecraft().fontRenderer.trimStringNewline(str);
+        int y = 0;
+        for(String s : Minecraft.getMinecraft().fontRenderer.wrapFormattedStringToWidth(str, width).split("\r\n|\r|\n"))
+            y += getFontHeight();
+        return y;
     }
 
     public static int getFontHeight()

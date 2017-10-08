@@ -178,6 +178,19 @@ public class GuiControlContainer extends Control implements IGuiScreenProvider, 
     }
 
     @Override
+    public void invokeRender2()
+    {
+        if(overlay.isActive())
+        {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, 150);
+            overlay.invokeRender2();
+            GlStateManager.popMatrix();
+        }
+        super.invokeRender2();
+    }
+
+    @Override
     public OverlayContainer getOverlay()
     {
         return overlay;

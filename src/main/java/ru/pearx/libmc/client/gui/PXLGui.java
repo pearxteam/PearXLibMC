@@ -34,7 +34,10 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     {
         drawDefaultBackground();
         if(gui != null)
+        {
             gui.invokeRender();
+            gui.invokeRender2();
+        }
     }
 
     @Override

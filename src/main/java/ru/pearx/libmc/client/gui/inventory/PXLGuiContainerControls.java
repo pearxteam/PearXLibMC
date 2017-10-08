@@ -39,7 +39,10 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
         GlStateManager.pushMatrix();
         GlStateManager.translate(-guiLeft, -guiTop, 0);
         if(gui != null)
+        {
             gui.invokeRender();
+            gui.invokeRender2();
+        }
         GlStateManager.popMatrix();
     }
 
