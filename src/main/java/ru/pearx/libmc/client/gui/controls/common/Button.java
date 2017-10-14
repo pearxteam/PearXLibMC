@@ -85,7 +85,8 @@ public class Button extends Control
         parts.get(8).draw(w - 8, h - 8);
 
         GlStateManager.color(1, 1, 1, 1);
-        DrawingTools.drawString(getText(), (w - DrawingTools.measureString(getText())) / 2, (h - DrawingTools.getFontHeight()) / 2, getTextColor());
+        String text = getText();
+        DrawingTools.drawString(text, (w - DrawingTools.measureString(text)) / 2, (h - DrawingTools.getStringHeight(text)) / 2, getTextColor());
     }
 
     public String getText()

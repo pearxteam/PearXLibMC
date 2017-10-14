@@ -1,8 +1,11 @@
 package ru.pearx.libmc;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -30,6 +33,7 @@ import ru.pearx.libmc.common.structure.CommandStructure;
 import ru.pearx.libmc.common.structure.processors.LootProcessor;
 import ru.pearx.libmc.common.structure.processors.StructureProcessor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;

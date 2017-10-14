@@ -139,7 +139,7 @@ public class ProgressBar extends Control
         GlStateManager.color(1, 1, 1);
 
         String form = getFormattedText();
-        DrawingTools.drawString(form, (getWidth() - DrawingTools.measureString(form)) / 2, (getHeight() - DrawingTools.getFontHeight()) / 2, getTextColor());
+        DrawingTools.drawString(form, (getWidth() - DrawingTools.measureString(form)) / 2, (getHeight() - DrawingTools.getStringHeight(form)) / 2, getTextColor());
     }
 
     public static class Mark
