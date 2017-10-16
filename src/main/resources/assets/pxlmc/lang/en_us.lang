@@ -1,6 +1,3 @@
-misc.gui.hovering.rotatable=Rotatable
-misc.gui.hovering.scalable=Scalable
-
 misc.gui.structure.fromPos=From Position:
 misc.gui.structure.toPos=To Position:
 misc.gui.structure.looking_at=From the Look
