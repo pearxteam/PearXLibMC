@@ -78,7 +78,7 @@ public class ContextMenu extends Control
         public void render()
         {
             if(isFocused())
-                DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), getElementMouseOverColor(), getElementMouseOverColor());
+                DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), getElementMouseOverColor());
             DrawingTools.drawString(element.getName(), margin, 0, getTextColor());
         }
 
@@ -145,6 +145,6 @@ public class ContextMenu extends Control
     @Override
     public void render()
     {
-        DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), Colors.GREY_800, Colors.GREY_800);
+        DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), Colors.GREY_800);
     }
 }

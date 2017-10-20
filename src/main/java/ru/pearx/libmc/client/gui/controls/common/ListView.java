@@ -74,13 +74,13 @@ public class ListView extends Control
     @Override
     public void render()
     {
-        DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), getBackgroundColor(), getBackgroundColor());
+        DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), getBackgroundColor());
         int y = 0;
         for(int i = 0; i < getElements().size(); i++)
         {
             String elem = getElements().get(i);
             if(getSelection() == i)
-                DrawingTools.drawGradientRect(0, y, getWidth(), DrawingTools.getFontHeight(), selectedColor, selectedColor);
+                DrawingTools.drawGradientRect(0, y, getWidth(), DrawingTools.getFontHeight(), selectedColor);
             int w = 0;
             StringBuilder sb = new StringBuilder();
             for (char ch : elem.toCharArray())

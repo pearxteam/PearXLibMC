@@ -114,7 +114,7 @@ public class ProgressBar extends Control
     @Override
     public void render()
     {
-        DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), getBackgroundColor(), getBackgroundColor());
+        DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), getBackgroundColor());
         Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(PXLMC.MODID, "textures/gui/progress_bar/" + (System.currentTimeMillis() / 50 % 4) + ".png"));
         double w = (double)getWidth() / getMaxValue() * getValue();
         Tessellator tes = Tessellator.getInstance();
@@ -128,7 +128,7 @@ public class ProgressBar extends Control
 
         for(Mark mark : getMarks())
         {
-            DrawingTools.drawGradientRect((int)((double) getWidth() / getMaxValue() * mark.getOnValue()), 0, 1, getHeight(), mark.getColor(), mark.getColor());
+            DrawingTools.drawGradientRect((int)((double) getWidth() / getMaxValue() * mark.getOnValue()), 0, 1, getHeight(), mark.getColor());
         }
 
         GlStateManager.color(0, 0, 0);

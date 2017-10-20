@@ -134,7 +134,7 @@ public class GuiStructureCreation extends GuiOnScreen
     @Override
     public void render()
     {
-        DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), Colors.GREY_700, Colors.GREY_700);
+        DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), Colors.GREY_700);
         DrawingTools.drawString(I18n.format("misc.gui.structure.fromPos"), fromPos.getX(), fromPos.getY() - DrawingTools.getFontHeight(), Colors.WHITE);
         DrawingTools.drawString(I18n.format("misc.gui.structure.toPos"), toPos.getX(), toPos.getY() - DrawingTools.getFontHeight(), Colors.WHITE);
         DrawingTools.drawString(I18n.format("misc.gui.structure.name"), name.getX(), name.getY() - DrawingTools.getFontHeight(), Colors.WHITE);

@@ -109,9 +109,6 @@ public class BlockArrayShowcase extends AbstractShowcase
         Tessellator tes = Tessellator.getInstance();
         BufferBuilder bld = tes.getBuffer();
 
-        GlStateManager.enableRescaleNormal();
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableLighting();
         GlStateManager.translate(getWidth() / 2, getHeight() / 2, 100);
         GlStateManager.scale(scale, -scale, scale);
         GlStateManager.rotate(rotX, 1, 0, 0);
@@ -137,7 +134,6 @@ public class BlockArrayShowcase extends AbstractShowcase
             }
         }
         tes.draw();
-        GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
     }
 }

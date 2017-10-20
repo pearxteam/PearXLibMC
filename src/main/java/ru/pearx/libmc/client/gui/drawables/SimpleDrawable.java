@@ -17,6 +17,14 @@ public class SimpleDrawable implements IGuiDrawable
     private ResourceLocation texture;
     private int texWidth, texHeight;
     private int targetWidth, targetHeight;
+    private int u, v;
+
+    public SimpleDrawable(ResourceLocation texture, int texWidth, int texHeight)
+    {
+        this.texture = texture;
+        this.texWidth = texWidth;
+        this.texHeight = texHeight;
+    }
 
     public SimpleDrawable(ResourceLocation texture, int texWidth, int texHeight, int targetWidth, int targetHeight)
     {
@@ -25,6 +33,17 @@ public class SimpleDrawable implements IGuiDrawable
         this.texHeight = texHeight;
         this.targetWidth = targetWidth;
         this.targetHeight = targetHeight;
+    }
+
+    public SimpleDrawable(ResourceLocation texture, int texWidth, int texHeight, int targetWidth, int targetHeight, int u, int v)
+    {
+        this.texture = texture;
+        this.texWidth = texWidth;
+        this.texHeight = texHeight;
+        this.targetWidth = targetWidth;
+        this.targetHeight = targetHeight;
+        this.u = u;
+        this.v = v;
     }
 
     @Override
@@ -44,7 +63,7 @@ public class SimpleDrawable implements IGuiDrawable
     {
         GlStateManager.enableBlend();
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
-        GuiScreen.drawScaledCustomSizeModalRect(x, y, 0, 0, texWidth, texHeight, targetWidth, targetHeight, texWidth, texHeight);
+        GuiScreen.drawScaledCustomSizeModalRect(x, y, u, v, targetWidth, targetHeight, targetWidth, targetHeight, texWidth, texHeight);
         GlStateManager.disableBlend();
     }
 }

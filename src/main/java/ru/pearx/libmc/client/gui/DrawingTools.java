@@ -90,7 +90,14 @@ public class DrawingTools
 
     public static int measureString(String str)
     {
-        return Minecraft.getMinecraft().fontRenderer.getStringWidth(str);
+        int w = 0;
+        for(String s : str.split("(?:\r\n|\r|\n)"))
+        {
+            int i = Minecraft.getMinecraft().fontRenderer.getStringWidth(s);
+            if(i > w)
+                w = i;
+        }
+        return w;
     }
 
     public static int measureChar(char ch)
@@ -102,7 +109,7 @@ public class DrawingTools
     {
         str = Minecraft.getMinecraft().fontRenderer.trimStringNewline(str);
         int y = 0;
-        for(String s : str.split("\r\n|\r|\n"))
+        for(String s : str.split("(?:\r\n|\r|\n)"))
             y += getFontHeight();
         return y;
     }
@@ -129,7 +136,7 @@ public class DrawingTools
         GlStateManager.popMatrix();
     }
 
-    public static void drawGradientRect(int x, int y, int width, int height, Color c1, Color c2)
+    public static void drawGradientRect(int x, int y, int width, int height, Color c1, Color c2, Color c3, Color c4)
     {
         int right = x + width;
         int bottom = y + height;
@@ -143,13 +150,18 @@ public class DrawingTools
         bld.begin(7, DefaultVertexFormats.POSITION_COLOR);
         bld.pos(right, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
         bld.pos(x, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-        bld.pos(x, bottom, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
-        bld.pos(right, bottom, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+        bld.pos(x, bottom, 0).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
+        bld.pos(right, bottom, 0).color(c4.getRed(), c4.getGreen(), c4.getBlue(), c4.getAlpha()).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+    }
+
+    public static void drawGradientRect(int x, int y, int width, int height, Color c)
+    {
+        drawGradientRect(x, y, width, height, c, c, c, c);
     }
 
     public static void drawLine(int x1, int y1, int x2, int y2, int width, Color c1, Color c2)
