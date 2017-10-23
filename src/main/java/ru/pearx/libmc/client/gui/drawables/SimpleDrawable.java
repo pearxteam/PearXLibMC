@@ -24,6 +24,8 @@ public class SimpleDrawable implements IGuiDrawable
         this.texture = texture;
         this.texWidth = texWidth;
         this.texHeight = texHeight;
+        this.targetWidth = texWidth;
+        this.targetHeight = texHeight;
     }
 
     public SimpleDrawable(ResourceLocation texture, int texWidth, int texHeight, int targetWidth, int targetHeight)

@@ -98,6 +98,8 @@ public class BlockArrayShowcase extends AbstractShowcase
         this.array = array;
         this.access = new BlockArrayBlockAccess(array);
         this.scale = 50;
+        this.rotX = 45;
+        this.rotY = 45;
     }
 
     @Override

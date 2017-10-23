@@ -27,6 +27,8 @@ public class EntityShowcase extends AbstractShowcase
     {
         this.clazz = clazz;
         scale = 75;
+        rotX = 45;
+        rotY = 45;
     }
 
     @Override
