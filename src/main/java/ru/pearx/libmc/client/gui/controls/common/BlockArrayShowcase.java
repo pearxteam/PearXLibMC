@@ -9,20 +9,30 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Point;
+import ru.pearx.lib.Color;
+import ru.pearx.lib.Colors;
 import ru.pearx.libmc.client.TessellatorUtils;
+import ru.pearx.libmc.client.gui.DrawingTools;
+import ru.pearx.libmc.client.gui.IGuiScreen;
 import ru.pearx.libmc.client.gui.controls.Control;
+import ru.pearx.libmc.client.gui.drawables.ItemDrawable;
 import ru.pearx.libmc.common.structure.blockarray.BlockArray;
 import ru.pearx.libmc.common.structure.blockarray.BlockArrayEntry;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -92,50 +102,159 @@ public class BlockArrayShowcase extends AbstractShowcase
 
     private BlockArray array;
     private BlockArrayBlockAccess access;
+    private boolean stacks;
+    private ResourceLocation buttonTex;
+    private Button buttonStacks;
+    private List<ItemDrawable> stackList = new ArrayList<>();
+    private Color col = Color.fromARGB(128, 32, 32, 32);
 
-    public BlockArrayShowcase(BlockArray array)
+    public BlockArrayShowcase(ResourceLocation buttonTex, BlockArray array)
     {
         this.array = array;
+        this.buttonTex = buttonTex;
         this.access = new BlockArrayBlockAccess(array);
         this.scale = 50;
         this.rotX = 45;
         this.rotY = 45;
+        buttonStacks = new Button(buttonTex, "", () -> stacks = !stacks)
+        {
+            @Override
+            public String getText()
+            {
+                return stacks ? "▲" : "▼";
+            }
+
+            @Override
+            public int getX()
+            {
+                return getParent().getWidth() - 3 - getWidth();
+            }
+
+            @Override
+            public int getY()
+            {
+                return 3;
+            }
+        };
+        buttonStacks.setSize(12, 12);
+
+        for(BlockArrayEntry entr : array.getMap().values())
+        {
+            if(!entr.getStack().isEmpty())
+            {
+                boolean res = false;
+                for (ItemDrawable draw : stackList)
+                {
+                    ItemStack stack = draw.stack;
+                    if (stack.getItem() == entr.getStack().getItem() && stack.getItemDamage() == entr.getStack().getItemDamage() && ItemStack.areItemStackShareTagsEqual(stack, entr.getStack()))
+                    {
+                        stack.grow(entr.getStack().getCount());
+                        res = true;
+                    }
+                }
+                if(!res)
+                {
+                    stackList.add(new ItemDrawable(entr.getStack(), 1.5f));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void init()
+    {
+        controls.add(buttonStacks);
     }
 
     @Override
     public void render()
     {
-        //todo: make tesrs support
-        GlStateManager.pushMatrix();
-        BlockRendererDispatcher blockRender = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        Tessellator tes = Tessellator.getInstance();
-        BufferBuilder bld = tes.getBuffer();
-
-        GlStateManager.translate(getWidth() / 2, getHeight() / 2, 100);
-        GlStateManager.scale(scale, -scale, scale);
-        GlStateManager.rotate(rotX, 1, 0, 0);
-        GlStateManager.rotate(rotY, 0, 1, 0);
-        float x = -((array.getMaxX() - array.getMinX() + 1) / 2f + array.getMinX());
-        float y = -((array.getMaxY() - array.getMinY() + 1) / 2f + array.getMinY());
-        float z = -((array.getMaxZ() - array.getMinZ() + 1) / 2f + array.getMinZ());
-        GlStateManager.translate(x, y, z);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-        bld.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        for(Map.Entry<BlockPos, BlockArrayEntry> entr : array.getMap().entrySet())
         {
-            blockRender.renderBlock(entr.getValue().getState(), entr.getKey(), access, bld);
-            if(entr.getValue().getTESR() != null)
+            //todo: make tesrs support
+            GlStateManager.pushMatrix();
+            BlockRendererDispatcher blockRender = Minecraft.getMinecraft().getBlockRendererDispatcher();
+            Tessellator tes = Tessellator.getInstance();
+            BufferBuilder bld = tes.getBuffer();
+
+            GlStateManager.translate(getWidth() / 2, getHeight() / 2, 200);
+            GlStateManager.scale(scale, -scale, scale);
+            GlStateManager.rotate(rotX, 1, 0, 0);
+            GlStateManager.rotate(rotY, 0, 1, 0);
+            float x = -((array.getMaxX() - array.getMinX() + 1) / 2f + array.getMinX());
+            float y = -((array.getMaxY() - array.getMinY() + 1) / 2f + array.getMinY());
+            float z = -((array.getMaxZ() - array.getMinZ() + 1) / 2f + array.getMinZ());
+            GlStateManager.translate(x, y, z);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+
+            bld.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            for (Map.Entry<BlockPos, BlockArrayEntry> entr : array.getMap().entrySet())
             {
-                entr.getValue().getTile().setPos(entr.getKey());
-                entr.getValue().getTile().setWorld(Minecraft.getMinecraft().world);
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(entr.getKey().getX(), entr.getKey().getY(), entr.getKey().getZ());
-                entr.getValue().getTESR().render(entr.getValue().getTile(), 0, 0, 0, 0, 0, 1);
-                GlStateManager.popMatrix();
+                blockRender.renderBlock(entr.getValue().getState(), entr.getKey(), access, bld);
+                if (entr.getValue().getTESR() != null)
+                {
+                    entr.getValue().getTile().setPos(entr.getKey());
+                    entr.getValue().getTile().setWorld(Minecraft.getMinecraft().world);
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(entr.getKey().getX(), entr.getKey().getY(), entr.getKey().getZ());
+                    entr.getValue().getTESR().render(entr.getValue().getTile(), 0, 0, 0, 0, 0, 1);
+                    GlStateManager.popMatrix();
+                }
+            }
+            tes.draw();
+            GlStateManager.popMatrix();
+        }
+
+        GlStateManager.pushMatrix();
+        if(stacks)
+        {
+            GlStateManager.enableBlend();
+            GlStateManager.translate(0, 0, 500);
+            DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), col);
+            GlStateManager.disableBlend();
+            int x = 8;
+            int y = 12;
+            int w = (getWidth() - x*2) / (24 + 2);
+
+            IGuiScreen scr = getGuiScreen();
+            for(ItemDrawable draw : stackList)
+            {
+                draw.draw(scr, x, y);
+                x += 24;
+                if(x > w)
+                {
+                    x = 8;
+                    y += 24;
+                }
             }
         }
-        tes.draw();
+    }
+
+    @Override
+    public void render2()
+    {
+        if(stacks)
+        {
+            int x = 8;
+            int y = 12;
+            int w = (getWidth() - x*2) / (24 + 2);
+            Point p = getPosOnScreen();
+            IGuiScreen scr = getGuiScreen();
+            for(ItemDrawable draw : stackList)
+            {
+                draw.drawTooltip(scr, x, y, getLastMouseX(), getLastMouseY(), p.getX(), p.getY());
+                x += 24;
+                if(x > w)
+                {
+                    x = 8;
+                    y += 24;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void postRender()
+    {
         GlStateManager.popMatrix();
     }
 }

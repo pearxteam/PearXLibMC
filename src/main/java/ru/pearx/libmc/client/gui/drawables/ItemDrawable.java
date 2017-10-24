@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
 /**
@@ -30,13 +31,7 @@ public class ItemDrawable implements IGuiDrawable
     @Override
     public void draw(IGuiScreen screen, int x, int y)
     {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, 0);
-        GlStateManager.scale(scale, scale, scale);
-        RenderHelper.enableGUIStandardItemLighting();
-        screen.getRenderItem().renderItemAndEffectIntoGUI(stack, 0, 0);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.popMatrix();
+        DrawingTools.drawItemStackGUI(stack, screen.getRenderItem(), x, y, scale);
     }
 
     public void drawTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY, int screenX, int screenY)

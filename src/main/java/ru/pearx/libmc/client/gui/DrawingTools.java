@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
@@ -255,5 +256,16 @@ public class DrawingTools
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         GlStateManager.disableTexture2D();
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+    }
+
+    public static void drawItemStackGUI(ItemStack stack, RenderItem rend, int x, int y, float scale)
+    {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, 0);
+        GlStateManager.scale(scale, scale, scale);
+        RenderHelper.enableGUIStandardItemLighting();
+        rend.renderItemAndEffectIntoGUI(stack, 0, 0);
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.popMatrix();
     }
 }
