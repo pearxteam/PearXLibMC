@@ -113,7 +113,6 @@ public class BlockArrayShowcase extends AbstractShowcase
         this.array = array;
         this.buttonTex = buttonTex;
         this.access = new BlockArrayBlockAccess(array);
-        this.scale = 50;
         this.rotX = 45;
         this.rotY = 45;
         buttonStacks = new Button(buttonTex, "", () -> stacks = !stacks)
@@ -163,6 +162,11 @@ public class BlockArrayShowcase extends AbstractShowcase
     @Override
     public void init()
     {
+        int sizeX = array.getMaxX() - array.getMinX() + 1;
+        int sizeY = array.getMaxY() - array.getMinY() + 1;
+        int w = (int)((getWidth() / sizeX) * 0.6f);
+        int h = (int)((getHeight() / sizeY) * 0.6f);
+        this.scale = Math.min(w, h);
         controls.add(buttonStacks);
     }
 
@@ -213,7 +217,7 @@ public class BlockArrayShowcase extends AbstractShowcase
             GlStateManager.disableBlend();
             int x = 8;
             int y = 12;
-            int w = (getWidth() - x*2) / (24 + 2);
+            int w = getWidth() - x*2;
 
             IGuiScreen scr = getGuiScreen();
             for(ItemDrawable draw : stackList)
@@ -236,7 +240,7 @@ public class BlockArrayShowcase extends AbstractShowcase
         {
             int x = 8;
             int y = 12;
-            int w = (getWidth() - x*2) / (24 + 2);
+            int w = getWidth() - x*2;
             Point p = getPosOnScreen();
             IGuiScreen scr = getGuiScreen();
             for(ItemDrawable draw : stackList)
