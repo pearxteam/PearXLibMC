@@ -4,8 +4,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
@@ -17,16 +15,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Point;
 import ru.pearx.lib.Color;
-import ru.pearx.lib.Colors;
-import ru.pearx.libmc.client.TessellatorUtils;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.IGuiScreen;
-import ru.pearx.libmc.client.gui.controls.Control;
-import ru.pearx.libmc.client.gui.drawables.ItemDrawable;
+import ru.pearx.libmc.client.gui.drawables.item.ItemDrawable;
 import ru.pearx.libmc.common.structure.blockarray.BlockArray;
 import ru.pearx.libmc.common.structure.blockarray.BlockArrayEntry;
 
@@ -144,7 +138,7 @@ public class BlockArrayShowcase extends AbstractShowcase
                 boolean res = false;
                 for (ItemDrawable draw : stackList)
                 {
-                    ItemStack stack = draw.stack;
+                    ItemStack stack = draw.getStack();
                     if (stack.getItem() == entr.getStack().getItem() && stack.getItemDamage() == entr.getStack().getItemDamage() && ItemStack.areItemStackShareTagsEqual(stack, entr.getStack()))
                     {
                         stack.grow(entr.getStack().getCount());
@@ -209,10 +203,10 @@ public class BlockArrayShowcase extends AbstractShowcase
         }
 
         GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, 500);
         if(stacks)
         {
             GlStateManager.enableBlend();
-            GlStateManager.translate(0, 0, 500);
             DrawingTools.drawGradientRect(0, 0, getWidth(), getHeight(), col);
             GlStateManager.disableBlend();
             int x = 8;

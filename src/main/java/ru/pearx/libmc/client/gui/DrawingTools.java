@@ -258,13 +258,14 @@ public class DrawingTools
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
-    public static void drawItemStackGUI(ItemStack stack, RenderItem rend, int x, int y, float scale)
+    public static void drawItemStackGUI(ItemStack stack, RenderItem rend, FontRenderer frend, int x, int y, float scale)
     {
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(scale, scale, scale);
         RenderHelper.enableGUIStandardItemLighting();
         rend.renderItemAndEffectIntoGUI(stack, 0, 0);
+        rend.renderItemOverlays(frend, stack, 0, 0);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.popMatrix();
     }

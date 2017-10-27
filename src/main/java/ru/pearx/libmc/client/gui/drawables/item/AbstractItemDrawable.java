@@ -1,37 +1,26 @@
-package ru.pearx.libmc.client.gui.drawables;
+package ru.pearx.libmc.client.gui.drawables.item;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.IGuiScreen;
+import ru.pearx.libmc.client.gui.drawables.IGuiDrawable;
 
-/**
- * Created by mrAppleXZ on 15.04.17 9:49.
+/*
+ * Created by mrAppleXZ on 27.10.17 22:10.
  */
 @SideOnly(Side.CLIENT)
-public class ItemDrawable implements IGuiDrawable
+public abstract class AbstractItemDrawable implements IGuiDrawable
 {
-    public ItemStack stack;
-    public float scale;
-
-    public ItemDrawable(ItemStack stack, float scale)
-    {
-        this.stack = stack;
-        this.scale = scale;
-    }
-
-    public ItemDrawable(ItemStack stack)
-    {
-        this(stack, 1);
-    }
+    private float scale;
 
     @Override
     public void draw(IGuiScreen screen, int x, int y)
     {
-        DrawingTools.drawItemStackGUI(stack, screen.getRenderItem(), x, y, scale);
+        DrawingTools.drawItemStackGUI(getRenderStack(), screen.getRenderItem(), Minecraft.getMinecraft().fontRenderer, x, y, scale);
     }
 
     public void drawTooltip(IGuiScreen screen, int x, int y, int mouseX, int mouseY, int screenX, int screenY)
@@ -40,7 +29,7 @@ public class ItemDrawable implements IGuiDrawable
         {
             GlStateManager.pushMatrix();
             GlStateManager.translate(-screenX, -screenY, 0);
-            screen.drawTooltip(stack, mouseX + screenX, mouseY + screenY);
+            screen.drawTooltip(getRenderStack(), mouseX + screenX, mouseY + screenY);
             GlStateManager.popMatrix();
         }
     }
@@ -61,5 +50,17 @@ public class ItemDrawable implements IGuiDrawable
     public int getHeight()
     {
         return (int)(16 * scale);
+    }
+
+    public abstract ItemStack getRenderStack();
+
+    public float getScale()
+    {
+        return scale;
+    }
+
+    public void setScale(float scale)
+    {
+        this.scale = scale;
     }
 }

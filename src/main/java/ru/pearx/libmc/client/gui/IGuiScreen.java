@@ -1,5 +1,6 @@
 package ru.pearx.libmc.client.gui;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
