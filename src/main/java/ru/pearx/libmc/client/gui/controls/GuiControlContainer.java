@@ -63,9 +63,10 @@ public class GuiControlContainer extends Control implements IGuiScreenProvider, 
 
     private IGuiScreen gs;
     private OverlayContainer overlay = new OverlayContainer();
-    public GuiControlContainer(Control cont)
+    public GuiControlContainer(Control cont, IGuiScreen gs)
     {
         initialized = true;
+        setGs(gs);
         controls.add(cont);
     }
 

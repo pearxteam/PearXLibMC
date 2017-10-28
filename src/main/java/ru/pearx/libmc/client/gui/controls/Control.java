@@ -8,6 +8,9 @@ import org.lwjgl.util.Point;
 import org.lwjgl.util.Rectangle;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Created by mrAppleXZ on 16.04.17 13:12.
  */
@@ -16,6 +19,8 @@ public class Control
 {
     public ControlList controls = new ControlList(this);
     private Control parent;
+    @Nullable
+    private IGuiScreen guiScreen = null;
 
     private int width;
     private int height;
@@ -37,6 +42,17 @@ public class Control
     public void setParent(Control parent)
     {
         this.parent = parent;
+        if(parent != null)
+        {
+            Control mp = getMainParent();
+            if (mp instanceof IGuiScreenProvider)
+            {
+                IGuiScreenProvider cont = (IGuiScreenProvider) mp;
+                this.guiScreen = cont.getGs();
+            }
+        }
+        else
+            this.guiScreen = null;
     }
 
     public int getWidth()
@@ -64,8 +80,8 @@ public class Control
         if(initialized)
         {
             Control main = getMainParent();
-            if (main.getGuiScreen() != null)
-                main.invokeMouseMove(main.getGuiScreen().getMouseX(), main.getGuiScreen().getMouseY(), 0, 0);
+            if (getGuiScreen() != null)
+                main.invokeMouseMove(getGuiScreen().getMouseX(), getGuiScreen().getMouseY(), 0, 0);
         }
     }
 
@@ -436,15 +452,10 @@ public class Control
         close();
     }
 
+    @Nullable
     public IGuiScreen getGuiScreen()
     {
-        Control parent = getMainParent();
-        if(parent instanceof IGuiScreenProvider)
-        {
-            IGuiScreenProvider cont = (IGuiScreenProvider) parent;
-            return cont.getGs();
-        }
-        return null;
+        return guiScreen;
     }
 
     public Control getMainParent()

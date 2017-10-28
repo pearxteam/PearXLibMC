@@ -21,12 +21,11 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     public PXLGui(GuiControlContainer cg)
     {
         gui = cg;
-        gui.setGs(this);
     }
 
     public PXLGui(Control cont)
     {
-        this(new GuiControlContainer(cont));
+        gui = new GuiControlContainer(cont, this);
     }
 
     @Override

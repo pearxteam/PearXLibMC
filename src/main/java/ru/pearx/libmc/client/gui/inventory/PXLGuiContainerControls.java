@@ -25,12 +25,12 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
     {
         super(cont);
         gui = cg;
-        gui.setGs(this);
     }
 
     public PXLGuiContainerControls(Container cont, Control contr)
     {
-        this(cont, new GuiControlContainer(contr));
+        super(cont);
+        gui = new GuiControlContainer(contr, this);
     }
 
     @Override
