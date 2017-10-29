@@ -150,7 +150,7 @@ public class DrawingTools
         BufferBuilder bld = tessellator.getBuffer();
         bld.begin(7, DefaultVertexFormats.POSITION_COLOR);
         bld.pos(right, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-        bld.pos(x, y, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+        bld.pos(x, y, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
         bld.pos(x, bottom, 0).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
         bld.pos(right, bottom, 0).color(c4.getRed(), c4.getGreen(), c4.getBlue(), c4.getAlpha()).endVertex();
         tessellator.draw();
