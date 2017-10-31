@@ -34,6 +34,7 @@ public class PXLContainer extends Container
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
+            //
             if (index < slotCount)
             {
                 if (!this.mergeItemStack(itemstack1, slotCount, this.inventorySlots.size(), true))
@@ -54,6 +55,8 @@ public class PXLContainer extends Container
             {
                 slot.onSlotChanged();
             }
+
+            slot.onTake(playerIn, itemstack1);
         }
 
         return itemstack;
