@@ -2,6 +2,7 @@ package ru.pearx.libmc.common;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
@@ -18,13 +19,16 @@ import java.util.List;
  */
 public class ItemStackUtils
 {
-    public static void extractAll(IItemHandler hand, int slot)
+    public static ItemStack extractAll(IItemHandler hand, int slot)
     {
         ItemStack stack = hand.getStackInSlot(slot);
-        if(!stack.isEmpty())
-        {
-            hand.extractItem(slot, stack.getCount(), false);
-        }
+        return hand.extractItem(slot, stack.getCount(), false);
+    }
+
+    public static void clear(IItemHandler hand)
+    {
+        for(int i = 0; i < hand.getSlots(); i++)
+            extractAll(hand, i);
     }
 
     public static void drop(IItemHandler hand, World world, BlockPos pos)
@@ -58,6 +62,59 @@ public class ItemStackUtils
             }
             return matching;
         }
+    }
+
+    public static boolean isCraftingMatrixMatches(InventoryCrafting inv, int width, int height, NonNullList<Ingredient> ingredients, boolean mirrored)
+    {
+        for (int x = 0; x <= inv.getWidth() - width; x++)
+        {
+            for (int y = 0; y <= inv.getHeight() - height; ++y)
+            {
+                if (checkMatch(inv, width, height, ingredients, x, y, false))
+                {
+                    return true;
+                }
+
+                if (mirrored && checkMatch(inv, width, height, ingredients, x, y, true))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean checkMatch(InventoryCrafting inv, int width, int height, NonNullList<Ingredient> ingredients, int startX, int startY, boolean mirror)
+    {
+        for (int x = 0; x < inv.getWidth(); x++)
+        {
+            for (int y = 0; y < inv.getHeight(); y++)
+            {
+                int subX = x - startX;
+                int subY = y - startY;
+                Ingredient target = Ingredient.EMPTY;
+
+                if (subX >= 0 && subY >= 0 && subX < width && subY < height)
+                {
+                    if (mirror)
+                    {
+                        target = ingredients.get(width - subX - 1 + subY * width);
+                    }
+                    else
+                    {
+                        target = ingredients.get(subX + subY * width);
+                    }
+                }
+
+                if (!target.apply(inv.getStackInRowAndColumn(x, y)))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
 }
