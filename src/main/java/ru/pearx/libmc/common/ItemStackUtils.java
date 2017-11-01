@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,18 +65,18 @@ public class ItemStackUtils
         }
     }
 
-    public static boolean isCraftingMatrixMatches(InventoryCrafting inv, int width, int height, NonNullList<Ingredient> ingredients, boolean mirrored)
+    public static boolean isCraftingMatrixMatches(@Nonnull InventoryCrafting inv, int width, int height, NonNullList<Ingredient> ings, boolean mirrored)
     {
         for (int x = 0; x <= inv.getWidth() - width; x++)
         {
             for (int y = 0; y <= inv.getHeight() - height; ++y)
             {
-                if (checkMatch(inv, width, height, ingredients, x, y, false))
+                if (checkMatch(inv, width, height, ings, x, y, false))
                 {
                     return true;
                 }
 
-                if (mirrored && checkMatch(inv, width, height, ingredients, x, y, true))
+                if (mirrored && checkMatch(inv, width, height, ings, x, y, true))
                 {
                     return true;
                 }
@@ -85,7 +86,7 @@ public class ItemStackUtils
         return false;
     }
 
-    private static boolean checkMatch(InventoryCrafting inv, int width, int height, NonNullList<Ingredient> ingredients, int startX, int startY, boolean mirror)
+    private static boolean checkMatch(InventoryCrafting inv, int width, int height, NonNullList<Ingredient> input, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < inv.getWidth(); x++)
         {
@@ -99,11 +100,11 @@ public class ItemStackUtils
                 {
                     if (mirror)
                     {
-                        target = ingredients.get(width - subX - 1 + subY * width);
+                        target = input.get(width - subX - 1 + subY * width);
                     }
                     else
                     {
-                        target = ingredients.get(subX + subY * width);
+                        target = input.get(subX + subY * width);
                     }
                 }
 
@@ -116,5 +117,4 @@ public class ItemStackUtils
 
         return true;
     }
-
 }
