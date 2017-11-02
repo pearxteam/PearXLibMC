@@ -1,7 +1,5 @@
 package ru.pearx.libmc.client.gui.controls.common;
 
-import net.minecraft.client.renderer.GlStateManager;
-import org.apache.commons.lang3.tuple.Pair;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.lib.Color;

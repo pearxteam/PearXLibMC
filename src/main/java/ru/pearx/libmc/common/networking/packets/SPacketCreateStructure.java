@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.apache.commons.lang3.tuple.Pair;
-import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.networking.ByteBufTools;
 import ru.pearx.libmc.common.structure.StructureApi;
 import ru.pearx.libmc.common.structure.processors.StructureProcessor;

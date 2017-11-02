@@ -8,7 +8,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ru.pearx.libmc.common.ItemStackUtils;
 
 /*
  * Created by mrAppleXZ on 15.10.17 17:07.

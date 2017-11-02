@@ -1,15 +1,9 @@
 package ru.pearx.libmc.client.gui.drawables.item;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ru.pearx.libmc.client.gui.DrawingTools;
-import ru.pearx.libmc.client.gui.IGuiScreen;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /*

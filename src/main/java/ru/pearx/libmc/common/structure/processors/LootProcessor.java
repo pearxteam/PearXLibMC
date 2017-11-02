@@ -1,19 +1,13 @@
 package ru.pearx.libmc.common.structure.processors;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.Colors;
 import ru.pearx.libmc.PXLMC;
@@ -22,7 +16,6 @@ import ru.pearx.libmc.client.gui.controls.common.ListView;
 import ru.pearx.libmc.client.gui.controls.common.TextBox;
 import ru.pearx.libmc.client.gui.structure.ControlStructureProcessor;
 
-import java.util.List;
 import java.util.Random;
 
 /*

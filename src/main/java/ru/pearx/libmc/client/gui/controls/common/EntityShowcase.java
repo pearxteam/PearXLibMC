@@ -2,17 +2,11 @@ package ru.pearx.libmc.client.gui.controls.common;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.util.Rectangle;
-import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.gui.DrawingTools;
-import ru.pearx.libmc.client.gui.controls.Control;
 
 /**
  * Created by mrAppleXZ on 02.07.17 12:53.

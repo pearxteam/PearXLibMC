@@ -8,7 +8,6 @@ import org.lwjgl.util.Point;
 import org.lwjgl.util.Rectangle;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**

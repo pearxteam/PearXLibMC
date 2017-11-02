@@ -13,6 +13,7 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -67,6 +68,7 @@ public class ItemStackUtils
 
     public static boolean isCraftingMatrixMatches(@Nonnull InventoryCrafting inv, int width, int height, NonNullList<Ingredient> ings, boolean mirrored)
     {
+        //copied from ShapedOreRecipe.
         for (int x = 0; x <= inv.getWidth() - width; x++)
         {
             for (int y = 0; y <= inv.getHeight() - height; ++y)
@@ -88,6 +90,7 @@ public class ItemStackUtils
 
     private static boolean checkMatch(InventoryCrafting inv, int width, int height, NonNullList<Ingredient> input, int startX, int startY, boolean mirror)
     {
+        //copied from ShapedOreRecipe.
         for (int x = 0; x < inv.getWidth(); x++)
         {
             for (int y = 0; y < inv.getHeight(); y++)
@@ -116,5 +119,40 @@ public class ItemStackUtils
         }
 
         return true;
+    }
+
+    public static boolean isCraftingMatrixMatchesShapeless(InventoryCrafting craft, NonNullList<Ingredient> input)
+    {
+        //copied from ShapelessOreRecipe.
+        NonNullList<Ingredient> required = NonNullList.create();
+        required.addAll(input);
+
+        for (int x = 0; x < craft.getSizeInventory(); x++)
+        {
+            ItemStack slot = craft.getStackInSlot(x);
+
+            if (!slot.isEmpty())
+            {
+                boolean inRecipe = false;
+                Iterator<Ingredient> req = required.iterator();
+
+                while (req.hasNext())
+                {
+                    if (req.next().apply(slot))
+                    {
+                        inRecipe = true;
+                        req.remove();
+                        break;
+                    }
+                }
+
+                if (!inRecipe)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return required.isEmpty();
     }
 }
