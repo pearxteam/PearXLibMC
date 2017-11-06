@@ -122,4 +122,21 @@ public class PXLMC
             }
         }
     }
+
+    public static int getHorizontalRotation(EnumFacing face)
+    {
+        switch (face)
+        {
+            case NORTH:
+                return 0;
+            case WEST:
+                return 90;
+            case SOUTH:
+                return 180;
+            case EAST:
+                return 270;
+            default:
+                return 0;
+        }
+    }
 }
