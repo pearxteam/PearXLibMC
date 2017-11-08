@@ -188,7 +188,7 @@ public class BlockArrayShowcase extends AbstractShowcase
             for (Map.Entry<BlockPos, BlockArrayEntry> entr : array.getMap().entrySet())
             {
                 blockRender.renderBlock(entr.getValue().getState(), entr.getKey(), access, bld);
-                if (entr.getValue().getTESR() != null)
+                /*if (entr.getValue().getTESR() != null)
                 {
                     entr.getValue().getTile().setPos(entr.getKey());
                     entr.getValue().getTile().setWorld(Minecraft.getMinecraft().world);
@@ -196,7 +196,7 @@ public class BlockArrayShowcase extends AbstractShowcase
                     GlStateManager.translate(entr.getKey().getX(), entr.getKey().getY(), entr.getKey().getZ());
                     entr.getValue().getTESR().render(entr.getValue().getTile(), 0, 0, 0, 0, 0, 1);
                     GlStateManager.popMatrix();
-                }
+                }*/
             }
             tes.draw();
             GlStateManager.popMatrix();

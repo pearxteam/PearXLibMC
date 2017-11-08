@@ -15,8 +15,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockArrayEntry
 {
     private TileEntity tile;
-    @SideOnly(Side.CLIENT)
-    private TileEntitySpecialRenderer tesr;
+   // @SideOnly(Side.CLIENT)
+    //private TileEntitySpecialRenderer tesr;
     private IBlockState state;
     private ItemStack stack;
 
@@ -41,18 +41,18 @@ public class BlockArrayEntry
     public void setTile(TileEntity tile)
     {
         this.tile = tile;
-        if(tile != null && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        /*if(tile != null && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
             //noinspection MethodCallSideOnly,VariableUseSideOnly
             tesr = TileEntityRendererDispatcher.instance.getRenderer(tile.getClass());
-        }
+        }*/
     }
 
-    @SideOnly(Side.CLIENT)
+    /*@SideOnly(Side.CLIENT)
     public TileEntitySpecialRenderer getTESR()
     {
         return tesr;
-    }
+    }*/
 
     public IBlockState getState()
     {
