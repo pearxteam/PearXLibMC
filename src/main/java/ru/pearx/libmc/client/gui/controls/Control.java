@@ -6,6 +6,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.Point;
 import org.lwjgl.util.Rectangle;
+import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
 import javax.annotation.Nullable;
@@ -479,6 +480,15 @@ public class Control
             parent = parent.getParent();
         }
         return new Point(x, y);
+    }
+
+    public void drawHoveringText(String s, int x, int y)
+    {
+        GlStateManager.pushMatrix();
+        Point pos = getPosOnScreen();
+        GlStateManager.translate(-pos.getX(), -pos.getY(), 0);
+        getGuiScreen().drawHovering(s, x + pos.getX(), y + pos.getY());
+        GlStateManager.popMatrix();
     }
 
     public static void setFocused(Control c, Control select)

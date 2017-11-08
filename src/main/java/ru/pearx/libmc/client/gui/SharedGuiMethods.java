@@ -11,6 +11,8 @@ import org.lwjgl.input.Mouse;
 import ru.pearx.libmc.client.gui.controls.GuiControlContainer;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /*
  * Created by mrAppleXZ on 17.09.17 15:56.
@@ -24,7 +26,7 @@ public final class SharedGuiMethods
     }
     public interface BaseHoveringRenderer
     {
-        void render(String text, int x, int y);
+        void render(List<String> text, int x, int y);
     }
 
     public static void handleKeyboardInput(GuiControlContainer container) throws IOException
@@ -83,7 +85,7 @@ public final class SharedGuiMethods
     public static void drawHovering(String text, int x, int y, BaseHoveringRenderer rend)
     {
         GlStateManager.pushMatrix();
-        rend.render(text, x, y);
+        rend.render(Arrays.asList(text.split("(?:\r\n|\r|\n)")), x, y);
         GlStateManager.disableRescaleNormal();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();

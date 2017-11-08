@@ -33,6 +33,11 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
         gui = new GuiControlContainer(contr, this);
     }
 
+    public PXLGuiContainerControls(Container cont)
+    {
+        super(cont);
+    }
+
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
@@ -116,5 +121,15 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
     public void onGuiClosed()
     {
         gui.invokeClose();
+    }
+
+    public void setControl(Control cont)
+    {
+        gui = new GuiControlContainer(cont, this);
+    }
+
+    public void setControlContainer(GuiControlContainer cont)
+    {
+        gui = cont;
     }
 }
