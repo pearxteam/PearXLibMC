@@ -3,7 +3,9 @@ package ru.pearx.libmc;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootContext;
@@ -29,6 +31,7 @@ import ru.pearx.libmc.common.structure.CommandStructure;
 import ru.pearx.libmc.common.structure.processors.LootProcessor;
 import ru.pearx.libmc.common.structure.processors.StructureProcessor;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -138,5 +141,48 @@ public class PXLMC
             default:
                 return 0;
         }
+    }
+
+    public static BlockPos.MutableBlockPos transformPos(BlockPos.MutableBlockPos pos, @Nullable Mirror mir, @Nullable Rotation rot)
+    {
+        int x = pos.getX(), y = pos.getY(), z = pos.getZ();
+        boolean flag = true;
+        if(mir != null)
+        {
+            switch (mir)
+            {
+                case LEFT_RIGHT:
+                    pos.setPos(x, y, -z);
+                    break;
+                case FRONT_BACK:
+                    pos.setPos(-x, y, z);
+                    break;
+                default:
+                    flag = false;
+                    break;
+            }
+        }
+        if(flag)
+        {
+            x = pos.getX();
+            y = pos.getY();
+            z = pos.getZ();
+        }
+        if(rot != null)
+        {
+            switch (rot)
+            {
+                case CLOCKWISE_90:
+                    pos.setPos(-z, y, x);
+                    break;
+                case CLOCKWISE_180:
+                    pos.setPos(-x, y, -z);
+                    break;
+                case COUNTERCLOCKWISE_90:
+                    pos.setPos(z, y, -x);
+                    break;
+            }
+        }
+        return pos;
     }
 }

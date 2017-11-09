@@ -1,13 +1,16 @@
 package ru.pearx.libmc.common.structure;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -23,6 +26,7 @@ import ru.pearx.libmc.common.structure.processors.IStructureProcessor;
 import ru.pearx.libmc.common.structure.processors.StructureProcessor;
 import ru.pearx.libmc.common.structure.processors.StructureProcessorData;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -190,29 +194,40 @@ public enum StructureApi
         return new Vec3i(tag.getInteger("sizeX"), tag.getInteger("sizeY"), tag.getInteger("sizeZ"));
     }
 
-    public void spawnStructure(NBTTagCompound tag, BlockPos at, WorldServer w, Random rand)
+    public void spawnStructure(NBTTagCompound tag, BlockPos at, @Nullable Mirror mir, @Nullable Rotation rot, WorldServer w, Random rand)
     {
         {
             NBTTagList blocks = tag.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
             BlockPos.MutableBlockPos absPos = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos relPos = new BlockPos.MutableBlockPos();
             Map<String, Block> bcache = new HashMap<>();
             for (NBTBase base : blocks)
             {
                 NBTTagCompound block = (NBTTagCompound) base;
-                absPos.setPos(at.getX() + block.getInteger("x"), at.getY() + block.getInteger("y"), at.getZ() + block.getInteger("z"));
+                relPos.setPos(block.getInteger("x"), block.getInteger("y"), block.getInteger("z"));
+                relPos = PXLMC.transformPos(relPos, mir, rot);
+                absPos.setPos(at.getX() + relPos.getX(), at.getY() + relPos.getY(), at.getZ() + relPos.getZ());
                 String id = block.getString("id");
                 if(!bcache.containsKey(id))
                     bcache.put(id, ForgeRegistries.BLOCKS.getValue(new ResourceLocation(id)));
                 Block b = bcache.get(id);
                 IBlockState state = b.getStateFromMeta(block.getInteger("meta"));
-                    w.setBlockState(absPos, state, 2);
+                if(mir != null) state = state.withMirror(mir);
+                if(rot != null) state = state.withRotation(rot);
+                w.setBlockState(absPos, state, 2);
                 if (block.hasKey("tile"))
                 {
                     NBTTagCompound tile = block.getCompoundTag("tile");
                     tile.setInteger("x", absPos.getX());
                     tile.setInteger("y", absPos.getY());
                     tile.setInteger("z", absPos.getZ());
-                    w.setTileEntity(absPos, TileEntity.create(w, tile));
+                    TileEntity te = TileEntity.create(w, tile);
+                    if(te != null)
+                    {
+                        if (mir != null) te.mirror(mir);
+                        if (rot != null) te.rotate(rot);
+                    }
+                    w.setTileEntity(absPos, te);
                 }
             }
         }

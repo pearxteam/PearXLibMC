@@ -4,7 +4,9 @@ import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import ru.pearx.libmc.PXLMC;
@@ -55,6 +57,8 @@ public class CommandStructure extends CommandBase
                     {
                         String name = args[1];
                         BlockPos pos = parseBlockPos(sender, args, 2, false);
+                        Mirror mir = args.length >= 6 ? parseMirror(args[5]) : Mirror.NONE;
+                        Rotation rot = args.length >= 7 ? parseRotation(args[6]) : Rotation.NONE;
                         NBTTagCompound tag;
                         try
                         {
@@ -72,7 +76,7 @@ public class CommandStructure extends CommandBase
                             PXLMC.getLog().error("An IOException occurred when spawning a structure.", e);
                             throw new CommandException("command.pxlmc_structure.ioexception", e.toString());
                         }
-                        StructureApi.INSTANCE.spawnStructure(tag, pos, (WorldServer)sender.getEntityWorld(), sender.getEntityWorld().rand);
+                        StructureApi.INSTANCE.spawnStructure(tag, pos, mir, rot, (WorldServer)sender.getEntityWorld(), sender.getEntityWorld().rand);
                         notifyCommandListener(sender, this, "command.pxlmc_structure.success");
                         return;
                     }
@@ -105,5 +109,37 @@ public class CommandStructure extends CommandBase
     public int getRequiredPermissionLevel()
     {
         return 2;
+    }
+
+    private Mirror parseMirror(String s)
+    {
+        switch (s)
+        {
+            case "none":
+                return Mirror.NONE;
+            case "left_right":
+                return Mirror.LEFT_RIGHT;
+            case "front_back":
+                return Mirror.FRONT_BACK;
+            default:
+                return Mirror.NONE;
+        }
+    }
+
+    private Rotation parseRotation(String s)
+    {
+        switch (s)
+        {
+            case "0":
+                return Rotation.NONE;
+            case "90":
+                return Rotation.CLOCKWISE_90;
+            case "180":
+                return Rotation.CLOCKWISE_180;
+            case "270":
+                return Rotation.COUNTERCLOCKWISE_90;
+            default:
+                return Rotation.NONE;
+        }
     }
 }
