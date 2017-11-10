@@ -7,6 +7,8 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
@@ -32,6 +34,7 @@ import ru.pearx.libmc.common.structure.processors.LootProcessor;
 import ru.pearx.libmc.common.structure.processors.StructureProcessor;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Vector3d;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -184,5 +187,48 @@ public class PXLMC
             }
         }
         return pos;
+    }
+
+    public static Vector3d transformVec(Vector3d vec, @Nullable Mirror mir, @Nullable Rotation rot)
+    {
+        double x = vec.getX(), y = vec.getY(), z = vec.getZ();
+        boolean flag = true;
+        if(mir != null)
+        {
+            switch (mir)
+            {
+                case LEFT_RIGHT:
+                    vec.setZ(-z);
+                    break;
+                case FRONT_BACK:
+                    vec.setX(-x);
+                    break;
+                default:
+                    flag = false;
+                    break;
+            }
+        }
+        if(flag)
+        {
+            x = vec.getX();
+            y = vec.getY();
+            z = vec.getZ();
+        }
+        if(rot != null)
+        {
+            switch (rot)
+            {
+                case CLOCKWISE_90:
+                    vec.set(-z, y, x);
+                    break;
+                case CLOCKWISE_180:
+                    vec.set(-x, y, -z);
+                    break;
+                case COUNTERCLOCKWISE_90:
+                    vec.set(z, y, -x);
+                    break;
+            }
+        }
+        return vec;
     }
 }

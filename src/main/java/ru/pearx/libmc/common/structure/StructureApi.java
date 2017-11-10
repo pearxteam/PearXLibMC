@@ -3,10 +3,17 @@ package ru.pearx.libmc.common.structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.item.EntityPainting;
+import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.*;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityStructure;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -26,6 +33,7 @@ import ru.pearx.libmc.common.structure.processors.StructureProcessor;
 import ru.pearx.libmc.common.structure.processors.StructureProcessorData;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Vector3d;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -232,33 +240,66 @@ public enum StructureApi
         }
         {
             NBTTagList entities = tag.getTagList("entities", Constants.NBT.TAG_COMPOUND);
+            Vector3d relVec = new Vector3d();
+            BlockPos.MutableBlockPos relTile = new BlockPos.MutableBlockPos();
             for(NBTBase nbt : entities)
             {
                 NBTTagCompound entity = (NBTTagCompound) nbt;
                 entity.setInteger("Dimension", w.provider.getDimension());
                 NBTTagList pos = entity.getTagList("Pos", Constants.NBT.TAG_DOUBLE);
-                pos.set(0, new NBTTagDouble(pos.getDoubleAt(0) + at.getX()));
-                pos.set(1, new NBTTagDouble(pos.getDoubleAt(1) + at.getY()));
-                pos.set(2, new NBTTagDouble(pos.getDoubleAt(2) + at.getZ()));
-                if(entity.hasKey("TileX", Constants.NBT.TAG_INT))
-                    entity.setInteger("TileX", entity.getInteger("TileX") + at.getX());
-                if(entity.hasKey("TileY", Constants.NBT.TAG_INT))
-                    entity.setInteger("TileY", entity.getInteger("TileY") + at.getY());
-                if(entity.hasKey("TileZ", Constants.NBT.TAG_INT))
-                    entity.setInteger("TileZ", entity.getInteger("TileZ") + at.getZ());
+                relVec.set(pos.getDoubleAt(0), pos.getDoubleAt(1), pos.getDoubleAt(2));
+                relVec = PXLMC.transformVec(relVec, mir, rot);
+                pos.set(0, new NBTTagDouble(relVec.getX() + at.getX()));
+                pos.set(1, new NBTTagDouble(relVec.getY() + at.getY()));
+                pos.set(2, new NBTTagDouble(relVec.getZ() + at.getZ()));
+                if(entity.hasKey("TileX", Constants.NBT.TAG_INT) && entity.hasKey("TileY", Constants.NBT.TAG_INT) && entity.hasKey("TileZ", Constants.NBT.TAG_INT))
+                {
+                    relTile.setPos(entity.getInteger("TileX"), entity.getInteger("TileY"), entity.getInteger("TileZ"));
+                    relTile = PXLMC.transformPos(relTile, mir, rot);
+                    entity.setInteger("TileX", relTile.getX() + at.getX());
+                    entity.setInteger("TileY", relTile.getY() + at.getY());
+                    entity.setInteger("TileZ", relTile.getZ() + at.getZ());
+                }
 
                 Entity e = EntityList.createEntityFromNBT(entity, w);
                 if(e != null)
+                {
+                    //hack
+                    if(e instanceof EntityHanging)
+                    {
+                        EnumFacing face = ((EntityHanging) e).facingDirection;
+                        if(face != null)
+                        {
+                            if (mir != null)
+                                face = mir.mirror(face);
+                            if (rot != null)
+                                face = rot.rotate(face);
+                        }
+                        ((EntityHanging) e).updateFacingWithBoundingBox(face);
+                    }
+                    else
+                    {
+                        if (mir != null)
+                            e.rotationYaw = e.getMirroredYaw(mir);
+                        if (rot != null)
+                            e.rotationYaw = e.getRotatedYaw(rot);
+                    }
                     w.spawnEntity(e);
+                }
             }
         }
         {
             NBTTagList procs = tag.getTagList("processors", Constants.NBT.TAG_COMPOUND);
+            BlockPos.MutableBlockPos relPos = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos absPos = new BlockPos.MutableBlockPos();
             for(NBTBase nbt : procs)
             {
                 NBTTagCompound proc = (NBTTagCompound) nbt;
                 IStructureProcessor processor = StructureProcessor.REGISTRY.getValue(new ResourceLocation(proc.getString("processor")));
-                BlockPos absPos = new BlockPos(proc.getInteger("x") + at.getX(), proc.getInteger("y") + at.getY(), proc.getInteger("z") + at.getZ());
+
+                relPos.setPos(proc.getInteger("x"), proc.getInteger("y"), proc.getInteger("z"));
+                relPos = PXLMC.transformPos(relPos, mir, rot);
+                absPos.setPos(relPos.getX() + at.getX(), relPos.getY() + at.getY(), relPos.getZ() + at.getZ());
                 StructureProcessorData dat = processor.loadData(proc, absPos);
                 processor.process(dat, w, rand);
             }
