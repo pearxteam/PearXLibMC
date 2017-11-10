@@ -58,7 +58,6 @@ public class WGGround implements IWorldGenerator
                     {
                         if(predicate.canGenerateHere(world, pos, random, state))
                         {
-                            System.out.println("FLOWER " + pos);
                             world.setBlockState(pos, state, 2);
                         }
                     }

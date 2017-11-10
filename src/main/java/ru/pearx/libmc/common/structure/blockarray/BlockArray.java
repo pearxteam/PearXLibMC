@@ -7,15 +7,13 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.apache.commons.lang3.tuple.Pair;
 import org.omg.CORBA.BooleanHolder;
 import ru.pearx.lib.Holder;
 import ru.pearx.lib.collections.EventMap;
 import ru.pearx.libmc.PXLMC;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /*
@@ -104,7 +102,6 @@ public class BlockArray
     {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(zeroPos);
         BlockPos.MutableBlockPos relPos = new BlockPos.MutableBlockPos();
-        boolean ret = true;
         for(Map.Entry<BlockPos, BlockArrayEntry> entr : getMap().entrySet())
         {
             relPos.setPos(entr.getKey().getX(), entr.getKey().getY(), entr.getKey().getZ());
@@ -112,21 +109,20 @@ public class BlockArray
             pos.setPos(relPos.getX() + zeroPos.getX(), relPos.getY() + zeroPos.getY(), relPos.getZ() + zeroPos.getZ());
             if(!checkEntry(entr.getValue(), w, pos, rot))
             {
-                ret = false;
-                break;
+                return false;
             }
         }
-        return ret;
+        return true;
     }
 
-    public boolean check(World w, BlockPos zeroPos)
+    public Optional<Rotation> check(World w, BlockPos zeroPos)
     {
         for(Rotation rot : Rotation.values())
         {
             if(check(w, zeroPos, rot))
-                return true;
+                return Optional.of(rot);
         }
-        return false;
+        return Optional.empty();
     }
 
     public boolean checkEntry(BlockArrayEntry entr, World w, BlockPos pos, Rotation rot)
@@ -145,9 +141,6 @@ public class BlockArray
 
     public boolean performAdditionalChecks(BlockArrayEntry entr, World w, BlockPos pos, Rotation rot)
     {
-        for(Checker check : getCheckers())
-            if(!check.check(entr, w, pos, rot))
-                return false;
-        return true;
+        return getCheckers().parallelStream().noneMatch((ch) -> ch.check(entr, w, pos, rot));
     }
 }
