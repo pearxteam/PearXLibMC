@@ -2,19 +2,13 @@ package ru.pearx.libmc.common.structure.blockarray;
 
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.apache.commons.lang3.tuple.Pair;
-import org.omg.CORBA.BooleanHolder;
-import ru.pearx.lib.Holder;
 import ru.pearx.lib.collections.EventMap;
 import ru.pearx.libmc.PXLMC;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /*
  * Created by mrAppleXZ on 15.10.17 16:52.
