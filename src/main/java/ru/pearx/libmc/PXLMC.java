@@ -32,6 +32,7 @@ import ru.pearx.libmc.common.networking.packets.SPacketCreateStructure;
 import ru.pearx.libmc.common.structure.CommandStructure;
 import ru.pearx.libmc.common.structure.processors.LootProcessor;
 import ru.pearx.libmc.common.structure.processors.StructureProcessor;
+import ru.pearx.libmc.common.tiles.PXLTiles;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector3d;
@@ -70,6 +71,7 @@ public class PXLMC
         log = e.getModLog();
 
         PXLCapabilities.register();
+        PXLTiles.setup();
 
         StructureProcessor.REGISTRY.register(new LootProcessor());
     }

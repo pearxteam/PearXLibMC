@@ -17,6 +17,7 @@ public class TileMultiblockSlave extends TileSyncable implements IMultiblockSlav
         return absMasterPos;
     }
 
+    @Override
     public void setMasterPos(BlockPos pos)
     {
         absMasterPos = pos;

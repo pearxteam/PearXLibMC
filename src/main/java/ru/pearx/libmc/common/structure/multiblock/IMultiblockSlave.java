@@ -8,4 +8,5 @@ import net.minecraft.util.math.BlockPos;
 public interface IMultiblockSlave
 {
     BlockPos getMasterPos();
+    void setMasterPos(BlockPos pos);
 }
