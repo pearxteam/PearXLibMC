@@ -2,6 +2,7 @@ package ru.pearx.libmc.common.blocks;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -13,9 +14,14 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockEvent;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockMaster;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockSlave;
+import ru.pearx.libmc.common.structure.multiblock.Multiblock;
+import ru.pearx.libmc.common.structure.multiblock.events.MultiblockActivatedEvent;
 import ru.pearx.libmc.common.structure.multiblock.events.MultiblockBreakEvent;
 import ru.pearx.libmc.common.tiles.TileMultiblockSlave;
 
@@ -42,14 +48,14 @@ public class BlockMultiblockSlave extends BlockBase
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
     {
-        sendEventToMaster(new MultiblockBreakEvent(worldIn, pos, state));
+        Multiblock.sendEventToMaster(worldIn, pos, new MultiblockBreakEvent(state), null);
         super.breakBlock(worldIn, pos, state);
     }
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+        return Multiblock.sendEventToMaster(worldIn, pos, new MultiblockActivatedEvent(state, playerIn, hand, facing, hitX, hitY, hitZ), false);
     }
 
     @Override
@@ -63,19 +69,6 @@ public class BlockMultiblockSlave extends BlockBase
     public TileEntity createTileEntity(World world, IBlockState state)
     {
         return new TileMultiblockSlave();
-    }
-
-    public void sendEventToMaster(IMultiblockEvent evt)
-    {
-        TileEntity te = evt.getWorld().getTileEntity(evt.getPos());
-        if(te != null && te instanceof IMultiblockSlave)
-        {
-            TileEntity master = te.getWorld().getTileEntity(((IMultiblockSlave) te).getMasterPos());
-            if(master != null && master instanceof IMultiblockMaster)
-            {
-                ((IMultiblockMaster) master).handleEvent(evt);
-            }
-        }
     }
 
     @Override

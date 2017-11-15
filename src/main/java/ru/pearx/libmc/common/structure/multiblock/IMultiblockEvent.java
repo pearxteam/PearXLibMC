@@ -6,9 +6,13 @@ import net.minecraft.world.World;
 /*
  * Created by mrAppleXZ on 13.11.17 17:08.
  */
-public interface IMultiblockEvent
+public interface IMultiblockEvent<T>
 {
     String getId();
-    BlockPos getPos();
-    World getWorld();
+
+    default <R> T cast(R r)
+    {
+        //noinspection unchecked
+        return (T)r;
+    }
 }

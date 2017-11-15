@@ -20,17 +20,16 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.models.processors.IQuadProcessor;
 import ru.pearx.libmc.client.models.processors.IVertexProcessor;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -101,7 +100,9 @@ public class OvModel implements IPXModel
             return DUMMY_LIST;
 
         List<BakedQuad> l = new ArrayList<>();
-        l.addAll(getBaked().getQuads(state, side, rand));
+        for(EnumFacing face : EnumFacing.values())
+            l.addAll(getBaked().getQuads(state, face, rand));
+        l.addAll(getBaked().getQuads(state, null, rand));
         process(l, state, side, rand);
         return l;
     }
@@ -179,7 +180,7 @@ public class OvModel implements IPXModel
                     return bld.build();
                 }
                 return q;
-            }).collect(Collectors.toList());
+            }).filter((q) -> shouldDisableSides() || Objects.equals(side, q.getFace())).collect(Collectors.toList());
             quads.clear();
             quads.addAll(processed);
         }

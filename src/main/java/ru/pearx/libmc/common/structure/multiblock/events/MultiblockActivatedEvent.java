@@ -11,21 +11,17 @@ import ru.pearx.libmc.common.structure.multiblock.IMultiblockEvent;
 /*
  * Created by mrAppleXZ on 13.11.17 19:13.
  */
-public class MultiblockActivatedEvent implements IMultiblockEvent
+public class MultiblockActivatedEvent implements IMultiblockEvent<Boolean>
 {
     public static final String ID = "activated";
-    private World world;
-    private BlockPos pos;
     private IBlockState state;
     private EntityPlayer player;
     private EnumHand hand;
     private EnumFacing facing;
     private float hitX, hitY, hitZ;
 
-    public MultiblockActivatedEvent(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public MultiblockActivatedEvent(IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        this.world = world;
-        this.pos = pos;
         this.state = state;
         this.player = player;
         this.hand = hand;
@@ -33,16 +29,6 @@ public class MultiblockActivatedEvent implements IMultiblockEvent
         this.hitX = hitX;
         this.hitY = hitY;
         this.hitZ = hitZ;
-    }
-
-    public World getWorld()
-    {
-        return world;
-    }
-
-    public BlockPos getPos()
-    {
-        return pos;
     }
 
     public IBlockState getState()

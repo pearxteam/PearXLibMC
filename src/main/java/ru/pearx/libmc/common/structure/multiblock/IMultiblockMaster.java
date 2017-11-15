@@ -14,5 +14,6 @@ public interface IMultiblockMaster
     void setRotation(Rotation rot);
     List<BlockPos> getSlavesPositions();
     void setSlavesPositions(List<BlockPos> lst);
-    void handleEvent(IMultiblockEvent evt);
+
+    <T> T handleEvent(IMultiblockEvent<T> evt, IMultiblockSlave slave);
 }

@@ -119,4 +119,19 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         opt.ifPresent(rotation -> form(w, pos, rotation));
         return opt;
     }
+
+    public static <T>T sendEventToMaster(World world, BlockPos pos, IMultiblockEvent<T> evt, T def)
+    {
+        TileEntity te = world.getTileEntity(pos);
+        if(te != null && te instanceof IMultiblockSlave)
+        {
+            IMultiblockSlave slave = (IMultiblockSlave) te;
+            TileEntity master = te.getWorld().getTileEntity(slave.getMasterPos());
+            if(master != null && master instanceof IMultiblockMaster)
+            {
+                return ((IMultiblockMaster) master).handleEvent(evt, slave);
+            }
+        }
+        return def;
+    }
 }
