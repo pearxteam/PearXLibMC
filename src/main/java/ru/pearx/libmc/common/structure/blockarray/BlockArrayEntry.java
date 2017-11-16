@@ -1,5 +1,6 @@
 package ru.pearx.libmc.common.structure.blockarray;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -26,6 +27,16 @@ public class BlockArrayEntry
     {
         this.state = state;
         this.stack = stack;
+    }
+
+    public BlockArrayEntry(Block block, ItemStack stack, TileEntity tile)
+    {
+        this(block.getDefaultState(), stack, tile);
+    }
+
+    public BlockArrayEntry(Block block, ItemStack stack)
+    {
+        this(block.getDefaultState(), stack);
     }
 
     public TileEntity getTile()

@@ -5,6 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.lwjgl.input.Mouse;
 import ru.pearx.lib.collections.EventMap;
 import ru.pearx.libmc.PXLMC;
 
@@ -46,6 +47,7 @@ public class BlockArray
         }
     });
     private List<Checker> checkers = new ArrayList<>();
+    private List<IProperty<?>> skippedProperties = new ArrayList<>();
 
     public BlockArray()
     {
@@ -92,8 +94,14 @@ public class BlockArray
         return checkers;
     }
 
+    public List<IProperty<?>> getSkippedProperties()
+    {
+        return skippedProperties;
+    }
+
     public boolean check(World w, BlockPos zeroPos, Rotation rot)
     {
+        Mouse.setGrabbed(false);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(zeroPos);
         BlockPos.MutableBlockPos relPos = new BlockPos.MutableBlockPos();
         for(Map.Entry<BlockPos, BlockArrayEntry> entr : getMap().entrySet())
@@ -127,6 +135,8 @@ public class BlockArray
             return false;
         for(IProperty<?> prop : st.getPropertyKeys())
         {
+            if(getSkippedProperties().contains(prop))
+                continue;
             if(!st.getValue(prop).equals(wst.getValue(prop)))
                 return false;
         }

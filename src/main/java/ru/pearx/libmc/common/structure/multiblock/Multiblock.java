@@ -1,21 +1,18 @@
 package ru.pearx.libmc.common.structure.multiblock;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityStructure;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
-import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
 import ru.pearx.libmc.common.structure.blockarray.BlockArray;
-import ru.pearx.libmc.common.structure.processors.IStructureProcessor;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -73,7 +70,7 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         this.masterState = masterState;
     }
 
-    public void form(World w, BlockPos zeroPos, Rotation rot)
+    public void form(World w, BlockPos zeroPos, Rotation rot, @Nullable EntityPlayer pl)
     {
         BlockPos.MutableBlockPos absMasterPos = new BlockPos.MutableBlockPos(getMasterPos());
         absMasterPos = PXLMC.transformPos(absMasterPos, null, rot);
@@ -105,6 +102,7 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
             IMultiblockMaster master = (IMultiblockMaster) te;
             master.setRotation(rot);
             master.setSlavesPositions(getStructure().getMap().keySet().stream().filter((pos) -> !pos.equals(getMasterPos())).collect(Collectors.toList()));
+            master.postForm(pl);
         }
     }
 
@@ -113,10 +111,10 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         return getStructure().check(w, pos);
     }
 
-    public Optional<Rotation> tryForm(World w, BlockPos pos)
+    public Optional<Rotation> tryForm(World w, BlockPos pos, @Nullable EntityPlayer p)
     {
         Optional<Rotation> opt = checkStructure(w, pos);
-        opt.ifPresent(rotation -> form(w, pos, rotation));
+        opt.ifPresent(rotation -> form(w, pos, Rotation.NONE, p));
         return opt;
     }
 
