@@ -233,4 +233,22 @@ public class PXLMC
         }
         return vec;
     }
+
+    public static EnumFacing.Axis rotateAxis(EnumFacing.Axis ax, Rotation rot)
+    {
+        switch (rot)
+        {
+            case COUNTERCLOCKWISE_90:
+            case CLOCKWISE_90:
+                switch (ax)
+                {
+                    case X:
+                        return EnumFacing.Axis.Z;
+                    case Z:
+                        return EnumFacing.Axis.X;
+                }
+                break;
+        }
+        return ax;
+    }
 }
