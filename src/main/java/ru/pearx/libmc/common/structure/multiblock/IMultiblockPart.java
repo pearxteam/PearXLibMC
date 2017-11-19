@@ -5,10 +5,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /*
- * Created by mrAppleXZ on 12.11.17 16:00.
+ * Created by mrAppleXZ on 19.11.17 16:25.
  */
-public interface IMultiblockSlave extends IMultiblockPart
+public interface IMultiblockPart
 {
-    BlockPos getMasterPos();
-    void setMasterPos(BlockPos pos);
+    BlockPos getPos();
+    World getWorld();
 }

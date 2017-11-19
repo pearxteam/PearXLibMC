@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -15,6 +16,8 @@ import ru.pearx.libmc.common.blocks.PXLBlocks;
 import ru.pearx.libmc.common.structure.blockarray.BlockArray;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,15 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
     private BlockArray structure;
     private BlockPos masterPos;
     private IBlockState masterState;
+    private IBlockState slaveState = PXLBlocks.multiblock_slave.getDefaultState();
+
+    public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState, IBlockState slaveState)
+    {
+        this.structure = structure;
+        this.masterPos = masterPos;
+        this.masterState = masterState;
+        this.slaveState = slaveState;
+    }
 
     public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState)
     {
@@ -70,6 +82,16 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         this.masterState = masterState;
     }
 
+    public IBlockState getSlaveState(BlockPos p)
+    {
+        return slaveState;
+    }
+
+    public void setSlaveState(IBlockState slaveState)
+    {
+        this.slaveState = slaveState;
+    }
+
     public void form(World w, BlockPos zeroPos, Rotation rot, @Nullable EntityPlayer pl)
     {
         BlockPos.MutableBlockPos absMasterPos = new BlockPos.MutableBlockPos(getMasterPos());
@@ -78,7 +100,7 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
 
         BlockPos.MutableBlockPos absPos = new BlockPos.MutableBlockPos();
         BlockPos.MutableBlockPos relPos = new BlockPos.MutableBlockPos();
-        IBlockState slaveState = PXLBlocks.multiblock_slave.getDefaultState();
+        List<BlockPos> slaves = new ArrayList<>();
         for (BlockPos p : getStructure().getMap().keySet())
         {
             relPos.setPos(p.getX(), p.getY(), p.getZ());
@@ -86,12 +108,13 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
             absPos.setPos(relPos.getX() + zeroPos.getX(), relPos.getY() + zeroPos.getY(), relPos.getZ() + zeroPos.getZ());
             if (!p.equals(getMasterPos()))
             {
-                w.setBlockState(absPos, slaveState);
+                w.setBlockState(absPos, getSlaveState(p));
                 TileEntity te = w.getTileEntity(absPos);
                 if (te != null && te instanceof IMultiblockSlave)
                 {
                     ((IMultiblockSlave) te).setMasterPos(absMasterPos);
                 }
+                slaves.add(absPos.toImmutable());
             }
         }
 
@@ -101,7 +124,8 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         {
             IMultiblockMaster master = (IMultiblockMaster) te;
             master.setRotation(rot);
-            master.setSlavesPositions(getStructure().getMap().keySet().stream().filter((pos) -> !pos.equals(getMasterPos())).collect(Collectors.toList()));
+            master.setSlavesPositions(slaves);
+            master.setId(getRegistryName());
             master.postForm(pl);
         }
     }
@@ -114,20 +138,20 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
     public Optional<Rotation> tryForm(World w, BlockPos pos, @Nullable EntityPlayer p)
     {
         Optional<Rotation> opt = checkStructure(w, pos);
-        opt.ifPresent(rotation -> form(w, pos, Rotation.NONE, p));
+        opt.ifPresent(rotation -> form(w, pos, rotation, p));
         return opt;
     }
 
-    public static <T>T sendEventToMaster(World world, BlockPos pos, IMultiblockEvent<T> evt, T def)
+    public static <T>T sendEventToMaster(IBlockAccess world, BlockPos pos, IMultiblockEvent<T> evt, T def)
     {
         TileEntity te = world.getTileEntity(pos);
-        if(te != null && te instanceof IMultiblockSlave)
+        if(te != null && te instanceof IMultiblockPart)
         {
-            IMultiblockSlave slave = (IMultiblockSlave) te;
-            TileEntity master = te.getWorld().getTileEntity(slave.getMasterPos());
+            IMultiblockPart part = (IMultiblockPart) te;
+            TileEntity master = te.getWorld().getTileEntity(part instanceof IMultiblockSlave ? ((IMultiblockSlave) part).getMasterPos() : part.getPos());
             if(master != null && master instanceof IMultiblockMaster)
             {
-                return ((IMultiblockMaster) master).handleEvent(evt, slave);
+                return ((IMultiblockMaster) master).handleEvent(evt, part);
             }
         }
         return def;

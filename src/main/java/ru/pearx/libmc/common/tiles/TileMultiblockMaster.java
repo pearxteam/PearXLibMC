@@ -1,9 +1,11 @@
 package ru.pearx.libmc.common.tiles;
 
 import net.minecraft.nbt.*;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockMaster;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockMasterDefault;
 
@@ -17,6 +19,7 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
 {
     private Rotation rot;
     private List<BlockPos> slaves;
+    private ResourceLocation id;
 
     @Override
     public Rotation getRotation()
@@ -43,6 +46,18 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     }
 
     @Override
+    public ResourceLocation getId()
+    {
+        return id;
+    }
+
+    @Override
+    public void setId(ResourceLocation s)
+    {
+        this.id = s;
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         compound.setInteger("rotation", getRotation().ordinal());
@@ -52,6 +67,7 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
            lst.appendTag(new NBTTagIntArray(new int[]{slave.getX() - getPos().getX(), slave.getY() - getPos().getY(), slave.getZ() - getPos().getZ()}));
         }
         compound.setTag("slaves", lst);
+        compound.setString("multiblock_id", getId().toString());
         return super.writeToNBT(compound);
     }
 
@@ -68,5 +84,11 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
             slaves.add(new BlockPos(arr[0] + getPos().getX(), arr[1] + getPos().getY(), arr[2] + getPos().getZ()));
         }
         setSlavesPositions(slaves);
+        setId(new ResourceLocation(compound.getString("multiblock_id")));
+    }
+
+    public BlockPos getOriginalPos(BlockPos trans)
+    {
+        return PXLMC.transformPos(trans.subtract(getPos()), null, PXLMC.getIdentityRotation(rot));
     }
 }

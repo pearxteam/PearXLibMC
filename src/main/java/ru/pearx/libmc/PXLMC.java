@@ -191,6 +191,11 @@ public class PXLMC
         return pos;
     }
 
+    public static BlockPos transformPos(BlockPos pos, @Nullable Mirror mir, @Nullable Rotation rot)
+    {
+        return transformPos(new BlockPos.MutableBlockPos(pos), mir, rot);
+    }
+
     public static Vector3d transformVec(Vector3d vec, @Nullable Mirror mir, @Nullable Rotation rot)
     {
         double x = vec.getX(), y = vec.getY(), z = vec.getZ();
@@ -250,5 +255,20 @@ public class PXLMC
                 break;
         }
         return ax;
+    }
+
+    public static Rotation getIdentityRotation(Rotation rot)
+    {
+        switch (rot)
+        {
+            case CLOCKWISE_90:
+                return Rotation.COUNTERCLOCKWISE_90;
+            case COUNTERCLOCKWISE_90:
+                return Rotation.CLOCKWISE_90;
+            case CLOCKWISE_180:
+                return Rotation.CLOCKWISE_180;
+            default:
+                return rot;
+        }
     }
 }
