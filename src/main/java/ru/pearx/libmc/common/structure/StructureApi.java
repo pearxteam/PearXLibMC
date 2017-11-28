@@ -3,16 +3,10 @@ package ru.pearx.libmc.common.structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityPainting;
-import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.*;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityStructure;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
@@ -23,7 +17,6 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.ResourceUtils;
 import ru.pearx.libmc.PXLMC;
@@ -90,28 +83,10 @@ public enum StructureApi
                     {
                         pos.setPos(x, y, z);
                         relativePos.setPos(pos.getX() - centerPos.getX(), pos.getY() - centerPos.getY(), pos.getZ() - centerPos.getZ());
-
                         IBlockState state = world.getBlockState(pos);
                         if (state.getBlock() == PXLBlocks.structure_nothing)
                             continue;
-                        NBTTagCompound block = new NBTTagCompound();
-                        block.setInteger("x", relativePos.getX());
-                        block.setInteger("y", relativePos.getY());
-                        block.setInteger("z", relativePos.getZ());//
-                        block.setString("id", state.getBlock().getRegistryName().toString());
-                        block.setInteger("meta", state.getBlock().getMetaFromState(state));
-
-                        TileEntity te = world.getTileEntity(pos);
-                        if (te != null)
-                        {
-                            NBTTagCompound tiletag = te.serializeNBT();
-                            tiletag.removeTag("x");
-                            tiletag.removeTag("y");
-                            tiletag.removeTag("z");
-                            block.setTag("tile", tiletag);
-                        }
-
-                        blocks.appendTag(block);
+                        blocks.appendTag(BlockUtils.serializeBlock(state, relativePos, world.getTileEntity(pos)));
                     }
                 }
             }
@@ -214,28 +189,18 @@ public enum StructureApi
                 relPos.setPos(block.getInteger("x"), block.getInteger("y"), block.getInteger("z"));
                 relPos = PXLMC.transformPos(relPos, mir, rot);
                 absPos.setPos(at.getX() + relPos.getX(), at.getY() + relPos.getY(), at.getZ() + relPos.getZ());
-                String id = block.getString("id");
-                if(!bcache.containsKey(id))
-                    bcache.put(id, ForgeRegistries.BLOCKS.getValue(new ResourceLocation(id)));
-                Block b = bcache.get(id);
-                IBlockState state = b.getStateFromMeta(block.getInteger("meta"));
-                if(mir != null) state = state.withMirror(mir);
-                if(rot != null) state = state.withRotation(rot);
-                w.setBlockState(absPos, state, 2);
-                if (block.hasKey("tile"))
+
+
+                BlockPair pair = BlockUtils.deserializeBlock(block, absPos, bcache, w);
+                if(mir != null) pair.setState(pair.getState().withMirror(mir));
+                if(rot != null) pair.setState(pair.getState().withRotation(rot));
+                w.setBlockState(absPos, pair.getState(), 2);
+                if(pair.getTile() != null)
                 {
-                    NBTTagCompound tile = block.getCompoundTag("tile");
-                    tile.setInteger("x", absPos.getX());
-                    tile.setInteger("y", absPos.getY());
-                    tile.setInteger("z", absPos.getZ());
-                    TileEntity te = TileEntity.create(w, tile);
-                    if(te != null)
-                    {
-                        if (mir != null) te.mirror(mir);
-                        if (rot != null) te.rotate(rot);
-                    }
-                    w.setTileEntity(absPos, te);
+                    if (mir != null) pair.getTile().mirror(mir);
+                    if (rot != null) pair.getTile().rotate(rot);
                 }
+                w.setTileEntity(absPos, pair.getTile());
             }
         }
         {

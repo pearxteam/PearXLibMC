@@ -12,6 +12,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
 import ru.pearx.libmc.PXLMC;
+import ru.pearx.libmc.common.blocks.BlockMultiblockPart;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
 import ru.pearx.libmc.common.structure.blockarray.BlockArray;
 
@@ -31,15 +32,7 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
     private BlockArray structure;
     private BlockPos masterPos;
     private IBlockState masterState;
-    private IBlockState slaveState = PXLBlocks.multiblock_slave.getDefaultState();
-
-    public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState, IBlockState slaveState)
-    {
-        this.structure = structure;
-        this.masterPos = masterPos;
-        this.masterState = masterState;
-        this.slaveState = slaveState;
-    }
+    private IBlockState slaveState;
 
     public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState)
     {
@@ -82,14 +75,11 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         this.masterState = masterState;
     }
 
-    public IBlockState getSlaveState(BlockPos p)
+    public IBlockState getSlaveState()
     {
+        if(slaveState == null)
+            slaveState = getMasterState().withProperty(BlockMultiblockPart.TYPE, BlockMultiblockPart.Type.SLAVE);
         return slaveState;
-    }
-
-    public void setSlaveState(IBlockState slaveState)
-    {
-        this.slaveState = slaveState;
     }
 
     public void form(World w, BlockPos zeroPos, Rotation rot, @Nullable EntityPlayer pl)
@@ -108,7 +98,7 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
             absPos.setPos(relPos.getX() + zeroPos.getX(), relPos.getY() + zeroPos.getY(), relPos.getZ() + zeroPos.getZ());
             if (!p.equals(getMasterPos()))
             {
-                w.setBlockState(absPos, getSlaveState(p));
+                w.setBlockState(absPos, getSlaveState());
                 TileEntity te = w.getTileEntity(absPos);
                 if (te != null && te instanceof IMultiblockSlave)
                 {

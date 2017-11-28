@@ -1,15 +1,14 @@
 package ru.pearx.libmc.common.blocks;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -26,11 +25,26 @@ import javax.annotation.Nullable;
 /*
  * Created by mrAppleXZ on 19.11.17 16:02.
  */
-public class BlockMultiblockPart extends BlockBase
+public abstract class BlockMultiblockPart extends BlockBase
 {
+    public enum Type implements IStringSerializable
+    {
+        MASTER,
+        SLAVE;
+
+        @Override
+        public String getName()
+        {
+            return toString().toLowerCase();
+        }
+    }
+
+    public static PropertyEnum<Type> TYPE = PropertyEnum.create("type", Type.class);
+
     public BlockMultiblockPart(Material materialIn)
     {
         super(materialIn);
+        setDefaultState(getDefaultState().withProperty(TYPE, Type.MASTER));
     }
 
     @Override
@@ -92,5 +106,43 @@ public class BlockMultiblockPart extends BlockBase
     public BlockFaceShape getBlockFaceShape(IBlockAccess w, IBlockState state, BlockPos pos, EnumFacing facing)
     {
         return Multiblock.sendEventToMaster(w, pos, new MultiblockGetFaceShapeEvent(state, facing), BlockFaceShape.UNDEFINED);
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, TYPE);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return getDefaultState().withProperty(TYPE, Type.values()[meta]);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        return state.getValue(TYPE).ordinal();
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state)
+    {
+        switch (state.getValue(TYPE))
+        {
+            case MASTER:
+                return createMasterTile(world, state);
+            case SLAVE:
+                return createSlaveTile(world, state);
+        }
+        return null;
+    }
+
+    public abstract TileEntity createMasterTile(World world, IBlockState state);
+    public TileEntity createSlaveTile(World world, IBlockState state)
+    {
+        return new TileMultiblockSlave();
     }
 }

@@ -15,12 +15,10 @@ import ru.pearx.libmc.PXLMC;
 public class PXLBlocks
 {
     public static final Block structure_nothing = null;
-    public static final BlockMultiblockSlave multiblock_slave = null;
 
     @SubscribeEvent
     public static void onBlockRegistry(RegistryEvent.Register<Block> e)
     {
         e.getRegistry().register(new BlockStructureNothing());
-        e.getRegistry().register(new BlockMultiblockSlave());
     }
 }
