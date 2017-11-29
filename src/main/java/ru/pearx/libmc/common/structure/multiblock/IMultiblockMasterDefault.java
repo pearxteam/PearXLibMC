@@ -20,7 +20,8 @@ public interface IMultiblockMasterDefault extends IMultiblockMaster
             case MultiblockBreakEvent.ID:
             {
                 handleBreak((MultiblockBreakEvent) evt, part);
-                unform();
+                if(!isInactive())
+                    unform();
                 break;
             }
             case MultiblockActivatedEvent.ID:

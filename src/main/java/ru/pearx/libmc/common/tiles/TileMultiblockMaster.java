@@ -20,6 +20,7 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     private Rotation rot;
     private List<BlockPos> slaves;
     private ResourceLocation id;
+    private boolean inactive;
 
     @Override
     public Rotation getRotation()
@@ -58,6 +59,18 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     }
 
     @Override
+    public boolean isInactive()
+    {
+        return inactive;
+    }
+
+    @Override
+    public void setInactive(boolean val)
+    {
+        this.inactive = val;
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         compound.setInteger("rotation", getRotation().ordinal());
@@ -68,6 +81,7 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
         }
         compound.setTag("slaves", lst);
         compound.setString("multiblock_id", getId().toString());
+        compound.setBoolean("inactive", inactive);
         return super.writeToNBT(compound);
     }
 
@@ -85,6 +99,7 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
         }
         setSlavesPositions(slaves);
         setId(new ResourceLocation(compound.getString("multiblock_id")));
+        setInactive(compound.getBoolean("inactive"));
     }
 
     public BlockPos getOriginalPos(BlockPos trans)
