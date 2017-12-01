@@ -1,5 +1,6 @@
 package ru.pearx.libmc.common.blocks;
 
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
@@ -138,6 +139,12 @@ public abstract class BlockMultiblockPart extends BlockBase
                 return createSlaveTile(world, state);
         }
         return null;
+    }
+
+    @Override
+    public EnumPushReaction getMobilityFlag(IBlockState state)
+    {
+        return EnumPushReaction.BLOCK;
     }
 
     public abstract TileEntity createMasterTile(World world, IBlockState state);

@@ -163,7 +163,7 @@ public enum StructureApi
     public  NBTTagCompound getStructureNbt(ResourceLocation loc) throws IOException
     {
         String s = "assets/" + loc.getResourceDomain() + "/structures/" + loc.getResourcePath() + ".dat";
-        try(InputStream str = ResourceUtils.getResource(s))
+        try(InputStream str = ResourceUtils.getResource(s, PXLMC.class))
         {
             if(str == null)
                 throw new FileNotFoundException("Can't find the structure file at " + s + "!");
