@@ -32,13 +32,13 @@ public class ParticleTrail extends PXParticle
     }
 
     @Override
-    public double getWidth()
+    public float getWidth()
     {
         return width;
     }
 
     @Override
-    public double getHeight()
+    public float getHeight()
     {
         return height;
     }

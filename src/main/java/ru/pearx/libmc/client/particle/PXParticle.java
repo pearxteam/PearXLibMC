@@ -25,8 +25,8 @@ public abstract class PXParticle
         setZ(z);
     }
 
-    public abstract double getWidth();
-    public abstract double getHeight();
+    public abstract float getWidth();
+    public abstract float getHeight();
     public abstract void onRender();
 
     public void onUpdate()
