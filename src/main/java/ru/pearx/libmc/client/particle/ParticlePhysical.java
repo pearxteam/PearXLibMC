@@ -78,13 +78,6 @@ public abstract class ParticlePhysical extends PXParticle
     }
 
     @Override
-    public void onUpdate()
-    {
-        move(getDx(), getDy(), getDz());
-        super.onUpdate();
-    }
-
-    @Override
     public void move(double px, double py, double pz)
     {
         //todo change aabbs to mutable variants?

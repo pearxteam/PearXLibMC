@@ -46,7 +46,6 @@ public interface IMultiblockMaster extends IMultiblockPart
             PXLMC.transformPos(origin, null, rot);
             origin.setPos(origin.getX() + + mb.getMasterPos().getX(), origin.getY() + mb.getMasterPos().getY(), origin.getZ() + + mb.getMasterPos().getZ());
             BlockArrayEntry entr = mb.getStructure().getMap().get(origin);
-            System.out.println(origin + " ");
             getWorld().setBlockState(pos, entr.getState().withRotation(getRotation()));
             if(entr.getTile() == null)
                 getWorld().removeTileEntity(pos);
