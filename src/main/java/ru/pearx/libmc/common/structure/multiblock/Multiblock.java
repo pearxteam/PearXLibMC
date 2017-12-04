@@ -134,16 +134,20 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
 
     public static <T>T sendEventToMaster(IBlockAccess world, BlockPos pos, IMultiblockEvent<T> evt, T def)
     {
-        TileEntity te = world.getTileEntity(pos);
-        if(te != null && te instanceof IMultiblockPart)
+        try
         {
-            IMultiblockPart part = (IMultiblockPart) te;
-            TileEntity master = te.getWorld().getTileEntity(part instanceof IMultiblockSlave ? ((IMultiblockSlave) part).getMasterPos() : part.getPos());
-            if(master != null && master instanceof IMultiblockMaster)
+            TileEntity te = world.getTileEntity(pos);
+            if (te != null && te instanceof IMultiblockPart)
             {
-                return ((IMultiblockMaster) master).handleEvent(evt, part);
+                IMultiblockPart part = (IMultiblockPart) te;
+                TileEntity master = te.getWorld().getTileEntity(part instanceof IMultiblockSlave ? ((IMultiblockSlave) part).getMasterPos() : part.getPos());
+                if (master != null && master instanceof IMultiblockMaster)
+                {
+                    return ((IMultiblockMaster) master).handleEvent(evt, part);
+                }
             }
         }
+        catch(Exception ignored) { }
         return def;
     }
 }

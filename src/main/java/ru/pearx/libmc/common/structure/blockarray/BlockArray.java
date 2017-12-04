@@ -1,12 +1,15 @@
 package ru.pearx.libmc.common.structure.blockarray;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import ru.pearx.lib.collections.EventMap;
 import ru.pearx.libmc.PXLMC;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /*
@@ -128,5 +131,12 @@ public class BlockArray
     public boolean performAdditionalChecks(BlockArrayEntry entr, IBlockState st, IBlockState wst, World w, BlockPos pos, Rotation rot)
     {
         return !getCheckers().parallelStream().noneMatch((ch) -> ch.check(entr, st, wst, w, pos, rot));
+    }
+
+    public static BlockArray fromSingleBlock(IBlockState state, ItemStack stack, @Nullable TileEntity te)
+    {
+        BlockArray arr = new BlockArray();
+        arr.getMap().put(new BlockPos(0, 0, 0), new BlockArrayEntry(state, stack, te));
+        return arr;
     }
 }
