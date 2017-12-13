@@ -16,10 +16,16 @@ import java.util.Optional;
 public class ModelStateHide implements IModelState
 {
     private List<String> groupsToHide;
+    private boolean invert = false;
 
     public ModelStateHide(String... groups)
     {
         groupsToHide = Arrays.asList(groups);
+    }
+    public ModelStateHide(boolean invert, String... groups)
+    {
+        groupsToHide = Arrays.asList(groups);
+        this.invert = invert;
     }
 
     @Override
@@ -33,7 +39,7 @@ public class ModelStateHide implements IModelState
                 String s = it.next();
                 for(String cond : groupsToHide)
                 {
-                    if(s.startsWith(cond + "_") || s.equals(cond))
+                    if((s.startsWith(cond + "_") || s.equals(cond)) == !invert)
                         return Optional.empty();
                 }
                 return Optional.of(TRSRTransformation.identity());

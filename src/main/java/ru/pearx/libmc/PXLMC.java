@@ -135,16 +135,23 @@ public class PXLMC
     {
         switch (face)
         {
-            case NORTH:
-                return 0;
-            case WEST:
-                return 90;
-            case SOUTH:
-                return 180;
-            case EAST:
-                return 270;
-            default:
-                return 0;
+            case NORTH: return 0;
+            case WEST: return 90;
+            case SOUTH: return 180;
+            case EAST: return 270;
+            default: return 0;
+        }
+    }
+
+    public static int getHorizontalRotation(Rotation rot)
+    {
+        switch (rot)
+        {
+            case NONE: return 180;
+            case CLOCKWISE_90: return 90;
+            case CLOCKWISE_180: return 0;
+            case COUNTERCLOCKWISE_90: return 270;
+            default: return 0;
         }
     }
 
