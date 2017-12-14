@@ -142,6 +142,12 @@ public abstract class BlockMultiblockPart extends BlockBase
     }
 
     @Override
+    public int getPackedLightmapCoords(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return super.getPackedLightmapCoords(state, source, pos);
+    }
+
+    @Override
     public EnumPushReaction getMobilityFlag(IBlockState state)
     {
         return EnumPushReaction.BLOCK;
