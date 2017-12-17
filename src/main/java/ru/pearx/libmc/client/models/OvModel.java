@@ -20,13 +20,11 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.models.processors.IQuadProcessor;
 import ru.pearx.libmc.client.models.processors.IVertexProcessor;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.*;

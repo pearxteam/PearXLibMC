@@ -1,8 +1,6 @@
 package ru.pearx.libmc.common.structure.multiblock.events;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockEvent;
 
 /*

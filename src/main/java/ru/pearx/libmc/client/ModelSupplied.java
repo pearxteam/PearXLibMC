@@ -7,8 +7,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.lib.Supplied;
 
-import java.util.function.Supplier;
-
 /*
  * Created by mrAppleXZ on 13.12.17 21:09.
  */

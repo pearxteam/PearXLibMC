@@ -1,10 +1,7 @@
 package ru.pearx.libmc.common.structure.multiblock;
 
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.ItemStackHandler;
 import ru.pearx.libmc.common.structure.multiblock.events.*;
 
 /*

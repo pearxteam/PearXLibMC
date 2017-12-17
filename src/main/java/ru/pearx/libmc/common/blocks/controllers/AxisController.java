@@ -1,11 +1,9 @@
 package ru.pearx.libmc.common.blocks.controllers;
 
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import ru.pearx.libmc.PXLMC;
 

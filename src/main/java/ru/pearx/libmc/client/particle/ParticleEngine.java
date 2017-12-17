@@ -47,6 +47,7 @@ public class ParticleEngine
             GlStateManager.rotate(player.rotationPitch, 1, 0, 0);
             GlStateManager.translate(-(width / 2), -(height / 2), 0);
 
+            GlStateManager.color(1, 1, 1, 1);
             part.onRender();
             GlStateManager.popMatrix();
         }

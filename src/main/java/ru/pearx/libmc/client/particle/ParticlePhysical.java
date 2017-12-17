@@ -1,7 +1,6 @@
 package ru.pearx.libmc.client.particle;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;

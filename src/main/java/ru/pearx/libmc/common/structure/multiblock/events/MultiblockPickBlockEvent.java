@@ -4,7 +4,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockEvent;
 
 /*

@@ -1,24 +1,18 @@
 package ru.pearx.libmc.client.models.processors;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.util.vector.Vector3f;
 import ru.pearx.libmc.client.ClientUtils;
 import ru.pearx.libmc.client.models.IPXModel;
 import ru.pearx.libmc.common.blocks.controllers.HorizontalFacingController;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import java.util.Arrays;
 import java.util.List;
 
 /*

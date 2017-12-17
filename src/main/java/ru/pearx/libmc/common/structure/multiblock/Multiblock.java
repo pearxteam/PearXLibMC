@@ -13,14 +13,12 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.blocks.BlockMultiblockPart;
-import ru.pearx.libmc.common.blocks.PXLBlocks;
 import ru.pearx.libmc.common.structure.blockarray.BlockArray;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /*
  * Created by mrAppleXZ on 14.11.17 13:34.
