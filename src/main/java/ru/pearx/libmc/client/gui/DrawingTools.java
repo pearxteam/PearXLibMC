@@ -264,7 +264,7 @@ public class DrawingTools
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(scale, scale, scale);
         RenderHelper.enableGUIStandardItemLighting();
-        rend.renderItemAndEffectIntoGUI(stack, 0, 0);
+        rend.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().player, stack, 0, 0);
         rend.renderItemOverlays(frend, stack, 0, 0);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.popMatrix();

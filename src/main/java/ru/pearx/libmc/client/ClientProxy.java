@@ -5,6 +5,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.client.gui.PXLGui;
 import ru.pearx.libmc.client.gui.structure.GuiStructureCreation;
+import ru.pearx.libmc.client.models.IModelProvider;
 import ru.pearx.libmc.common.CommonProxy;
 
 /*
@@ -17,5 +18,11 @@ public class ClientProxy extends CommonProxy
     public void openStructureCreationGui()
     {
         Minecraft.getMinecraft().displayGuiScreen(new PXLGui(new GuiStructureCreation()));
+    }
+
+    @Override
+    public void setupModels(IModelProvider prov)
+    {
+        prov.setupModels();
     }
 }

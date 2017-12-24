@@ -6,7 +6,10 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import ru.pearx.libmc.PXLMC;
+import ru.pearx.libmc.client.models.IModelProvider;
 import ru.pearx.libmc.common.blocks.PXLBlocks;
 
 /*
@@ -17,10 +20,19 @@ import ru.pearx.libmc.common.blocks.PXLBlocks;
 public class PXLItems
 {
     public static final ItemBlock structure_nothing = null;
+    public static final ItemMultiblock multiblock = null;
 
     @SubscribeEvent
     public static void onBlockRegistry(RegistryEvent.Register<Item> e)
     {
-        e.getRegistry().register(new ItemBlockBase(PXLBlocks.structure_nothing));
+        register(new ItemBlockBase(PXLBlocks.structure_nothing), e.getRegistry());
+        register(new ItemMultiblock(), e.getRegistry());
+    }
+
+    private static void register(Item itm, IForgeRegistry<Item> reg)
+    {
+        if(itm instanceof IModelProvider)
+            PXLMC.PROXY.setupModels((IModelProvider) itm);
+        reg.register(itm);
     }
 }

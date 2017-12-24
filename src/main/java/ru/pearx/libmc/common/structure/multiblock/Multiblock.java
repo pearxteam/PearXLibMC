@@ -1,11 +1,14 @@
 package ru.pearx.libmc.common.structure.multiblock;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -31,12 +34,14 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
     private BlockPos masterPos;
     private IBlockState masterState;
     private IBlockState slaveState;
+    private ModelResourceLocation itemModel;
 
-    public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState)
+    public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState, ModelResourceLocation itemModel)
     {
         this.structure = structure;
         this.masterPos = masterPos;
         this.masterState = masterState;
+        this.itemModel = itemModel;
     }
 
     public Multiblock()
@@ -78,6 +83,21 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         if(slaveState == null)
             slaveState = getMasterState().withProperty(BlockMultiblockPart.TYPE, BlockMultiblockPart.Type.SLAVE);
         return slaveState;
+    }
+
+    public ModelResourceLocation getItemModel()
+    {
+        return itemModel;
+    }
+
+    public void setItemModel(ModelResourceLocation itemModel)
+    {
+        this.itemModel = itemModel;
+    }
+
+    public String getName()
+    {
+        return I18n.translateToLocalFormatted("multiblock." + getRegistryName() + ".name");
     }
 
     public void form(World w, BlockPos zeroPos, Rotation rot, @Nullable EntityPlayer pl)

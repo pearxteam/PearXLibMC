@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.networking.packets.CPacketSyncASMState;
 
@@ -40,12 +41,7 @@ public class AnimationStateManager implements IAnimationStateManager
         else
         {
             this.state = state;
-            WorldServer world = (WorldServer) tile.getWorld();
-            PlayerChunkMapEntry entr = world.getPlayerChunkMap().getEntry(tile.getPos().getX() / 16, tile.getPos().getZ() / 16);
-            for(EntityPlayerMP p : entr.players)
-            {
-                PXLMC.NETWORK.sendTo(new CPacketSyncASMState(tile.getPos(), getAvailableStates().indexOf(state)), p);
-            }
+            PXLMC.NETWORK.sendToAllAround(new CPacketSyncASMState(tile.getPos(), getAvailableStates().indexOf(state)), new NetworkRegistry.TargetPoint(tile.getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 256));
         }
     }
 

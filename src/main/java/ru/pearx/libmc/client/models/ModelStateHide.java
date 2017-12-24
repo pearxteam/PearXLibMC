@@ -37,12 +37,16 @@ public class ModelStateHide implements IModelState
             while (it.hasNext())
             {
                 String s = it.next();
+                boolean keep = invert;
                 for(String cond : groupsToHide)
                 {
                     if((s.startsWith(cond + "_") || s.equals(cond)) == !invert)
-                        return Optional.empty();
+                    {
+                        keep = !keep;
+                        break;
+                    }
                 }
-                return Optional.of(TRSRTransformation.identity());
+                return keep ? Optional.empty() : Optional.of(TRSRTransformation.identity());
             }
         }
         //keep the part
