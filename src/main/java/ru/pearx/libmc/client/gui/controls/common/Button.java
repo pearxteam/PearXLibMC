@@ -58,22 +58,22 @@ public class Button extends Control
         if(isFocused())
             GlStateManager.color(.8f, .8f, .8f, 1);
         //upper and bottom
-        for(int i = 1; i < (w - 8) / 8; i++)
+        for(int i = 1; i < (w - 8) / 8f; i++)
         {
             int x = i * 8;
             parts.get(1).draw(x, 0);
             parts.get(7).draw(x, h - 8);
         }
         //right and left
-        for(int i = 1; i < (h - 8) / 8; i++)
+        for(int i = 1; i < (h - 8) / 8f; i++)
         {
             int y = i * 8;
             parts.get(3).draw(0, y);
             parts.get(5).draw(w - 8, y);
         }
-        for (int xm = 1; xm < (w - 8) / 8; xm++)
+        for (int xm = 1; xm < (w - 8) / 8f; xm++)
         {
-            for(int ym = 1; ym < (h - 8) / 8; ym++)
+            for(int ym = 1; ym < (h - 8) / 8f; ym++)
             {
                 parts.get(4).draw(xm * 8, ym * 8);
             }
