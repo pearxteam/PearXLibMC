@@ -3,8 +3,8 @@ package ru.pearx.libmc.common.structure.multiblock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -139,14 +139,14 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         }
     }
 
-    public Optional<Rotation> checkStructure(World w, BlockPos pos)
+    public Optional<Rotation> checkMultiblock(World w, BlockPos pos, @Nullable EntityPlayer p, @Nullable EnumHand hand)
     {
         return getStructure().check(w, pos);
     }
 
-    public Optional<Rotation> tryForm(World w, BlockPos pos, @Nullable EntityPlayer p)
+    public Optional<Rotation> tryForm(World w, BlockPos pos, @Nullable EntityPlayer p, @Nullable EnumHand hand)
     {
-        Optional<Rotation> opt = checkStructure(w, pos);
+        Optional<Rotation> opt = checkMultiblock(w, pos, p, hand);
         opt.ifPresent(rotation -> form(w, pos, rotation, p));
         return opt;
     }

@@ -7,6 +7,9 @@ misc.gui.structure.pos=Position:
 misc.structure_processor.loot.name=Loot
 misc.structure_processor.loot.table=Loot Table:
 
+misc.multiblock.result.wrongBlock=§cWrong Block at x=§8%d§c, y=§8%d§c, z=§8%d§c!§r
+misc.multiblock.result.success=§aThe structure was successfully built!§r
+
 tile.structure_nothing.name=Structure Nothing
 
 command.pxlmc_structure.usage=Usage: /pxlmc_structure create | /pxlmc_structure spawn <name> <x> <y> <z> [none|left_right|front_back] [0|90|180|270]
