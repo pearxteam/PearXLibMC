@@ -1,9 +1,6 @@
 package ru.pearx.libmc.common.animation;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.networking.packets.CPacketSyncASMState;

@@ -6,7 +6,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemStackHandler;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.ClientUtils;
 import ru.pearx.libmc.common.structure.multiblock.Multiblock;
