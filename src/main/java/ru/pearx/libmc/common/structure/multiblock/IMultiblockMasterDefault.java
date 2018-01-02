@@ -2,6 +2,8 @@ package ru.pearx.libmc.common.structure.multiblock;
 
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import ru.pearx.libmc.common.items.PXLItems;
 import ru.pearx.libmc.common.structure.multiblock.events.*;
 
 /*
@@ -40,8 +42,13 @@ public interface IMultiblockMasterDefault extends IMultiblockMaster
     default boolean hasCapability(MultiblockCapabilityEvent.Has<?> evt, IMultiblockPart part) {return false;}
     default <T>T getCapability(MultiblockCapabilityEvent.Get<T> evt, IMultiblockPart part) {return null;}
     default BlockFaceShape getFaceShape(MultiblockGetFaceShapeEvent evt, IMultiblockPart part) {return null;}
+
     default ItemStack getPickBlock(MultiblockPickBlockEvent evt, IMultiblockPart part)
     {
-        return ItemStack.EMPTY;
+        ItemStack st = new ItemStack(PXLItems.multiblock);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("multiblock", getId().toString());
+        st.setTagCompound(tag);
+        return st;
     }
 }
