@@ -3,6 +3,7 @@ package ru.pearx.libmc.client.models;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.List;
 
 /*
  * Created by mrAppleXZ on 24.12.17 10:26.
@@ -22,16 +24,23 @@ public abstract class PXModel implements IPXModel
 {
     private WeakReference<ItemStack> stack;
 
-    public static final ItemOverrideList OVERRIDE_LIST = new ItemOverrideList(Collections.emptyList())
+    public static class OverrideList extends ItemOverrideList
     {
+        public OverrideList(List<ItemOverride> overridesIn)
+        {
+            super(overridesIn);
+        }
+
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
         {
             if (originalModel instanceof IPXModel)
                 ((IPXModel) originalModel).setStack(stack);
-            return originalModel;
+            return super.handleItemState(originalModel, stack, world, entity);
         }
-    };
+    }
+
+    public static final OverrideList OVERRIDE_LIST = new OverrideList(Collections.emptyList());
 
     public static final ImmutableList<BakedQuad> DUMMY_LIST = ImmutableList.of();
 
