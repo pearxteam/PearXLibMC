@@ -26,7 +26,7 @@ public interface IMultiblockMaster extends IMultiblockPart
     void setId(ResourceLocation s);
     boolean isInactive();
     void setInactive(boolean val);
-    void update();
+    void updateMultiblock();
 
 
     default void postForm(@Nullable EntityPlayer p) {}
