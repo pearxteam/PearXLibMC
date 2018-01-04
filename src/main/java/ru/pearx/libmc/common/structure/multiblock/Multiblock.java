@@ -2,6 +2,7 @@ package ru.pearx.libmc.common.structure.multiblock;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
@@ -35,13 +36,15 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
     private IBlockState masterState;
     private IBlockState slaveState;
     private ModelResourceLocation itemModel;
+    private CreativeTabs itemCreativeTab;
 
-    public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState, ModelResourceLocation itemModel)
+    public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState, ModelResourceLocation itemModel, CreativeTabs itemCreativeTab)
     {
         this.structure = structure;
         this.masterPos = masterPos;
         this.masterState = masterState;
         this.itemModel = itemModel;
+        this.itemCreativeTab = itemCreativeTab;
     }
 
     public Multiblock()
@@ -93,6 +96,16 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
     public void setItemModel(ModelResourceLocation itemModel)
     {
         this.itemModel = itemModel;
+    }
+
+    public CreativeTabs getItemCreativeTab()
+    {
+        return itemCreativeTab;
+    }
+
+    public void setItemCreativeTab(CreativeTabs itemCreativeTab)
+    {
+        this.itemCreativeTab = itemCreativeTab;
     }
 
     public String getName()
