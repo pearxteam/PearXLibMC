@@ -77,7 +77,7 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     }
 
     @Override
-    public void update()
+    public void updateMultiblock()
     {
         Multiblock mb = Multiblock.REGISTRY.getValue(getId());
         BlockArray arr = mb.getStructure();
@@ -93,36 +93,36 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        compound.setInteger("rotation", getRotation().ordinal());
+        nbt.setInteger("rotation", getRotation().ordinal());
         NBTTagList lst = new NBTTagList();
         for(BlockPos slave : getSlavesPositions())
         {
            lst.appendTag(new NBTTagIntArray(new int[]{slave.getX() - getPos().getX(), slave.getY() - getPos().getY(), slave.getZ() - getPos().getZ()}));
         }
-        compound.setTag("slaves", lst);
-        compound.setString("multiblock_id", getId().toString());
-        compound.setBoolean("inactive", inactive);
-        return super.writeToNBT(compound);
+        nbt.setTag("slaves", lst);
+        nbt.setString("multiblock_id", getId().toString());
+        nbt.setBoolean("inactive", inactive);
+        return super.writeToNBT(nbt);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(NBTTagCompound nbt)
     {
-        super.readFromNBT(compound);
-        setRotation(Rotation.values()[compound.getInteger("rotation")]);
+        super.readFromNBT(nbt);
+        setRotation(Rotation.values()[nbt.getInteger("rotation")]);
         List<BlockPos> slaves = new ArrayList<>();
-        NBTTagList lst = compound.getTagList("slaves", Constants.NBT.TAG_INT_ARRAY);
+        NBTTagList lst = nbt.getTagList("slaves", Constants.NBT.TAG_INT_ARRAY);
         for(NBTBase base : lst)
         {
             int[] arr = ((NBTTagIntArray) base).getIntArray();
             slaves.add(new BlockPos(arr[0] + getPos().getX(), arr[1] + getPos().getY(), arr[2] + getPos().getZ()));
         }
         setSlavesPositions(slaves);
-        setId(new ResourceLocation(compound.getString("multiblock_id")));
-        setInactive(compound.getBoolean("inactive"));
-        update();
+        setId(new ResourceLocation(nbt.getString("multiblock_id")));
+        setInactive(nbt.getBoolean("inactive"));
+        updateMultiblock();
     }
 
     public BlockPos getOriginalPos(BlockPos trans)

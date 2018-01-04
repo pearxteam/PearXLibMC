@@ -30,19 +30,19 @@ public class TileMultiblockSlave extends TileSyncable implements IMultiblockSlav
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
-        super.writeToNBT(compound);
+        super.writeToNBT(nbt);
         BlockPos rel = getMasterPos().subtract(getPos());
-        compound.setIntArray("masterPos", new int[] {rel.getX(), rel.getY(), rel.getZ()});
-        return compound;
+        nbt.setIntArray("masterPos", new int[] {rel.getX(), rel.getY(), rel.getZ()});
+        return nbt;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(NBTTagCompound nbt)
     {
-        super.readFromNBT(compound);
-        int[] ints = compound.getIntArray("masterPos");
+        super.readFromNBT(nbt);
+        int[] ints = nbt.getIntArray("masterPos");
         setMasterPos(new BlockPos(getPos().getX() + ints[0], getPos().getY() + ints[1], getPos().getZ() + ints[2]));
     }
 

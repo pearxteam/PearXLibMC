@@ -135,7 +135,7 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
             master.setSlavesPositions(slaves);
             master.setId(getRegistryName());
             master.postForm(pl);
-            master.update();
+            master.updateMultiblock();
         }
     }
 
