@@ -1,13 +1,17 @@
 package ru.pearx.libmc.common;
 
+import com.google.common.collect.Lists;
+import net.minecraft.client.util.RecipeItemHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
@@ -121,38 +125,32 @@ public class ItemStackUtils
         return true;
     }
 
-    public static boolean isCraftingMatrixMatchesShapeless(InventoryCrafting craft, NonNullList<Ingredient> input)
+    public static boolean isCraftingMatrixMatchesShapeless(InventoryCrafting craft, NonNullList<Ingredient> input, IRecipe recipe, boolean simple)
     {
         //copied from ShapelessOreRecipe.
-        NonNullList<Ingredient> required = NonNullList.create();
-        required.addAll(input);
+        int ingredientCount = 0;
+        RecipeItemHelper recipeItemHelper = new RecipeItemHelper();
+        List<ItemStack> items = Lists.newArrayList();
 
-        for (int x = 0; x < craft.getSizeInventory(); x++)
+        for (int i = 0; i < craft.getSizeInventory(); ++i)
         {
-            ItemStack slot = craft.getStackInSlot(x);
-
-            if (!slot.isEmpty())
+            ItemStack itemstack = craft.getStackInSlot(i);
+            if (!itemstack.isEmpty())
             {
-                boolean inRecipe = false;
-                Iterator<Ingredient> req = required.iterator();
-
-                while (req.hasNext())
-                {
-                    if (req.next().apply(slot))
-                    {
-                        inRecipe = true;
-                        req.remove();
-                        break;
-                    }
-                }
-
-                if (!inRecipe)
-                {
-                    return false;
-                }
+                ++ingredientCount;
+                if (simple)
+                    recipeItemHelper.accountStack(itemstack, 1);
+                else
+                    items.add(itemstack);
             }
         }
 
-        return required.isEmpty();
+        if (ingredientCount != input.size())
+            return false;
+
+        if (simple)
+            return recipeItemHelper.canCraft(recipe, null);
+
+        return RecipeMatcher.findMatches(items, input) != null;
     }
 }
