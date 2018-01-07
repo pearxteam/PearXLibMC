@@ -147,7 +147,7 @@ public class BlockArrayShowcase extends AbstractShowcase
                 }
                 if(!res)
                 {
-                    stackList.add(new ItemDrawable(entr.getStack(), 1.5f));
+                    stackList.add(new ItemDrawable(entr.getStack().copy(), 1.5f));
                 }
             }
         }
