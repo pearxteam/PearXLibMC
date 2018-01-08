@@ -37,12 +37,9 @@ public abstract class PXLFastTESR<T extends TileEntity> extends TileEntitySpecia
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
-        renderPre(te, x, y, z, partialTicks, destroyStage, alpha);
         setTrans(te);
 
         render(te, x, y, z, partialTicks, destroyStage, partialTicks, buffer, tessellator);
-
-        renderPost(te, x, y, z, partialTicks, destroyStage, alpha);
         GlStateManager.popMatrix();
 
         RenderHelper.enableStandardItemLighting();
@@ -59,7 +56,4 @@ public abstract class PXLFastTESR<T extends TileEntity> extends TileEntitySpecia
     }
 
     public abstract void render(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha, BufferBuilder buffer, Tessellator tes);
-
-    public void renderPre(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){}
-    public void renderPost(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){}
 }
