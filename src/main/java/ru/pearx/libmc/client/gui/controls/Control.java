@@ -9,6 +9,7 @@ import org.lwjgl.util.Rectangle;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 /**
  * Created by mrAppleXZ on 16.04.17 13:12.
@@ -383,7 +384,7 @@ public class Control
         boolean last = true;
         for (Control cont : controls)
         {
-            if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
+            if ((cont.getX() <= x && cont.getX() + cont.getWidth() >= x) && (cont.getY() <= y && cont.getY() + cont.getHeight() >= y))
             {
                 cont.invokeMouseMove(x - cont.getX(), y - cont.getY(), dx, dy);
                 last = false;
@@ -394,7 +395,6 @@ public class Control
         setLastMouseY(y);
         if(last)
             setFocused(getMainParent(), this);
-
     }
 
     public void invokeMouseEnter()
