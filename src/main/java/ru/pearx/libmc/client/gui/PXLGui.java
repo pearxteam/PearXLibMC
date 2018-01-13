@@ -1,5 +1,6 @@
 package ru.pearx.libmc.client.gui;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
@@ -113,5 +114,12 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     public void onGuiClosed()
     {
         gui.invokeClose();
+    }
+
+    @Override
+    public void setWorldAndResolution(Minecraft mc, int width, int height)
+    {
+        super.setWorldAndResolution(mc, width, height);
+        gui.invokeInit();
     }
 }

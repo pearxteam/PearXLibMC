@@ -75,7 +75,7 @@ public class Control
         this.height = height;
     }
 
-    private void triggerMove()
+    public void triggerMove()
     {
         if(initialized)
         {
@@ -430,8 +430,8 @@ public class Control
             initialized = true;
         }
         Control parent = getMainParent();
-        if (parent.getGuiScreen() != null)
-            parent.invokeMouseMove(parent.getGuiScreen().getMouseX(), parent.getGuiScreen().getMouseY(), 0, 0);
+        if (getGuiScreen() != null)
+            parent.invokeMouseMove(getGuiScreen().getMouseX(), getGuiScreen().getMouseY(), 0, 0);
     }
 
     public GuiControlContainer.OverlayContainer getOverlay()

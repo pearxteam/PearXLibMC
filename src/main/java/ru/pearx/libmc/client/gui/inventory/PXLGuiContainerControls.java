@@ -1,5 +1,6 @@
 package ru.pearx.libmc.client.gui.inventory;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.inventory.Container;
@@ -131,5 +132,12 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
     public void setControlContainer(GuiControlContainer cont)
     {
         gui = cont;
+    }
+
+    @Override
+    public void setWorldAndResolution(Minecraft mc, int width, int height)
+    {
+        super.setWorldAndResolution(mc, width, height);
+        gui.invokeInit();
     }
 }
