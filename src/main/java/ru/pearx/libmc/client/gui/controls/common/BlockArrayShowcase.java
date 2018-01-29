@@ -3,6 +3,7 @@ package ru.pearx.libmc.client.gui.controls.common;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Biomes;
@@ -18,6 +19,8 @@ import net.minecraft.world.biome.Biome;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Point;
 import ru.pearx.lib.Color;
+import ru.pearx.libmc.PXLMC;
+import ru.pearx.libmc.client.ModelSupplied;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 import ru.pearx.libmc.client.gui.drawables.item.ItemDrawable;
@@ -94,6 +97,8 @@ public class BlockArrayShowcase extends AbstractShowcase
         }
     }
 
+    public static final ModelSupplied HIGHLIGHT = new ModelSupplied(new ModelResourceLocation(new ResourceLocation(PXLMC.MODID, "blockarray_showcase_highlight"), "normal"));
+
     private BlockArray array;
     private BlockArrayBlockAccess access;
     private boolean stacks;
@@ -161,7 +166,7 @@ public class BlockArrayShowcase extends AbstractShowcase
         int w = (int)((getWidth() / sizeX) * 0.6f);
         int h = (int)((getHeight() / sizeY) * 0.6f);
         this.scale = Math.min(w, h);
-        controls.add(buttonStacks);
+        getControls().add(buttonStacks);
     }
 
     @Override
@@ -198,6 +203,7 @@ public class BlockArrayShowcase extends AbstractShowcase
                     GlStateManager.popMatrix();
                 }*/
             }
+            blockRender.getBlockModelRenderer().renderModel(access, HIGHLIGHT.get(), Blocks.AIR.getDefaultState(), new BlockPos(0, 0, 0), bld, false);
             tes.draw();
             GlStateManager.popMatrix();
         }

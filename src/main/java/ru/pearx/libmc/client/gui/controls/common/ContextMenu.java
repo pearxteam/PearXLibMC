@@ -84,7 +84,7 @@ public class ContextMenu extends Control
         public void mouseUp(int button, int x, int y)
         {
             element.runnable.run();
-            ContextMenu.this.getParent().controls.remove(ContextMenu.this);
+            ContextMenu.this.getParent().getControls().remove(ContextMenu.this);
         }
     }
 
@@ -121,7 +121,7 @@ public class ContextMenu extends Control
 
     private void updateMeasurements()
     {
-        controls.removeIf((Control cont) -> cont instanceof Button);
+        getControls().removeIf((Control cont) -> cont instanceof Button);
         int maxW = 0;
         int y = margin;
         for(Element e : getElements())
@@ -135,7 +135,7 @@ public class ContextMenu extends Control
         for(Element e : getElements())
         {
             Button butt = new Button(0, y, e);
-            controls.add(butt);
+            getControls().add(butt);
             y += butt.getHeight() + margin;
         }
     }

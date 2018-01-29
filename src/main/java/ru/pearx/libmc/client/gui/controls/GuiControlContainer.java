@@ -14,11 +14,6 @@ public class GuiControlContainer extends Control implements IGuiScreenProvider, 
     @SideOnly(Side.CLIENT)
     public class OverlayContainer extends Control implements IGuiScreenProvider, IOverlayProvider
     {
-        public OverlayContainer()
-        {
-            initialized = true;
-        }
-
         @Override
         public IGuiScreen getGs()
         {
@@ -45,7 +40,7 @@ public class GuiControlContainer extends Control implements IGuiScreenProvider, 
 
         public boolean isActive()
         {
-            return controls.size() > 0;
+            return getControls().size() > 0;
         }
 
         @Override
@@ -57,7 +52,7 @@ public class GuiControlContainer extends Control implements IGuiScreenProvider, 
         @Override
         public void mouseUp(int button, int x, int y)
         {
-            controls.clear();
+            getControls().clear();
         }
     }
 
@@ -73,7 +68,7 @@ public class GuiControlContainer extends Control implements IGuiScreenProvider, 
     @Override
     public void init()
     {
-        controls.add(cont);
+        getControls().add(cont);
     }
 
     @Override
@@ -195,6 +190,13 @@ public class GuiControlContainer extends Control implements IGuiScreenProvider, 
             GlStateManager.popMatrix();
         }
         super.invokeRender2();
+    }
+
+    @Override
+    public void invokeInit()
+    {
+        overlay.invokeInit();
+        super.invokeInit();
     }
 
     @Override

@@ -109,8 +109,8 @@ public class LootProcessor extends StructureProcessor
         public void init()
         {
             super.init();
-            controls.add(table);
-            controls.add(faces);
+            getControls().add(table);
+            getControls().add(faces);
         }
     }
 

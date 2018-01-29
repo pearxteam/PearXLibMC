@@ -68,14 +68,14 @@ public class GuiStructureCreation extends GuiOnScreen
             if (now != -1)
             {
                 if(cntrls_now != null)
-                    GuiStructureCreation.this.controls.remove(cntrls_now);
+                    GuiStructureCreation.this.getControls().remove(cntrls_now);
                 cntrls_now = cntrls.get(now);
-                GuiStructureCreation.this.controls.add(cntrls.get(now));
+                GuiStructureCreation.this.getControls().add(cntrls.get(now));
 
             } else
             {
                 if(cntrls_now != null)
-                    GuiStructureCreation.this.controls.remove(cntrls_now);
+                    GuiStructureCreation.this.getControls().remove(cntrls_now);
                 cntrls_now = null;
             }
         }
@@ -88,7 +88,7 @@ public class GuiStructureCreation extends GuiOnScreen
             menu.getElements().add(new ContextMenu.Element(proc.getName(), () -> addControl(proc.getName(), proc.getControl(null))));
         }
         menu.setPos(getGuiScreen().getMouseX(), getGuiScreen().getMouseY());
-        getOverlay().controls.add(menu);
+        getOverlay().getControls().add(menu);
     });
     public Button procsRemove = new Button(new ResourceLocation(PXLMC.MODID, "textures/gui/button.png"), "-", () ->
     {
@@ -143,15 +143,15 @@ public class GuiStructureCreation extends GuiOnScreen
     @Override
     public void init()
     {
-        controls.add(fromPos);
-        controls.add(toPos);
-        controls.add(fromPosLooking);
-        controls.add(toPosLooking);
-        controls.add(name);
-        controls.add(create);
-        controls.add(procsLst);
-        controls.add(procsAdd);
-        controls.add(procsRemove);
+        getControls().add(fromPos);
+        getControls().add(toPos);
+        getControls().add(fromPosLooking);
+        getControls().add(toPosLooking);
+        getControls().add(name);
+        getControls().add(create);
+        getControls().add(procsLst);
+        getControls().add(procsAdd);
+        getControls().add(procsRemove);
 
         Path p = Minecraft.getMinecraft().mcDataDir.toPath().resolve(CACHE_FILE_NAME);
         try(InputStream str = Files.newInputStream(p))

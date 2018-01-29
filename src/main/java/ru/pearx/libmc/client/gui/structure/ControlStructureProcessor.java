@@ -36,8 +36,8 @@ public abstract class ControlStructureProcessor extends Control
     @Override
     public void init()
     {
-        controls.add(pos);
-        controls.add(fromLook);
+        getControls().add(pos);
+        getControls().add(fromLook);
     }
 
     public void setPosText(BlockPos pos)

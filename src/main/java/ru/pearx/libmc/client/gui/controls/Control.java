@@ -9,7 +9,6 @@ import org.lwjgl.util.Rectangle;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 
 /**
  * Created by mrAppleXZ on 16.04.17 13:12.
@@ -17,10 +16,11 @@ import java.util.ArrayList;
 @SideOnly(Side.CLIENT)
 public class Control
 {
-    public ControlList controls = new ControlList(this);
+    private ControlList controls = new ControlList(this);
     private Control parent;
     @Nullable
     private IGuiScreen guiScreen = null;
+    private Control mainParent = this;
 
     private int width;
     private int height;
@@ -31,8 +31,14 @@ public class Control
     private boolean selected;
     private int lastMouseX;
     private int lastMouseY;
+    private boolean initialized;
 
-    public boolean initialized;
+    //PROPERTIES
+
+    public ControlList getControls()
+    {
+        return controls;
+    }
 
     public Control getParent()
     {
@@ -44,15 +50,62 @@ public class Control
         this.parent = parent;
         if(parent != null)
         {
-            Control mp = getMainParent();
+            //update main parent if changed
+            Control mp = getMainParentExplicit();
+            Control lastMp = getMainParent();
+            if(lastMp != mp)
+                setMainParent(mp);
+            //update gui screen if changed
+            IGuiScreen gs = null;
+            IGuiScreen lastGs = getGuiScreen();
             if (mp instanceof IGuiScreenProvider)
             {
                 IGuiScreenProvider cont = (IGuiScreenProvider) mp;
-                this.guiScreen = cont.getGs();
+                gs = cont.getGs();
             }
+            if(gs != lastGs)
+                setGuiScreen(gs);
         }
         else
-            this.guiScreen = null;
+        {
+            setGuiScreen(null);
+            setMainParent(null);
+        }
+    }
+
+    private Control getMainParentExplicit()
+    {
+        Control c = this;
+        while(c.getParent() != null)
+        {
+            c = c.getParent();
+        }
+        return c;
+    }
+
+    public Control getMainParent()
+    {
+        return mainParent;
+    }
+
+    private void setMainParent(Control mainParent)
+    {
+        this.mainParent = mainParent;
+        for(Control child : getControls())
+            child.setMainParent(mainParent);
+    }
+
+    @Nullable
+    public IGuiScreen getGuiScreen()
+    {
+        return guiScreen;
+    }
+
+    private void setGuiScreen(IGuiScreen gs)
+    {
+        this.guiScreen = gs;
+        for(Control child : getControls())
+            child.setGuiScreen(gs);
     }
 
     public int getWidth()
@@ -79,9 +132,11 @@ public class Control
     {
         if(initialized)
         {
-            Control main = getMainParent();
-            if (getGuiScreen() != null)
+            if (getGuiScreen() != null && getMainParent() != null)
+            {
+                Control main = getMainParent();
                 main.invokeMouseMove(getGuiScreen().getMouseX(), getGuiScreen().getMouseY(), 0, 0);
+            }
         }
     }
 
@@ -153,7 +208,7 @@ public class Control
         return focused;
     }
 
-    public void setFocused(boolean val)
+    private void setFocused(boolean val)
     {
         focused = val;
     }
@@ -176,7 +231,7 @@ public class Control
     private void select(Control toSelect)
     {
         setSelected(this == toSelect);
-        for(Control child : controls)
+        for(Control child : getControls())
         {
             child.select(toSelect);
         }
@@ -187,7 +242,7 @@ public class Control
         return lastMouseX;
     }
 
-    public void setLastMouseX(int lastMouseX)
+    private void setLastMouseX(int lastMouseX)
     {
         this.lastMouseX = lastMouseX;
     }
@@ -197,10 +252,14 @@ public class Control
         return lastMouseY;
     }
 
-    public void setLastMouseY(int lastMouseY)
+    private void setLastMouseY(int lastMouseY)
     {
         this.lastMouseY = lastMouseY;
     }
+
+
+    //EVENTS
+
 
     public void render()
     {
@@ -278,6 +337,8 @@ public class Control
     }
 
 
+    //EVENT INVOKES
+
 
     public void invokeRender()
     {
@@ -286,13 +347,14 @@ public class Control
         GlStateManager.pushMatrix();
         GlStateManager.translate(getX(), getY(), 0);
         if(isVisible())
-            render();
-        for(Control cont : controls)
         {
-            cont.invokeRender();
-        }
-        if(isVisible())
+            render();
+            for (Control cont : getControls())
+            {
+                cont.invokeRender();
+            }
             postRender();
+        }
         GlStateManager.popMatrix();
     }
 
@@ -303,13 +365,14 @@ public class Control
         GlStateManager.pushMatrix();
         GlStateManager.translate(getX(), getY(), 0);
         if(isVisible())
-            render2();
-        for(Control cont : controls)
         {
-            cont.invokeRender2();
-        }
-        if(isVisible())
+            render2();
+            for (Control cont : getControls())
+            {
+                cont.invokeRender2();
+            }
             postRender2();
+        }
         GlStateManager.popMatrix();
     }
 
@@ -317,7 +380,7 @@ public class Control
     {
         if(!initialized)
             return;
-        for (Control cont : controls)
+        for (Control cont : getControls())
             cont.invokeKeyDown(keycode);
         keyDown(keycode);
     }
@@ -326,7 +389,7 @@ public class Control
     {
         if(!initialized)
             return;
-        for (Control cont : controls)
+        for (Control cont : getControls())
             cont.invokeKeyUp(keycode);
         keyUp(keycode);
     }
@@ -335,7 +398,7 @@ public class Control
     {
         if(!initialized)
             return;
-        for (Control cont : controls)
+        for (Control cont : getControls())
             cont.invokeKeyPress(key, keycode);
         keyPress(key, keycode);
     }
@@ -345,7 +408,7 @@ public class Control
         boolean last = true;
         if (!initialized)
             return;
-        for (Control cont : controls)
+        for (Control cont : getControls())
         {
             if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
             {
@@ -365,7 +428,7 @@ public class Control
         boolean last = true;
         if(!initialized)
             return;
-        for (Control cont : controls)
+        for (Control cont : getControls())
         {
             if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
             {
@@ -382,7 +445,7 @@ public class Control
         if(!initialized)
             return;
         boolean last = true;
-        for (Control cont : controls)
+        for (Control cont : getControls())
         {
             if ((cont.getX() <= x && cont.getX() + cont.getWidth() >= x) && (cont.getY() <= y && cont.getY() + cont.getHeight() >= y))
             {
@@ -415,7 +478,7 @@ public class Control
     {
         if(!initialized)
             return;
-        for (Control cont : controls)
+        for (Control cont : getControls())
         {
             cont.invokeMouseWheel(delta);
         }
@@ -446,26 +509,12 @@ public class Control
     {
         if(!initialized)
             return;
-        for(Control cont : controls)
+        for(Control cont : getControls())
             cont.invokeClose();
         close();
     }
 
-    @Nullable
-    public IGuiScreen getGuiScreen()
-    {
-        return guiScreen;
-    }
 
-    public Control getMainParent()
-    {
-        Control c = this;
-        while(c.getParent() != null)
-        {
-            c = c.getParent();
-        }
-        return c;
-    }
 
     public Point getPosOnScreen()
     {
@@ -502,7 +551,7 @@ public class Control
             c.setFocused(true);
             c.invokeMouseEnter();
         }
-        for (Control cont : c.controls)
+        for (Control cont : c.getControls())
             setFocused(cont, select);
     }
 }
