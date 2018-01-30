@@ -5,7 +5,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by mrAppleXZ on 16.04.17 13:12.
@@ -13,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @SideOnly(Side.CLIENT)
 public class ControlList implements Collection<Control>
 {
-    private CopyOnWriteArrayList<Control> lst = new CopyOnWriteArrayList<>();
+    private ConcurrentLinkedQueue<Control> lst = new ConcurrentLinkedQueue<>();
 
     public Control parent;
 

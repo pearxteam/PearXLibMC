@@ -7,10 +7,4 @@ import ru.pearx.libmc.client.gui.controls.Control;
  */
 public class ControlScrollable extends Control
 {
-    private int scrollX, scrollY;
-    @Override
-    public void invokeRender()
-    {
-        super.invokeRender();
-    }
 }

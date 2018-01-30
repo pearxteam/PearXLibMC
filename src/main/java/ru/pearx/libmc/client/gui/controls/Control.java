@@ -145,6 +145,11 @@ public class Control
         return x;
     }
 
+    public int getTransformedX()
+    {
+        return getX() + (getParent() == null ? 0 : getParent().getOffsetX()) + getOwnOffsetX();
+    }
+
     public void setX(int x, boolean triggerMove)
     {
         this.x = x;
@@ -160,6 +165,11 @@ public class Control
     public int getY()
     {
         return y;
+    }
+
+    public int getTransformedY()
+    {
+        return getY() + (getParent() == null ? 0 : getParent().getOffsetY()) + getOwnOffsetY();
     }
 
     public void setY(int y, boolean triggerMove)
@@ -257,6 +267,26 @@ public class Control
         this.lastMouseY = lastMouseY;
     }
 
+    public int getOffsetX()
+    {
+        return 0;
+    }
+
+    public int getOffsetY()
+    {
+        return 0;
+    }
+
+    public int getOwnOffsetX()
+    {
+        return 0;
+    }
+
+    public int getOwnOffsetY()
+    {
+        return 0;
+    }
+
 
     //EVENTS
 
@@ -342,38 +372,39 @@ public class Control
 
     public void invokeRender()
     {
-        if(!initialized)
+        if (!initialized)
             return;
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(getX(), getY(), 0);
-        if(isVisible())
+        if (isVisible())
         {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(getTransformedX(), getTransformedY(), 0);
             render();
             for (Control cont : getControls())
             {
                 cont.invokeRender();
             }
             postRender();
+            GlStateManager.popMatrix();
         }
-        GlStateManager.popMatrix();
     }
 
     public void invokeRender2()
     {
-        if(!initialized)
+        if (!initialized)
             return;
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(getX(), getY(), 0);
-        if(isVisible())
+        if (isVisible())
         {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(getTransformedX(), getTransformedY(), 0);
             render2();
             for (Control cont : getControls())
             {
                 cont.invokeRender2();
             }
             postRender2();
+
+            GlStateManager.popMatrix();
         }
-        GlStateManager.popMatrix();
     }
 
     public void invokeKeyDown(int keycode)
@@ -410,10 +441,10 @@ public class Control
             return;
         for (Control cont : getControls())
         {
-            if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
+            if (new Rectangle(cont.getTransformedX(), cont.getTransformedY(), cont.getWidth(), cont.getHeight()).contains(x, y))
             {
                 last = false;
-                cont.invokeMouseDown(button, x - cont.getX(), y - cont.getY());
+                cont.invokeMouseDown(button, x - cont.getTransformedX(), y - cont.getTransformedY());
             }
         }
         if(last)
@@ -430,10 +461,10 @@ public class Control
             return;
         for (Control cont : getControls())
         {
-            if (new Rectangle(cont.getX(), cont.getY(), cont.getWidth(), cont.getHeight()).contains(x, y))
+            if (new Rectangle(cont.getTransformedX(), cont.getTransformedY(), cont.getWidth(), cont.getHeight()).contains(x, y))
             {
                 last = false;
-                cont.invokeMouseUp(button, x - cont.getX(), y - cont.getY());
+                cont.invokeMouseUp(button, x - cont.getTransformedX(), y - cont.getTransformedY());
             }
         }
         if(last)
@@ -447,9 +478,9 @@ public class Control
         boolean last = true;
         for (Control cont : getControls())
         {
-            if ((cont.getX() <= x && cont.getX() + cont.getWidth() >= x) && (cont.getY() <= y && cont.getY() + cont.getHeight() >= y))
+            if ((cont.getTransformedX() <= x && cont.getTransformedX() + cont.getWidth() >= x) && (cont.getTransformedY() <= y && cont.getTransformedY() + cont.getHeight() >= y))
             {
-                cont.invokeMouseMove(x - cont.getX(), y - cont.getY(), dx, dy);
+                cont.invokeMouseMove(x - cont.getTransformedX(), y - cont.getTransformedY(), dx, dy);
                 last = false;
             }
         }
@@ -518,13 +549,13 @@ public class Control
 
     public Point getPosOnScreen()
     {
-        int x = getX();
-        int y = getY();
+        int x = getTransformedX();
+        int y = getTransformedY();
         Control parent = getParent();
         while(parent != null)
         {
-            x += parent.getX();
-            y += parent.getY();
+            x += parent.getTransformedY();
+            y += parent.getTransformedY();
             parent = parent.getParent();
         }
         return new Point(x, y);
