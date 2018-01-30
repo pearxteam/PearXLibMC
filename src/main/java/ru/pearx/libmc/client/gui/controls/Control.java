@@ -4,8 +4,10 @@ package ru.pearx.libmc.client.gui.controls;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Point;
 import org.lwjgl.util.Rectangle;
+import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
 import javax.annotation.Nullable;
@@ -287,6 +289,11 @@ public class Control
         return 0;
     }
 
+    public boolean shouldStencil()
+    {
+        return false;
+    }
+
 
     //EVENTS
 
@@ -370,7 +377,7 @@ public class Control
     //EVENT INVOKES
 
 
-    public void invokeRender()
+    public void invokeRender(int stencilLevel)
     {
         if (!initialized)
             return;
@@ -378,12 +385,37 @@ public class Control
         {
             GlStateManager.pushMatrix();
             GlStateManager.translate(getTransformedX(), getTransformedY(), 0);
+            boolean stenc = shouldStencil();
+            if(stenc)
+            {
+                int flag = stencilLevel + 1;
+                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                GL11.glEnable(GL11.GL_STENCIL_TEST);
+                GL11.glStencilFunc(GL11.GL_EQUAL, flag - 1, 0xFF);
+                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
+                GL11.glStencilMask(0xFF);
+                GL11.glColorMask(false, false, false, false);
+                GL11.glDepthMask(false);
+                if(stencilLevel == 0)
+                {
+                    GL11.glClearStencil(0);
+                    GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+                }
+                DrawingTools.drawRectangle(0, 0, getWidth(), getHeight());
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
+                GL11.glStencilFunc(GL11.GL_EQUAL, flag, 0xFF);
+                GL11.glStencilMask(0);
+                GL11.glColorMask(true, true, true, true);
+                GL11.glDepthMask(true);
+            }
             render();
             for (Control cont : getControls())
             {
-                cont.invokeRender();
+                cont.invokeRender(stenc ? stencilLevel + 1 : stencilLevel);
             }
             postRender();
+            if(stenc && stencilLevel == 0)
+                GL11.glDisable(GL11.GL_STENCIL_TEST);
             GlStateManager.popMatrix();
         }
     }

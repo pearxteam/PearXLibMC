@@ -36,12 +36,17 @@ public abstract class AbstractShowcase extends Control
     @Override
     public void mouseWheel(int delta)
     {
-        if(isFocused())
+        if (isFocused())
         {
             scale += delta / 120;
-            if(scale < 0)
+            if (scale < 0)
                 scale = 0;
         }
     }
 
+    @Override
+    public boolean shouldStencil()
+    {
+        return true;
+    }
 }

@@ -202,36 +202,6 @@ public class DrawingTools
         GlStateManager.enableTexture2D();
     }
 
-    public static int drawStencil(int w, int h)
-    {
-        //todo REWRITE STENCILING
-        int bit = MinecraftForgeClient.reserveStencilBit();
-        int flag = 1 << bit;
-
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        GL11.glStencilFunc(GL11.GL_ALWAYS, flag, flag);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-        GL11.glStencilMask(flag);
-        GL11.glColorMask(false, false, false, false);
-        GL11.glDepthMask(false);
-        GL11.glClearStencil(0);
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-        DrawingTools.drawRectangle(0, 0, w, h);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glStencilFunc(GL11.GL_EQUAL, flag, flag);
-        GL11.glStencilMask(0);
-        GL11.glColorMask(true, true, true, true);
-        GL11.glDepthMask(true);
-        return bit;
-    }
-
-    public static void removeStencil(int bit)
-    {
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
-        MinecraftForgeClient.releaseStencilBit(bit);
-    }
-
     public static void drawEntity(Entity ent, float x, float y, float scale, float rotX, float rotY, float rotZ)
     {
         GlStateManager.enableColorMaterial();
