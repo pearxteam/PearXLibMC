@@ -25,4 +25,11 @@ public class ClientProxy extends CommonProxy
     {
         prov.setupModels();
     }
+
+    @Override
+    public void preInit()
+    {
+        if(!Minecraft.getMinecraft().getFramebuffer().isStencilEnabled())
+            Minecraft.getMinecraft().getFramebuffer().enableStencil();
+    }
 }

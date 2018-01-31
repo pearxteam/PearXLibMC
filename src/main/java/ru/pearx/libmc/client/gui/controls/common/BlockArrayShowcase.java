@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityBeaconRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
@@ -13,12 +14,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Point;
 import ru.pearx.lib.Color;
+import ru.pearx.lib.Colors;
+import ru.pearx.lib.math.MathUtils;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.ModelSupplied;
 import ru.pearx.libmc.client.gui.DrawingTools;
@@ -37,6 +41,38 @@ import java.util.Map;
  */
 public class BlockArrayShowcase extends AbstractShowcase
 {
+    public static final float[][] HIGHLIGHT_MODEL =
+            {
+                    {-0.1f, 1.1f, -0.1f},
+                    {1.1f, 1.1f, -0.1f},
+                    {1.1f, -0.1f, -0.1f},
+                    {-0.1f, -0.1f, -0.1f},
+
+                    {1.1f, 1.1f, -0.1f},
+                    {1.1f, 1.1f, 1.1f},
+                    {1.1f, -0.1f, 1.1f},
+                    {1.1f, -0.1f, -0.1f},
+
+                    {-0.1f, 1.1f, 1.1f},
+                    {-0.1f, 1.1f, -0.1f},
+                    {-0.1f, -0.1f, -0.1f},
+                    {-0.1f, -0.1f, 1.1f},
+
+                    {1.1f, 1.1f, 1.1f},
+                    {-0.1f, 1.1f, 1.1f},
+                    {-0.1f, -0.1f, 1.1f},
+                    {1.1f, -0.1f, 1.1f},
+
+                    {1.1f, -0.1f, 1.1f},
+                    {-0.1f, -0.1f, 1.1f},
+                    {-0.1f, -0.1f, -0.1f},
+                    {1.1f, -0.1f, -0.1f},
+
+                    {-0.1f, 1.1f, 1.1f},
+                    {1.1f, 1.1f, 1.1f},
+                    {1.1f, 1.1f, -0.1f},
+                    {-0.1f, 1.1f, -0.1f},
+            };
     public static class BlockArrayBlockAccess implements IBlockAccess
     {
         private BlockArray arr;
@@ -97,23 +133,29 @@ public class BlockArrayShowcase extends AbstractShowcase
         }
     }
 
-    public static final ModelSupplied HIGHLIGHT = new ModelSupplied(new ModelResourceLocation(new ResourceLocation(PXLMC.MODID, "blockarray_showcase_highlight"), "normal"));
-
     private BlockArray array;
     private BlockArrayBlockAccess access;
     private boolean stacks;
+    private boolean highlight;
     private ResourceLocation buttonTex;
     private Button buttonStacks;
+    private Button buttonHighlight;
     private List<ItemDrawable> stackList = new ArrayList<>();
     private Color col = Color.fromARGB(128, 32, 32, 32);
 
     public BlockArrayShowcase(ResourceLocation buttonTex, BlockArray array)
+    {
+        this(buttonTex, array, false);
+    }
+
+    public BlockArrayShowcase(ResourceLocation buttonTex, BlockArray array, boolean highlightButton)
     {
         this.array = array;
         this.buttonTex = buttonTex;
         this.access = new BlockArrayBlockAccess(array);
         this.rotX = 45;
         this.rotY = 45;
+        int size = 12;
         buttonStacks = new Button(buttonTex, "", () -> stacks = !stacks)
         {
             @Override
@@ -134,7 +176,33 @@ public class BlockArrayShowcase extends AbstractShowcase
                 return 3;
             }
         };
-        buttonStacks.setSize(12, 12);
+        buttonStacks.setSize(size, size);
+
+        if(highlightButton)
+        {
+            highlight = true;
+            buttonHighlight = new Button(buttonTex, "", () -> highlight = !highlight)
+            {
+                @Override
+                public String getText()
+                {
+                    return highlight ? "□" : "■";
+                }
+
+                @Override
+                public int getX()
+                {
+                    return getParent().getWidth() - 3 * 2 - getWidth() * 2;
+                }
+
+                @Override
+                public int getY()
+                {
+                    return 3;
+                }
+            };
+            buttonHighlight.setSize(size, size);
+        }
 
         for(BlockArrayEntry entr : array.getMap().values())
         {
@@ -167,6 +235,8 @@ public class BlockArrayShowcase extends AbstractShowcase
         int h = (int)((getHeight() / sizeY) * 0.6f);
         this.scale = Math.min(w, h);
         getControls().add(buttonStacks);
+        if(buttonHighlight != null)
+            getControls().add(buttonHighlight);
     }
 
     @Override
@@ -203,8 +273,20 @@ public class BlockArrayShowcase extends AbstractShowcase
                     GlStateManager.popMatrix();
                 }*/
             }
-            blockRender.getBlockModelRenderer().renderModel(access, HIGHLIGHT.get(), Blocks.AIR.getDefaultState(), new BlockPos(0, 0, 0), bld, false);
             tes.draw();
+            if (highlight)
+            {
+                GlStateManager.disableTexture2D();
+                GlStateManager.enableBlend();
+                bld.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+                for (float[] vert : HIGHLIGHT_MODEL)
+                {
+                    bld.pos(vert[0], vert[1], vert[2]).color(0.3f, 0.3f, 1f, MathHelper.sin(MathUtils.toRadians(System.currentTimeMillis() / 5 % 360)) * 0.125f + 0.425f).endVertex();
+                }
+                tes.draw();
+                GlStateManager.disableBlend();
+                GlStateManager.enableTexture2D();
+            }
             GlStateManager.popMatrix();
         }
 

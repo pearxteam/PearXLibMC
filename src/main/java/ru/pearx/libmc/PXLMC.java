@@ -72,6 +72,8 @@ public class PXLMC
         PXLTiles.setup();
 
         StructureProcessor.REGISTRY.register(new LootProcessor());
+
+        PROXY.preInit();
     }
 
     @Mod.EventHandler
