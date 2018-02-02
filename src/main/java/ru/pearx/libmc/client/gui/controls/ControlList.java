@@ -2,8 +2,10 @@ package ru.pearx.libmc.client.gui.controls;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.lib.collections.EventCollection;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -12,9 +14,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @SideOnly(Side.CLIENT)
 public class ControlList implements Collection<Control>
 {
-    private ConcurrentLinkedQueue<Control> lst = new ConcurrentLinkedQueue<>();
-
     public Control parent;
+    private Collection<Control> lst = new ConcurrentLinkedQueue<>();
 
     public ControlList(Control parent)
     {
@@ -60,21 +61,27 @@ public class ControlList implements Collection<Control>
     @Override
     public boolean add(Control control)
     {
-        control.setParent(parent);
         boolean bool = lst.add(control);
-        control.invokeInit();
+        if(bool)
+        {
+            control.setParent(parent);
+            control.invokeInit();
+            parent.invokeChildrenChanged();
+        }
         return bool;
     }
 
     @Override
     public boolean remove(Object o)
     {
-        if(o instanceof Control)
+        boolean bool = lst.remove(o);
+        if(bool && o instanceof Control)
         {
             ((Control) o).invokeClose();
             ((Control) o).setParent(null);
+            parent.invokeChildrenChanged();
         }
-        return lst.remove(o);
+        return bool;
     }
 
     @Override
@@ -86,35 +93,53 @@ public class ControlList implements Collection<Control>
     @Override
     public boolean addAll(Collection<? extends Control> collection)
     {
-        for (Control c : collection)
-            c.setParent(parent);
-        return lst.addAll(collection);
+        boolean bool = lst.addAll(collection);
+        if(bool)
+        {
+            for (Control c : collection)
+            {
+                c.setParent(parent);
+                c.invokeInit();
+            }
+            parent.invokeChildrenChanged();
+        }
+        return bool;
     }
 
     @Override
     public boolean removeAll(Collection<?> collection)
     {
-        for(Object o : collection)
-            if(o instanceof Control)
+        boolean bool = lst.removeAll(collection);
+        if(bool)
+        {
+            for (Object o : collection)
             {
-                ((Control) o).invokeClose();
-                ((Control) o).setParent(null);
+                if (o instanceof Control)
+                {
+                    ((Control) o).invokeClose();
+                    ((Control) o).setParent(null);
+                }
             }
-        return lst.removeAll(collection);
+            parent.invokeChildrenChanged();
+        }
+        return bool;
     }
 
     @Override
     public boolean retainAll(Collection<?> collection)
     {
-        for(Control c : this)
+        for (Control c : this)
         {
-            if(!collection.contains(c))
+            if (!collection.contains(c))
             {
                 c.invokeClose();
                 c.setParent(null);
             }
         }
-        return lst.retainAll(collection);
+        boolean bool = lst.retainAll(collection);
+        if (bool)
+            parent.invokeChildrenChanged();
+        return bool;
     }
 
     @Override

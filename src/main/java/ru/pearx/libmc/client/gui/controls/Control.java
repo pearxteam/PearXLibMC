@@ -294,7 +294,6 @@ public class Control
         return false;
     }
 
-
     //EVENTS
 
 
@@ -371,6 +370,12 @@ public class Control
     public void close()
     {
 
+    }
+
+    //todo invoke this when sizes of children changed, not only added/removed
+    public void childrenChanged()
+    {
+        System.out.println("CHILDREN CHANGED!");
     }
 
 
@@ -552,12 +557,10 @@ public class Control
     {
         if (!initialized)
         {
-            init();
             initialized = true;
+            init();
         }
-        Control parent = getMainParent();
-        if (getGuiScreen() != null)
-            parent.invokeMouseMove(getGuiScreen().getMouseX(), getGuiScreen().getMouseY(), 0, 0);
+        triggerMove();
     }
 
     public GuiControlContainer.OverlayContainer getOverlay()
@@ -577,6 +580,10 @@ public class Control
         close();
     }
 
+    public void invokeChildrenChanged()
+    {
+        childrenChanged();
+    }
 
 
     public Point getPosOnScreen()
