@@ -4,7 +4,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.lib.Color;
 import ru.pearx.lib.Colors;
-import ru.pearx.lib.collections.EventList;
+import ru.pearx.lib.collections.event.EventList;
+import ru.pearx.lib.collections.event.SimpleEventList;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.controls.Control;
 
@@ -54,7 +55,7 @@ public class ContextMenu extends Control
         }
     }
 
-    private EventList<Element> elements = new EventList<>(new ArrayList<>(), this::updateMeasurements);
+    private SimpleEventList<Element> elements = new SimpleEventList<>(new ArrayList<>(), this::updateMeasurements);
     private int margin = 3;
     private Color textColor = Colors.WHITE;
     private Color elementMouseOverColor = Color.fromRGB(25, 25, 25);

@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import ru.pearx.lib.collections.EventMap;
+import ru.pearx.lib.collections.event.EventMap;
 import ru.pearx.libmc.PXLMC;
 
 import javax.annotation.Nullable;

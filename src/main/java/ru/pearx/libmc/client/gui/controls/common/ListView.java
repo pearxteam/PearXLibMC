@@ -2,7 +2,8 @@ package ru.pearx.libmc.client.gui.controls.common;
 
 import ru.pearx.lib.Color;
 import ru.pearx.lib.Colors;
-import ru.pearx.lib.collections.EventList;
+import ru.pearx.lib.collections.event.EventList;
+import ru.pearx.lib.collections.event.SimpleEventList;
 import ru.pearx.lib.math.MathUtils;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.controls.Control;
@@ -19,7 +20,7 @@ public class ListView extends Control
     private Color backgroundColor = Colors.GREY_800;
     private Color textColor = Colors.WHITE;
     private Color selectedColor = Colors.BLUE_500;
-    private EventList<String> elements = new EventList<>(new LinkedList<>(), () ->
+    private SimpleEventList<String> elements = new SimpleEventList<>(new LinkedList<>(), () ->
     {
         if(getElements().size() <= getSelection())
         {
@@ -55,7 +56,7 @@ public class ListView extends Control
 
     public void setSelection(int selection)
     {
-        int i = this.selection;
+        int i = this.selection; 
         this.selection = selection;
         onSelectionChanged(i, selection);
     }

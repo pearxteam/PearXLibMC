@@ -2,7 +2,6 @@ package ru.pearx.libmc.client.gui.controls;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ru.pearx.lib.collections.EventCollection;
 
 import java.util.Collection;
 import java.util.Iterator;
