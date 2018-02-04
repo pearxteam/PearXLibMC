@@ -372,13 +372,6 @@ public class Control
 
     }
 
-    //todo invoke this when sizes of children changed, not only added/removed
-    public void childrenChanged()
-    {
-        System.out.println("CHILDREN CHANGED!");
-    }
-
-
     //EVENT INVOKES
 
 
@@ -579,12 +572,6 @@ public class Control
             cont.invokeClose();
         close();
     }
-
-    public void invokeChildrenChanged()
-    {
-        childrenChanged();
-    }
-
 
     public Point getPosOnScreen()
     {

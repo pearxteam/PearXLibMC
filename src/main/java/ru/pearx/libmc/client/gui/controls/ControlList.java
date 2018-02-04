@@ -65,7 +65,6 @@ public class ControlList implements Collection<Control>
         {
             control.setParent(parent);
             control.invokeInit();
-            parent.invokeChildrenChanged();
         }
         return bool;
     }
@@ -78,7 +77,6 @@ public class ControlList implements Collection<Control>
         {
             ((Control) o).invokeClose();
             ((Control) o).setParent(null);
-            parent.invokeChildrenChanged();
         }
         return bool;
     }
@@ -100,7 +98,6 @@ public class ControlList implements Collection<Control>
                 c.setParent(parent);
                 c.invokeInit();
             }
-            parent.invokeChildrenChanged();
         }
         return bool;
     }
@@ -119,7 +116,6 @@ public class ControlList implements Collection<Control>
                     ((Control) o).setParent(null);
                 }
             }
-            parent.invokeChildrenChanged();
         }
         return bool;
     }
@@ -135,10 +131,7 @@ public class ControlList implements Collection<Control>
                 c.setParent(null);
             }
         }
-        boolean bool = lst.retainAll(collection);
-        if (bool)
-            parent.invokeChildrenChanged();
-        return bool;
+        return lst.retainAll(collection);
     }
 
     @Override
