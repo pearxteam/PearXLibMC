@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 @SideOnly(Side.CLIENT)
 public class Control
 {
-    private ControlList controls = new ControlList(this);
+    private ControlCollection controls = new ControlCollection(this);
     private Control parent;
     @Nullable
     private IGuiScreen guiScreen = null;
@@ -37,7 +37,7 @@ public class Control
 
     //PROPERTIES
 
-    public ControlList getControls()
+    public ControlCollection getControls()
     {
         return controls;
     }
@@ -372,6 +372,11 @@ public class Control
 
     }
 
+    public void update()
+    {
+
+    }
+
     //EVENT INVOKES
 
 
@@ -409,6 +414,7 @@ public class Control
             render();
             for (Control cont : getControls())
             {
+                //todo check bounds
                 cont.invokeRender(stenc ? stencilLevel + 1 : stencilLevel);
             }
             postRender();
@@ -554,6 +560,15 @@ public class Control
             init();
         }
         triggerMove();
+    }
+
+    public void invokeUpdate()
+    {
+        if(!initialized)
+            return;
+        update();
+        for(Control c : getControls())
+            c.invokeUpdate();
     }
 
     public GuiControlContainer.OverlayContainer getOverlay()

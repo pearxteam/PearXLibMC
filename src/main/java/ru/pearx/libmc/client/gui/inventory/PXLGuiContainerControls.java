@@ -140,4 +140,10 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
         super.setWorldAndResolution(mc, width, height);
         gui.invokeInit();
     }
+
+    @Override
+    public void updateScreen()
+    {
+        gui.invokeUpdate();
+    }
 }

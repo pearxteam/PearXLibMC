@@ -200,6 +200,13 @@ public class GuiControlContainer extends Control implements IGuiScreenProvider, 
     }
 
     @Override
+    public void invokeUpdate()
+    {
+        overlay.invokeUpdate();
+        super.invokeUpdate();
+    }
+
+    @Override
     public OverlayContainer getOverlay()
     {
         return overlay;

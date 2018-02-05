@@ -122,4 +122,10 @@ public class PXLGui extends GuiScreen implements IGuiScreen
         super.setWorldAndResolution(mc, width, height);
         gui.invokeInit();
     }
+
+    @Override
+    public void updateScreen()
+    {
+        gui.invokeUpdate();
+    }
 }
