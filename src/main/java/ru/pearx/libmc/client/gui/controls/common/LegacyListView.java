@@ -15,7 +15,7 @@ import java.util.List;
 /*
  * Created by mrAppleXZ on 27.09.17 19:19.
  */
-public class ListView extends Control
+public class LegacyListView extends Control
 {
     private Color backgroundColor = Colors.GREY_800;
     private Color textColor = Colors.WHITE;
@@ -29,7 +29,7 @@ public class ListView extends Control
     });
     private int selection = -1;
 
-    public ListView(String... elements)
+    public LegacyListView(String... elements)
     {
         this.elements.addAll(Arrays.asList(elements));
     }

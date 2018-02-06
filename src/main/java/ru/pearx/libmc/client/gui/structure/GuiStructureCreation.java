@@ -17,7 +17,7 @@ import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.controls.GuiOnScreen;
 import ru.pearx.libmc.client.gui.controls.common.Button;
 import ru.pearx.libmc.client.gui.controls.common.ContextMenu;
-import ru.pearx.libmc.client.gui.controls.common.ListView;
+import ru.pearx.libmc.client.gui.controls.common.LegacyListView;
 import ru.pearx.libmc.client.gui.controls.common.TextBox;
 import ru.pearx.libmc.common.networking.packets.SPacketCreateStructure;
 import ru.pearx.libmc.common.structure.processors.IStructureProcessor;
@@ -60,7 +60,7 @@ public class GuiStructureCreation extends GuiOnScreen
         }
     });
 
-    public ListView procsLst = new ListView()
+    public LegacyListView procsLst = new LegacyListView()
     {
         @Override
         public void onSelectionChanged(int old, int now)

@@ -8,6 +8,7 @@ import ru.pearx.lib.collections.event.EventCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by mrAppleXZ on 16.04.17 13:12.
@@ -21,8 +22,8 @@ public class ControlCollection implements Collection<Control>
         @Override
         public void onAdd(Control control)
         {
-            control.setParent(parent);
-            control.invokeInit();
+            setParentAndInit(control);
+            parent.invokeChildAdd(control);
         }
 
         @Override
@@ -37,8 +38,9 @@ public class ControlCollection implements Collection<Control>
         {
             if(o instanceof Control)
             {
-                ((Control) o).invokeClose();
-                ((Control) o).setParent(null);
+                Control c = (Control)o;
+                removeParentAndClose(c);
+                parent.invokeChildRemove(c);
             }
         }
 
@@ -52,7 +54,21 @@ public class ControlCollection implements Collection<Control>
         @Override
         public void onClear(Collection<Control> t)
         {
-            onRemove(t);
+            for(Control c : t)
+                removeParentAndClose(c);
+            parent.invokeChildClear(t);
+        }
+
+        private void setParentAndInit(Control c)
+        {
+            c.setParent(parent);
+            c.invokeInit();
+        }
+
+        private void removeParentAndClose(Control c)
+        {
+            c.invokeClose();
+            c.setParent(null);
         }
     });
 

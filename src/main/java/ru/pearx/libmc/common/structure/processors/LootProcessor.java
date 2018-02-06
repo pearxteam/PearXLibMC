@@ -12,7 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import ru.pearx.lib.Colors;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.client.gui.DrawingTools;
-import ru.pearx.libmc.client.gui.controls.common.ListView;
+import ru.pearx.libmc.client.gui.controls.common.LegacyListView;
 import ru.pearx.libmc.client.gui.controls.common.TextBox;
 import ru.pearx.libmc.client.gui.structure.ControlStructureProcessor;
 
@@ -67,7 +67,7 @@ public class LootProcessor extends StructureProcessor
     public static class LootControl extends ControlStructureProcessor
     {
         public TextBox table = new TextBox(new ResourceLocation(PXLMC.MODID, "textures/gui/textbox.png"));
-        public ListView faces = new ListView();
+        public LegacyListView faces = new LegacyListView();
 
         public LootControl()
         {

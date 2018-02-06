@@ -11,6 +11,7 @@ import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.IGuiScreen;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Created by mrAppleXZ on 16.04.17 13:12.
@@ -115,9 +116,19 @@ public class Control
         return width;
     }
 
+    public void setWidth(int width, boolean triggerMove)
+    {
+        int prev = this.width;
+        this.width = width;
+        if(getParent() != null)
+            getParent().invokeChildWidthChanged(this, prev, width);
+        if(triggerMove)
+            triggerMove();
+    }
+
     public void setWidth(int width)
     {
-        this.width = width;
+        setWidth(width, true);
     }
 
     public int getHeight()
@@ -125,9 +136,19 @@ public class Control
         return height;
     }
 
+    public void setHeight(int height, boolean triggerMove)
+    {
+        int prev = this.height;
+        this.height = height;
+        if(getParent() != null)
+            getParent().invokeChildHeightChanged(this, prev, height);
+        if(triggerMove)
+            triggerMove();
+    }
+
     public void setHeight(int height)
     {
-        this.height = height;
+        setHeight(height, true);
     }
 
     public void triggerMove()
@@ -154,7 +175,10 @@ public class Control
 
     public void setX(int x, boolean triggerMove)
     {
+        int prev = this.x;
         this.x = x;
+        if(getParent() != null)
+            getParent().invokeChildXChanged(this, prev, x);
         if(triggerMove)
             triggerMove();
     }
@@ -176,7 +200,10 @@ public class Control
 
     public void setY(int y, boolean triggerMove)
     {
+        int prev = this.y;
         this.y = y;
+        if(getParent() != null)
+            getParent().invokeChildYChanged(this, prev, y);
         if(triggerMove)
             triggerMove();
     }
@@ -188,8 +215,15 @@ public class Control
 
     public void setPos(int x, int y, boolean triggerMove)
     {
+        int prevX = this.x;
+        int prevY = this.y;
         this.x = x;
         this.y = y;
+        if (getParent() != null)
+        {
+            getParent().invokeChildXChanged(this, prevX, x);
+            getParent().invokeChildYChanged(this, prevY, y);
+        }
         if(triggerMove)
             triggerMove();
     }
@@ -199,10 +233,24 @@ public class Control
         setPos(x, y, true);
     }
 
+    public void setSize(int w, int h, boolean triggerMove)
+    {
+        int prevW = this.width;
+        int prevH = this.height;
+        this.width = w;
+        this.height = h;
+        if (getParent() != null)
+        {
+            getParent().invokeChildWidthChanged(this, prevW, w);
+            getParent().invokeChildHeightChanged(this, prevH, h);
+        }
+        if(triggerMove)
+            triggerMove();
+    }
+
     public void setSize(int w, int h)
     {
-        setWidth(w);
-        setHeight(h);
+        setSize(w, h, true);
     }
 
     public boolean isVisible()
@@ -373,6 +421,41 @@ public class Control
     }
 
     public void update()
+    {
+
+    }
+
+    public void childAdd(Control c)
+    {
+
+    }
+
+    public void childRemove(Control c)
+    {
+
+    }
+
+    public void childClear(Collection<Control> c)
+    {
+
+    }
+
+    public void childXChanged(Control c, int prevX, int newX)
+    {
+
+    }
+
+    public void childYChanged(Control c, int prevY, int newY)
+    {
+
+    }
+
+    public void childWidthChanged(Control c, int prevW, int newW)
+    {
+
+    }
+
+    public void childHeightChanged(Control c, int prevH, int newH)
     {
 
     }
@@ -560,6 +643,55 @@ public class Control
             init();
         }
         triggerMove();
+    }
+
+    public void invokeChildAdd(Control c)
+    {
+        if(!initialized)
+            return;
+        childAdd(c);
+    }
+
+    public void invokeChildRemove(Control c)
+    {
+        if(!initialized)
+            return;
+        childRemove(c);
+    }
+
+    public void invokeChildClear(Collection<Control> c)
+    {
+        if(!initialized)
+            return;
+        childClear(c);
+    }
+
+    public void invokeChildXChanged(Control c, int prevX, int newX)
+    {
+        if(!initialized)
+            return;
+        childXChanged(c, prevX, newX);
+    }
+
+    public void invokeChildYChanged(Control c, int prevY, int newY)
+    {
+        if(!initialized)
+            return;
+        childYChanged(c, prevY, newY);
+    }
+
+    public void invokeChildWidthChanged(Control c, int prevW, int newW)
+    {
+        if(!initialized)
+            return;
+        childWidthChanged(c, prevW, newW);
+    }
+
+    public void invokeChildHeightChanged(Control c, int prevH, int newH)
+    {
+        if(!initialized)
+            return;
+        childHeightChanged(c, prevH, newH);
     }
 
     public void invokeUpdate()
