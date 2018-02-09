@@ -5,10 +5,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.lib.collections.event.CollectionEventHandler;
 import ru.pearx.lib.collections.event.EventCollection;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by mrAppleXZ on 16.04.17 13:12.
@@ -17,7 +16,7 @@ import java.util.List;
 public class ControlCollection implements Collection<Control>
 {
     public Control parent;
-    private EventCollection<Control> lst = new EventCollection<>(new ArrayList<>(), new CollectionEventHandler<Control>()
+    private EventCollection<Control> lst = new EventCollection<>(new ConcurrentLinkedQueue<>(), new CollectionEventHandler<Control>()
     {
         @Override
         public void onAdd(Control control)
