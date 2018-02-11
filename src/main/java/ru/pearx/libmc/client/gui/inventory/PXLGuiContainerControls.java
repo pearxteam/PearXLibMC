@@ -146,4 +146,11 @@ public class PXLGuiContainerControls extends PXLGuiContainer implements IGuiScre
     {
         gui.invokeUpdate();
     }
+
+    @Override
+    public void close()
+    {
+        if(Minecraft.getMinecraft().currentScreen == this)
+            Minecraft.getMinecraft().displayGuiScreen(null);
+    }
 }

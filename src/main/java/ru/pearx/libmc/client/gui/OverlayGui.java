@@ -56,4 +56,10 @@ public class OverlayGui implements IGuiScreen
     {
         //not implemented.
     }
+
+    @Override
+    public void close()
+    {
+
+    }
 }

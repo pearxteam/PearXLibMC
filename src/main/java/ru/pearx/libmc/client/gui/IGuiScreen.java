@@ -49,4 +49,6 @@ public interface IGuiScreen
      */
     void drawTooltip(ItemStack stack, int x, int y);
     void drawHovering(String text, int x, int y);
+
+    void close();
 }

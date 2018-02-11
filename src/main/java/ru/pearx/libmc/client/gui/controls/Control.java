@@ -213,6 +213,7 @@ public class Control
         setY(y, true);
     }
 
+
     public void setPos(int x, int y, boolean triggerMove)
     {
         int prevX = this.x;

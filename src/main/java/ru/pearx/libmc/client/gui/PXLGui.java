@@ -128,4 +128,11 @@ public class PXLGui extends GuiScreen implements IGuiScreen
     {
         gui.invokeUpdate();
     }
+
+    @Override
+    public void close()
+    {
+        if(Minecraft.getMinecraft().currentScreen == this)
+            Minecraft.getMinecraft().displayGuiScreen(null);
+    }
 }
