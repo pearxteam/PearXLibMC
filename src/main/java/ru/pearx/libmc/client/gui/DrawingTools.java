@@ -14,13 +14,21 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import ru.pearx.lib.Color;
+import ru.pearx.lib.math.BezierUtils;
 
 /**
  * Created by mrAppleXZ on 16.04.17 20:45.
  */
 @SideOnly(Side.CLIENT)
-public class DrawingTools
+public final class DrawingTools
 {
+    private DrawingTools() {}
+
+    public interface BezierColor
+    {
+        Color getColor(float[][] points, float[] point, int index);
+    }
+
     public static void drawTexture(ResourceLocation tex, int x, int y, int width, int height, int u, int v, int texw, int texh)
     {
         Minecraft.getMinecraft().getTextureManager().bindTexture(tex);
@@ -178,6 +186,32 @@ public class DrawingTools
         bld.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
         bld.pos(x1, y1, 0).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
         bld.pos(x2, y2, 0).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.glLineWidth(1);
+    }
+
+    public static void drawBezier(float dt, float width, float x0, float y0, float x1, float y1, float x2, float y2, BezierColor col)
+    {
+        GlStateManager.glLineWidth(width);
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bld = tessellator.getBuffer();
+        bld.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        float[][] res = BezierUtils.getBezier2dPoints(dt, x0, y0, x1, y1, x2, y2);
+        for(int i = 0; i < res.length; i++)
+        {
+            float[] f = res[i];
+            Color c = col.getColor(res, f, i);
+            bld.pos(f[0], f[1], 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+        }
         tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         GlStateManager.disableBlend();
