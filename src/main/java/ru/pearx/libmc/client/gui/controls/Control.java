@@ -473,10 +473,9 @@ public class Control
             GlStateManager.pushMatrix();
             GlStateManager.translate(getTransformedX(), getTransformedY(), 0);
             boolean stenc = shouldStencil();
+            int flag = stencilLevel + 1;
             if(stenc)
             {
-                //todo popStencil pushStencil
-                int flag = stencilLevel + 1;
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glEnable(GL11.GL_STENCIL_TEST);
                 GL11.glStencilFunc(GL11.GL_EQUAL, flag - 1, 0xFF);
@@ -503,6 +502,10 @@ public class Control
                 cont.invokeRender(stenc ? stencilLevel + 1 : stencilLevel);
             }
             postRender();
+            if(stenc)
+            {
+                GL11.glStencilFunc(GL11.GL_EQUAL, flag - 1, 0xFF);
+            }
             if(stenc && stencilLevel == 0)
                 GL11.glDisable(GL11.GL_STENCIL_TEST);
             GlStateManager.popMatrix();
