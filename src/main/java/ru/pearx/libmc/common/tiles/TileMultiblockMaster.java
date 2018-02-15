@@ -125,17 +125,10 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
         updateMultiblock();
     }
 
-    public BlockPos getOriginalPos(BlockPos trans)
-    {
-        return PXLMC.transformPos(trans.subtract(getPos()), null, PXLMC.getIdentityRotation(rot));
-    }
-
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox()
     {
         return renderBB;
     }
-
-
 }

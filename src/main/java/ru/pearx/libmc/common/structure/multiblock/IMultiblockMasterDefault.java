@@ -9,6 +9,10 @@ import ru.pearx.libmc.common.structure.multiblock.events.*;
 /*
  * Created by mrAppleXZ on 13.11.17 19:06.
  */
+
+/**
+ * An {@link IMultiblockMaster} with default event handlers.
+ */
 public interface IMultiblockMasterDefault extends IMultiblockMaster
 {
     @Override
@@ -19,12 +23,12 @@ public interface IMultiblockMasterDefault extends IMultiblockMaster
             case MultiblockBreakEvent.ID:
             {
                 handleBreak((MultiblockBreakEvent) evt, part);
-                if(!isInactive())
+                if (!isInactive())
                     unform();
                 break;
             }
             case MultiblockActivatedEvent.ID:
-                return evt.cast(handleActivated((MultiblockActivatedEvent)evt, part));
+                return evt.cast(handleActivated((MultiblockActivatedEvent) evt, part));
             case MultiblockCapabilityEvent.Has.ID:
                 return evt.cast(hasCapability((MultiblockCapabilityEvent.Has<?>) evt, part));
             case MultiblockCapabilityEvent.Get.ID:

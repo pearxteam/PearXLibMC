@@ -9,9 +9,11 @@ import ru.pearx.libmc.common.structure.multiblock.IMultiblockEvent;
 /*
  * Created by mrAppleXZ on 13.11.17 19:13.
  */
+
 public class MultiblockActivatedEvent implements IMultiblockEvent<Boolean>
 {
     public static final String ID = "activated";
+
     private IBlockState state;
     private EntityPlayer player;
     private EnumHand hand;

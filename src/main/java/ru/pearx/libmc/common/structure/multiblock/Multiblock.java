@@ -169,13 +169,13 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
         try
         {
             TileEntity te = world.getTileEntity(pos);
-            if (te != null && te instanceof IMultiblockPart)
+            if (te instanceof IMultiblockPart)
             {
                 IMultiblockPart part = (IMultiblockPart) te;
-                TileEntity master = te.getWorld().getTileEntity(part instanceof IMultiblockSlave ? ((IMultiblockSlave) part).getMasterPos() : part.getPos());
-                if (master != null && master instanceof IMultiblockMaster)
+                IMultiblockMaster master = part.getMaster();
+                if (master != null)
                 {
-                    return ((IMultiblockMaster) master).handleEvent(evt, part);
+                    return master.handleEvent(evt, part);
                 }
             }
         }
