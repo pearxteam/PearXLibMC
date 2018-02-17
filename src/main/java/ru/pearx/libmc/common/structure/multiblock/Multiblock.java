@@ -38,19 +38,6 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
     private ModelResourceLocation itemModel;
     private CreativeTabs itemCreativeTab;
 
-    public Multiblock(BlockArray structure, BlockPos masterPos, IBlockState masterState, ModelResourceLocation itemModel, CreativeTabs itemCreativeTab)
-    {
-        this.structure = structure;
-        this.masterPos = masterPos;
-        this.masterState = masterState;
-        this.itemModel = itemModel;
-        this.itemCreativeTab = itemCreativeTab;
-    }
-
-    public Multiblock()
-    {
-    }
-
     public BlockArray getStructure()
     {
         return structure;

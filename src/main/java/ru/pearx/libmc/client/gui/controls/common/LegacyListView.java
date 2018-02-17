@@ -2,7 +2,6 @@ package ru.pearx.libmc.client.gui.controls.common;
 
 import ru.pearx.lib.Color;
 import ru.pearx.lib.Colors;
-import ru.pearx.lib.collections.event.EventList;
 import ru.pearx.lib.collections.event.SimpleEventList;
 import ru.pearx.lib.math.MathUtils;
 import ru.pearx.libmc.client.gui.DrawingTools;

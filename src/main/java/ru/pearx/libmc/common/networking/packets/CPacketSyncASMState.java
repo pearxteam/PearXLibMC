@@ -19,15 +19,17 @@ import ru.pearx.libmc.common.networking.ByteBufTools;
 public class CPacketSyncASMState implements IMessage
 {
     public BlockPos pos;
+    public int element;
     public int state;
 
     public CPacketSyncASMState()
     {
     }
 
-    public CPacketSyncASMState(BlockPos pos, int state)
+    public CPacketSyncASMState(BlockPos pos, int element, int state)
     {
         this.pos = pos;
+        this.element = element;
         this.state = state;
     }
 
@@ -35,6 +37,7 @@ public class CPacketSyncASMState implements IMessage
     public void fromBytes(ByteBuf buf)
     {
         pos = ByteBufTools.readBlockPos(buf);
+        element = buf.readInt();
         state = buf.readInt();
     }
 
@@ -42,6 +45,7 @@ public class CPacketSyncASMState implements IMessage
     public void toBytes(ByteBuf buf)
     {
         ByteBufTools.writeBlockPos(buf, pos);
+        buf.writeInt(element);
         buf.writeInt(state);
     }
 
@@ -57,7 +61,7 @@ public class CPacketSyncASMState implements IMessage
                 if(te != null && te.hasCapability(PXLCapabilities.ASM, null))
                 {
                     IAnimationStateManager manager = te.getCapability(PXLCapabilities.ASM, null);
-                    manager.changeState(manager.getAvailableStates().get(message.state));
+                    manager.changeState(message.element, message.state);
                 }
             });
             return null;

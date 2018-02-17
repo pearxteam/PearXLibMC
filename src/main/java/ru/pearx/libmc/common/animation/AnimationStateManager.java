@@ -14,43 +14,54 @@ import java.util.List;
 public class AnimationStateManager implements IAnimationStateManager
 {
     private TileEntity tile;
-    private String state;
-    private List<String> states;
+    private List<AnimationElement> elements;
 
-    public AnimationStateManager(TileEntity te, String defaultState, String... states)
+    public AnimationStateManager(TileEntity te, AnimationElement... elements)
     {
         this.tile = te;
-        this.state = defaultState;
-        this.states = Arrays.asList(states);
+        this.elements = Arrays.asList(elements);
     }
 
     @Override
-    public void changeState(String state)
+    public List<AnimationElement> getElements()
     {
-        if(!states.contains(state))
-            throw new IllegalArgumentException("state");
-        //client
-        if(tile.getWorld().isRemote)
+        return elements;
+    }
+
+    @Override
+    public AnimationElement getElement(String name)
+    {
+        for (AnimationElement el : getElements())
+            if (el.getName().equals(name))
+                return el;
+        return null;
+    }
+
+    @Override
+    public void changeState(int element, int index)
+    {
+        getElements().get(element).setStateIndex(index);
+        if (!tile.getWorld().isRemote)
         {
-            this.state = state;
+            PXLMC.NETWORK.sendToAllAround(new CPacketSyncASMState(tile.getPos(), element, index), new NetworkRegistry.TargetPoint(tile.getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 256));
         }
-        //server
-        else
+    }
+
+    @Override
+    public void changeState(String name, String newState)
+    {
+        for(int i = 0; i < getElements().size(); i++)
         {
-            this.state = state;
-            PXLMC.NETWORK.sendToAllAround(new CPacketSyncASMState(tile.getPos(), getAvailableStates().indexOf(state)), new NetworkRegistry.TargetPoint(tile.getWorld().provider.getDimension(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ(), 256));
+            AnimationElement el = getElements().get(i);
+            if(el.getName().equals(name))
+            {
+                int stateInd = el.getStates().indexOf(newState);
+                if (stateInd < 0)
+                    throw new IllegalArgumentException("\"" + newState + "\" is not a valid state for an element \"" + name + "\"! Valid states are " + el.getStates() + ".");
+                changeState(i, stateInd);
+                return;
+            }
         }
-    }
-
-    @Override
-    public String getState()
-    {
-        return state;
-    }
-
-    @Override
-    public List<String> getAvailableStates()
-    {
-        return states;
+        throw new IllegalArgumentException("\"" + name + "\" is not a valid element.");
     }
 }

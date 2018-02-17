@@ -4,7 +4,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.lib.Color;
 import ru.pearx.lib.Colors;
-import ru.pearx.lib.collections.event.EventList;
 import ru.pearx.lib.collections.event.SimpleEventList;
 import ru.pearx.libmc.client.gui.DrawingTools;
 import ru.pearx.libmc.client.gui.controls.Control;

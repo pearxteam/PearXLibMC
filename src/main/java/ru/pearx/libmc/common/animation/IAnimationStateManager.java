@@ -7,7 +7,8 @@ import java.util.List;
  */
 public interface IAnimationStateManager
 {
-    void changeState(String state);
-    String getState();
-    List<String> getAvailableStates();
+    void changeState(String name, String state);
+    void changeState(int element, int state);
+    AnimationElement getElement(String name);
+    List<AnimationElement> getElements();
 }
