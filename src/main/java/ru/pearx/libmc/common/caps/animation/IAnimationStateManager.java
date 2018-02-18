@@ -1,4 +1,4 @@
-package ru.pearx.libmc.common.animation;
+package ru.pearx.libmc.common.caps.animation;
 
 import java.util.List;
 

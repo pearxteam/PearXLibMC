@@ -1,19 +1,23 @@
 package ru.pearx.libmc.common.tiles;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.libmc.PXLMC;
+import ru.pearx.libmc.common.networking.packets.CPacketUpdateTileEntitySyncable;
 
 import javax.annotation.Nullable;
 
 /**
  * Created by mrAppleXZ on 11.04.17 20:28.
  */
-public class TileSyncable extends TileEntity
+public abstract class TileSyncable extends TileEntity
 {
     @Override
     @SideOnly(Side.CLIENT)
@@ -36,9 +40,36 @@ public class TileSyncable extends TileEntity
         return new SPacketUpdateTileEntity(getPos(), 1, getUpdateTag());
     }
 
-    public void sendUpdatesToClients()
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
     {
-        IBlockState ibs = getWorld().getBlockState(getPos());
-        getWorld().notifyBlockUpdate(getPos(), ibs, ibs, 2);
+        super.readFromNBT(compound);
+        readCustomData(compound);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        writeCustomData(compound);
+        return compound;
+    }
+
+    public abstract void readCustomData(NBTTagCompound tag);
+    public abstract void writeCustomData(NBTTagCompound tag);
+
+    public void sendUpdates(NBTTagCompound tag)
+    {
+        if(getWorld() instanceof WorldServer)
+        {
+            PlayerChunkMapEntry entr = ((WorldServer) getWorld()).getPlayerChunkMap().getEntry(getPos().getX() >> 4, getPos().getZ() >> 4);
+            if(entr != null)
+            {
+                for (EntityPlayerMP p : entr.players)
+                {
+                    PXLMC.NETWORK.sendTo(new CPacketUpdateTileEntitySyncable(getPos(), tag), p);
+                }
+            }
+        }
     }
 }

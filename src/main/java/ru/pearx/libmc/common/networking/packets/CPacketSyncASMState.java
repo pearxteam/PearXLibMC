@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.common.PXLCapabilities;
-import ru.pearx.libmc.common.animation.IAnimationStateManager;
+import ru.pearx.libmc.common.caps.animation.IAnimationStateManager;
 import ru.pearx.libmc.common.networking.ByteBufTools;
 
 /*

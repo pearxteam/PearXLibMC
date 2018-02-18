@@ -93,36 +93,40 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+    public void readCustomData(NBTTagCompound tag)
     {
-        nbt.setInteger("rotation", getRotation().ordinal());
-        NBTTagList lst = new NBTTagList();
-        for(BlockPos slave : getSlavesPositions())
+        if(tag.hasKey("rotation", Constants.NBT.TAG_INT))
+            setRotation(Rotation.values()[tag.getInteger("rotation")]);
+        if(tag.hasKey("slaves", Constants.NBT.TAG_LIST))
         {
-           lst.appendTag(new NBTTagIntArray(new int[]{slave.getX() - getPos().getX(), slave.getY() - getPos().getY(), slave.getZ() - getPos().getZ()}));
+            List<BlockPos> slaves = new ArrayList<>();
+            NBTTagList lst = tag.getTagList("slaves", Constants.NBT.TAG_INT_ARRAY);
+            for (NBTBase base : lst)
+            {
+                int[] arr = ((NBTTagIntArray) base).getIntArray();
+                slaves.add(new BlockPos(arr[0] + getPos().getX(), arr[1] + getPos().getY(), arr[2] + getPos().getZ()));
+            }
+            setSlavesPositions(slaves);
         }
-        nbt.setTag("slaves", lst);
-        nbt.setString("multiblock_id", getId().toString());
-        nbt.setBoolean("inactive", inactive);
-        return super.writeToNBT(nbt);
+        if(tag.hasKey("multiblock_id", Constants.NBT.TAG_STRING))
+            setId(new ResourceLocation(tag.getString("multiblock_id")));
+        if(tag.hasKey("inactive", Constants.NBT.TAG_BYTE))
+            setInactive(tag.getBoolean("inactive"));
+        updateMultiblock();
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt)
+    public void writeCustomData(NBTTagCompound tag)
     {
-        super.readFromNBT(nbt);
-        setRotation(Rotation.values()[nbt.getInteger("rotation")]);
-        List<BlockPos> slaves = new ArrayList<>();
-        NBTTagList lst = nbt.getTagList("slaves", Constants.NBT.TAG_INT_ARRAY);
-        for(NBTBase base : lst)
+        tag.setInteger("rotation", getRotation().ordinal());
+        NBTTagList lst = new NBTTagList();
+        for(BlockPos slave : getSlavesPositions())
         {
-            int[] arr = ((NBTTagIntArray) base).getIntArray();
-            slaves.add(new BlockPos(arr[0] + getPos().getX(), arr[1] + getPos().getY(), arr[2] + getPos().getZ()));
+            lst.appendTag(new NBTTagIntArray(new int[]{slave.getX() - getPos().getX(), slave.getY() - getPos().getY(), slave.getZ() - getPos().getZ()}));
         }
-        setSlavesPositions(slaves);
-        setId(new ResourceLocation(nbt.getString("multiblock_id")));
-        setInactive(nbt.getBoolean("inactive"));
-        updateMultiblock();
+        tag.setTag("slaves", lst);
+        tag.setString("multiblock_id", getId().toString());
+        tag.setBoolean("inactive", inactive);
     }
 
     @Override

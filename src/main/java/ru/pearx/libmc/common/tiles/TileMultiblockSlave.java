@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockSlave;
 import ru.pearx.libmc.common.structure.multiblock.Multiblock;
 import ru.pearx.libmc.common.structure.multiblock.events.MultiblockCapabilityEvent;
@@ -30,20 +31,20 @@ public class TileMultiblockSlave extends TileSyncable implements IMultiblockSlav
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+    public void readCustomData(NBTTagCompound tag)
     {
-        super.writeToNBT(nbt);
-        BlockPos rel = getMasterPos().subtract(getPos());
-        nbt.setIntArray("masterPos", new int[] {rel.getX(), rel.getY(), rel.getZ()});
-        return nbt;
+        if(tag.hasKey("masterPos", Constants.NBT.TAG_INT_ARRAY))
+        {
+            int[] ints = tag.getIntArray("masterPos");
+            setMasterPos(new BlockPos(getPos().getX() + ints[0], getPos().getY() + ints[1], getPos().getZ() + ints[2]));
+        }
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbt)
+    public void writeCustomData(NBTTagCompound tag)
     {
-        super.readFromNBT(nbt);
-        int[] ints = nbt.getIntArray("masterPos");
-        setMasterPos(new BlockPos(getPos().getX() + ints[0], getPos().getY() + ints[1], getPos().getZ() + ints[2]));
+        BlockPos rel = getMasterPos().subtract(getPos());
+        tag.setIntArray("masterPos", new int[] {rel.getX(), rel.getY(), rel.getZ()});
     }
 
     @Nullable

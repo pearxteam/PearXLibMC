@@ -26,6 +26,7 @@ import ru.pearx.libmc.common.CommonProxy;
 import ru.pearx.libmc.common.PXLCapabilities;
 import ru.pearx.libmc.common.networking.packets.CPacketOpenStructureCreationGui;
 import ru.pearx.libmc.common.networking.packets.CPacketSyncASMState;
+import ru.pearx.libmc.common.networking.packets.CPacketUpdateTileEntitySyncable;
 import ru.pearx.libmc.common.networking.packets.SPacketCreateStructure;
 import ru.pearx.libmc.common.structure.CommandStructure;
 import ru.pearx.libmc.common.structure.processors.LootProcessor;
@@ -79,9 +80,11 @@ public class PXLMC
     @Mod.EventHandler
     public static void init(FMLInitializationEvent e)
     {
-        NETWORK.registerMessage(CPacketSyncASMState.Handler.class, CPacketSyncASMState.class, 0, Side.CLIENT);
-        NETWORK.registerMessage(CPacketOpenStructureCreationGui.Handler.class, CPacketOpenStructureCreationGui.class, 1, Side.CLIENT);
-        NETWORK.registerMessage(SPacketCreateStructure.Handler.class, SPacketCreateStructure.class, 2, Side.SERVER);
+        int id = 0;
+        NETWORK.registerMessage(CPacketSyncASMState.Handler.class, CPacketSyncASMState.class, id++, Side.CLIENT);
+        NETWORK.registerMessage(CPacketOpenStructureCreationGui.Handler.class, CPacketOpenStructureCreationGui.class, id++, Side.CLIENT);
+        NETWORK.registerMessage(SPacketCreateStructure.Handler.class, SPacketCreateStructure.class, id++, Side.SERVER);
+        NETWORK.registerMessage(CPacketUpdateTileEntitySyncable.Handler.class, CPacketUpdateTileEntitySyncable.class, id++, Side.CLIENT);
     }
 
     @Mod.EventHandler

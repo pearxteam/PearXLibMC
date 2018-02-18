@@ -7,8 +7,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import ru.pearx.libmc.PXLMC;
-import ru.pearx.libmc.common.animation.AnimationStateManager;
-import ru.pearx.libmc.common.animation.IAnimationStateManager;
+import ru.pearx.libmc.common.caps.animation.AnimationStateManager;
+import ru.pearx.libmc.common.caps.animation.IAnimationStateManager;
 
 import javax.annotation.Nullable;
 
