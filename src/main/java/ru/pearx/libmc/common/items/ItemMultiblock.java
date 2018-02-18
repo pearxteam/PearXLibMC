@@ -63,6 +63,7 @@ public class ItemMultiblock extends ItemBase
             if(mb != null)
             {
                 mb.form(worldIn, pos.offset(facing), PXLMC.getRotation(player.getHorizontalFacing()), player);
+                return EnumActionResult.SUCCESS;
             }
         }
         return EnumActionResult.FAIL;
