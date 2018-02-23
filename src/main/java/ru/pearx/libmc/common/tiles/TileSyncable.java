@@ -1,9 +1,13 @@
 package ru.pearx.libmc.common.tiles;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
@@ -58,7 +62,7 @@ public abstract class TileSyncable extends TileEntity
     public abstract void readCustomData(NBTTagCompound tag);
     public abstract void writeCustomData(NBTTagCompound tag);
 
-    public void sendUpdates(NBTTagCompound tag)
+    public void sendUpdates(NBTTagCompound tag, EntityPlayer player)
     {
         if(getWorld() instanceof WorldServer)
         {
@@ -67,7 +71,8 @@ public abstract class TileSyncable extends TileEntity
             {
                 for (EntityPlayerMP p : entr.players)
                 {
-                    PXLMC.NETWORK.sendTo(new CPacketUpdateTileEntitySyncable(getPos(), tag), p);
+                    if(player == null || player != p)
+                        PXLMC.NETWORK.sendTo(new CPacketUpdateTileEntitySyncable(getPos(), tag), p);
                 }
             }
         }

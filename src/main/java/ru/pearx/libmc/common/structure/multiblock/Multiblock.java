@@ -118,24 +118,26 @@ public class Multiblock extends IForgeRegistryEntry.Impl<Multiblock>
             {
                 w.setBlockState(absPos, getSlaveState());
                 TileEntity te = w.getTileEntity(absPos);
-                if (te != null && te instanceof IMultiblockSlave)
+                if (te instanceof IMultiblockSlave)
                 {
                     ((IMultiblockSlave) te).setMasterPos(absMasterPos);
                 }
+                w.notifyBlockUpdate(absPos, w.getBlockState(absPos), w.getBlockState(absPos), 2);
                 slaves.add(absPos.toImmutable());
             }
         }
 
         w.setBlockState(absMasterPos, getMasterState());
         TileEntity te = w.getTileEntity(absMasterPos);
-        if (te != null && te instanceof IMultiblockMaster)
+        if (te instanceof IMultiblockMaster)
         {
             IMultiblockMaster master = (IMultiblockMaster) te;
             master.setRotation(rot);
             master.setSlavesPositions(slaves);
-            master.setId(getRegistryName());
+            master.setIdAndUpdate(getRegistryName());
             master.postForm(pl);
-            master.updateMultiblock();
+            master.setInactive(false);
+            w.notifyBlockUpdate(absMasterPos, w.getBlockState(absMasterPos), w.getBlockState(absMasterPos), 2);
         }
     }
 

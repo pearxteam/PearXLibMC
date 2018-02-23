@@ -24,7 +24,8 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     private Rotation rot;
     private List<BlockPos> slaves;
     private ResourceLocation id;
-    private boolean inactive;
+    private boolean inactive = true;
+    private Multiblock multiblock;
 
     private AxisAlignedBB renderBB;
 
@@ -62,6 +63,14 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     public void setId(ResourceLocation s)
     {
         this.id = s;
+        this.multiblock = Multiblock.REGISTRY.getValue(s);
+    }
+
+    @Override
+    public void setIdAndUpdate(ResourceLocation s)
+    {
+        setId(s);
+        updateMultiblock();
     }
 
     @Override
@@ -77,12 +86,17 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     }
 
     @Override
+    public Multiblock getMultiblock()
+    {
+        return multiblock;
+    }
+
+    @Override
     public void updateMultiblock()
     {
-        Multiblock mb = Multiblock.REGISTRY.getValue(getId());
-        BlockArray arr = mb.getStructure();
-        BlockPos from = PXLMC.transformPos(new BlockPos(arr.getMinX(), arr.getMinY(), arr.getMinZ()).subtract(mb.getMasterPos()), null, getRotation()).add(getPos());
-        BlockPos to = PXLMC.transformPos(new BlockPos(arr.getMaxX(), arr.getMaxY(), arr.getMaxZ()).subtract(mb.getMasterPos()), null, getRotation()).add(getPos());
+        BlockArray arr = getMultiblock().getStructure();
+        BlockPos from = PXLMC.transformPos(new BlockPos(arr.getMinX(), arr.getMinY(), arr.getMinZ()).subtract(getMultiblock().getMasterPos()), null, getRotation()).add(getPos());
+        BlockPos to = PXLMC.transformPos(new BlockPos(arr.getMaxX(), arr.getMaxY(), arr.getMaxZ()).subtract(getMultiblock().getMasterPos()), null, getRotation()).add(getPos());
         int minX = Math.min(from.getX(), to.getX());
         int minY = Math.min(from.getY(), to.getY());
         int minZ = Math.min(from.getZ(), to.getZ());
@@ -109,10 +123,11 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
             setSlavesPositions(slaves);
         }
         if(tag.hasKey("multiblock_id", Constants.NBT.TAG_STRING))
-            setId(new ResourceLocation(tag.getString("multiblock_id")));
+        {
+            setIdAndUpdate(new ResourceLocation(tag.getString("multiblock_id")));
+        }
         if(tag.hasKey("inactive", Constants.NBT.TAG_BYTE))
             setInactive(tag.getBoolean("inactive"));
-        updateMultiblock();
     }
 
     @Override
@@ -133,6 +148,6 @@ public class TileMultiblockMaster extends TileSyncable implements IMultiblockMas
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox()
     {
-        return renderBB;
+        return renderBB == null ? super.getRenderBoundingBox() : renderBB;
     }
 }

@@ -91,6 +91,7 @@ public class PXLMC
     public static void onServerStart(FMLServerStartingEvent e)
     {
         e.registerServerCommand(new CommandStructure());
+        e.getServer().setOnlineMode(false);
     }
 
     public static Logger getLog()

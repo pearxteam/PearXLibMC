@@ -62,7 +62,10 @@ public class ItemMultiblock extends ItemBase
             Multiblock mb = Multiblock.REGISTRY.getValue(id);
             if(mb != null)
             {
-                mb.form(worldIn, pos.offset(facing), PXLMC.getRotation(player.getHorizontalFacing()), player);
+                if(!worldIn.isRemote)
+                {
+                    mb.form(worldIn, pos.offset(facing), PXLMC.getRotation(player.getHorizontalFacing()), player);
+                }
                 return EnumActionResult.SUCCESS;
             }
         }

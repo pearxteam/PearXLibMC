@@ -47,6 +47,17 @@ public interface IMultiblockMaster extends IMultiblockPart
     ResourceLocation getId();
 
     /**
+     * Gets the {@link Multiblock} of this master.
+     */
+    Multiblock getMultiblock();
+
+    /**
+     * Sets the multiblock's ID and updates the multiblock.
+     * @see #updateMultiblock().
+     */
+    void setIdAndUpdate(ResourceLocation s);
+
+    /**
      * Sets the multiblock's ID.
      */
     void setId(ResourceLocation s);
@@ -63,13 +74,13 @@ public interface IMultiblockMaster extends IMultiblockPart
     void setInactive(boolean val);
 
     /**
-     * Updates the multiblock. Called when the multiblock is formed and loaded from NBT.
+     * Updates the multiblock. Usually called when the multiblock has been loaded from NBT or formed.
      */
     void updateMultiblock();
 
 
     /**
-     * An event that occurs when the multiblock is formed, but not updated for the first time.
+     * An event that occurs when the multiblock is formed and the {@link #updateMultiblock()} method has called.
      * @param p The player that formed the multiblock.
      */
     default void postForm(@Nullable EntityPlayer p) {}
@@ -83,14 +94,13 @@ public interface IMultiblockMaster extends IMultiblockPart
         BlockPos.MutableBlockPos origin = new BlockPos.MutableBlockPos();
         List<BlockPos> lst = new ArrayList<>(getSlavesPositions());
         lst.add(getPos());
-        Multiblock mb = Multiblock.REGISTRY.getValue(getId());
         Rotation rot = PXLMC.getIdentityRotation(getRotation());
         for(BlockPos pos : lst)
         {
             origin.setPos(pos.getX() - getPos().getX(), pos.getY() - getPos().getY(), pos.getZ() - getPos().getZ());
             PXLMC.transformPos(origin, null, rot);
-            origin.setPos(origin.getX() + + mb.getMasterPos().getX(), origin.getY() + mb.getMasterPos().getY(), origin.getZ() + + mb.getMasterPos().getZ());
-            BlockArrayEntry entr = mb.getStructure().getMap().get(origin);
+            origin.setPos(origin.getX() + getMultiblock().getMasterPos().getX(), origin.getY() + getMultiblock().getMasterPos().getY(), origin.getZ() + + getMultiblock().getMasterPos().getZ());
+            BlockArrayEntry entr = getMultiblock().getStructure().getMap().get(origin);
             getWorld().setBlockState(pos, entr.getState().withRotation(getRotation()));
             if(entr.getTile() == null)
                 getWorld().removeTileEntity(pos);
@@ -120,18 +130,15 @@ public interface IMultiblockMaster extends IMultiblockPart
      */
     default BlockPos getOriginalPos(BlockPos trans)
     {
-        return PXLMC.transformPos(trans.subtract(getPos()), null, PXLMC.getIdentityRotation(getRotation()));
+        return getMultiblock().getMasterPos().add(PXLMC.transformPos(trans.subtract(getPos()), null, PXLMC.getIdentityRotation(getRotation())));
     }
 
     /**
-     * Gets the original {@link BlockArrayEntry} from a position in the world.
-     * @param trans Position in the world/
-     * @return Original {@link BlockArrayEntry} in the structure.
+     * Gets the (0; 0; 0;) position of the multiblock in the world.
      */
-    default BlockArrayEntry getOriginalEntry(BlockPos trans)
+    default BlockPos getZeroPos()
     {
-        //todo cache the multiblock?
-        return Multiblock.REGISTRY.getValue(getId()).getStructure().getMap().get(getOriginalPos(trans));
+        return getPos().subtract(PXLMC.transformPos(getMultiblock().getMasterPos(), null, getRotation()));
     }
 
     /**

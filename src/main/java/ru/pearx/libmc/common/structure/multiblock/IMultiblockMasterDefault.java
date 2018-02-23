@@ -18,25 +18,28 @@ public interface IMultiblockMasterDefault extends IMultiblockMaster
     @Override
     default <T>T handleEvent(IMultiblockEvent<T> evt, IMultiblockPart part)
     {
-        switch (evt.getId())
+        if(!isInactive())
         {
-            case MultiblockBreakEvent.ID:
+            switch (evt.getId())
             {
-                handleBreak((MultiblockBreakEvent) evt, part);
-                if (!isInactive())
-                    unform();
-                break;
+                case MultiblockBreakEvent.ID:
+                {
+                    handleBreak((MultiblockBreakEvent) evt, part);
+                    if (!part.getWorld().isRemote)
+                        unform();
+                    break;
+                }
+                case MultiblockActivatedEvent.ID:
+                    return evt.cast(handleActivated((MultiblockActivatedEvent) evt, part));
+                case MultiblockCapabilityEvent.Has.ID:
+                    return evt.cast(hasCapability((MultiblockCapabilityEvent.Has<?>) evt, part));
+                case MultiblockCapabilityEvent.Get.ID:
+                    return evt.cast(getCapability((MultiblockCapabilityEvent.Get<T>) evt, part));
+                case MultiblockPickBlockEvent.ID:
+                    return evt.cast(getPickBlock((MultiblockPickBlockEvent) evt, part));
+                case MultiblockGetFaceShapeEvent.ID:
+                    return evt.cast(getFaceShape((MultiblockGetFaceShapeEvent) evt, part));
             }
-            case MultiblockActivatedEvent.ID:
-                return evt.cast(handleActivated((MultiblockActivatedEvent) evt, part));
-            case MultiblockCapabilityEvent.Has.ID:
-                return evt.cast(hasCapability((MultiblockCapabilityEvent.Has<?>) evt, part));
-            case MultiblockCapabilityEvent.Get.ID:
-                return evt.cast(getCapability((MultiblockCapabilityEvent.Get<T>) evt, part));
-            case MultiblockPickBlockEvent.ID:
-                return evt.cast(getPickBlock((MultiblockPickBlockEvent) evt, part));
-            case MultiblockGetFaceShapeEvent.ID:
-                return evt.cast(getFaceShape((MultiblockGetFaceShapeEvent) evt, part));
         }
         return null;
     }
