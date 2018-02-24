@@ -24,6 +24,7 @@ public class PXLModelRenderer
 {
     public static boolean renderModelTESR(IBlockAccess worldIn, IBakedModel modelIn, IBlockState stateIn, BlockPos posIn, BufferBuilder buffer, boolean checkSides, long rand)
     {
+        buffer.setTranslation(-posIn.getX(), -posIn.getY(), -posIn.getZ());
         boolean flag = false;
         for (EnumFacing enumfacing : EnumFacing.values())
         {
@@ -43,7 +44,7 @@ public class PXLModelRenderer
             renderQuadsFlat(worldIn, stateIn, posIn, buffer, list1);
             flag = true;
         }
-
+        buffer.setTranslation(0, 0, 0);
         return flag;
     }
 

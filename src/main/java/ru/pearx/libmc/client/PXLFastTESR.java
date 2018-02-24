@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityBeaconRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
@@ -37,7 +38,6 @@ public abstract class PXLFastTESR<T extends TileEntity> extends TileEntitySpecia
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
-        setTrans(te);
 
         render(te, x, y, z, partialTicks, destroyStage, partialTicks, buffer, tessellator);
         GlStateManager.popMatrix();
@@ -45,14 +45,9 @@ public abstract class PXLFastTESR<T extends TileEntity> extends TileEntitySpecia
         RenderHelper.enableStandardItemLighting();
     }
 
-    protected void resetTrans(TileEntity te)
+    protected void setTrans(BufferBuilder bld, TileEntity te)
     {
-        GlStateManager.translate(te.getPos().getX(), te.getPos().getY(), te.getPos().getZ());
-    }
-
-    protected void setTrans(TileEntity te)
-    {
-        GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
+        bld.setTranslation(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
     }
 
     public abstract void render(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha, BufferBuilder buffer, Tessellator tes);
