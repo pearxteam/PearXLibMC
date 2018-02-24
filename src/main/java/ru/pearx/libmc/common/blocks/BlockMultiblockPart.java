@@ -1,5 +1,6 @@
 package ru.pearx.libmc.common.blocks;
 
+import net.minecraft.block.BlockChest;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -15,10 +16,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import ru.pearx.libmc.common.structure.multiblock.Multiblock;
-import ru.pearx.libmc.common.structure.multiblock.events.MultiblockActivatedEvent;
-import ru.pearx.libmc.common.structure.multiblock.events.MultiblockBreakEvent;
-import ru.pearx.libmc.common.structure.multiblock.events.MultiblockGetFaceShapeEvent;
-import ru.pearx.libmc.common.structure.multiblock.events.MultiblockPickBlockEvent;
+import ru.pearx.libmc.common.structure.multiblock.events.*;
 import ru.pearx.libmc.common.tiles.TileMultiblockSlave;
 
 import javax.annotation.Nullable;
@@ -80,12 +78,6 @@ public abstract class BlockMultiblockPart extends BlockBase
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
-    {
-        //leave this empty.
-    }
-
-    @Override
     public boolean isFullBlock(IBlockState state)
     {
         return false;
@@ -140,8 +132,6 @@ public abstract class BlockMultiblockPart extends BlockBase
         }
         return null;
     }
-
-
 
     @Override
     public EnumPushReaction getMobilityFlag(IBlockState state)

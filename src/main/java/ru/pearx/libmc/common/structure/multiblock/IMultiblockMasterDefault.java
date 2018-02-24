@@ -18,16 +18,19 @@ public interface IMultiblockMasterDefault extends IMultiblockMaster
     @Override
     default <T>T handleEvent(IMultiblockEvent<T> evt, IMultiblockPart part)
     {
-        if(!isInactive())
+        if(evt.getId().equals(MultiblockBreakEvent.ID))
+        {
+            handleBreak((MultiblockBreakEvent) evt, part);
+            if (!part.getWorld().isRemote && !isInactive())
+                unform();
+        }
+        else if(!isInactive())
         {
             switch (evt.getId())
             {
                 case MultiblockBreakEvent.ID:
                 {
-                    handleBreak((MultiblockBreakEvent) evt, part);
-                    if (!part.getWorld().isRemote)
-                        unform();
-                    break;
+
                 }
                 case MultiblockActivatedEvent.ID:
                     return evt.cast(handleActivated((MultiblockActivatedEvent) evt, part));
