@@ -5,18 +5,28 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import ru.pearx.libmc.common.nbt.serialization.NBTSerializer;
 import ru.pearx.libmc.common.structure.multiblock.IMultiblockSlave;
 import ru.pearx.libmc.common.structure.multiblock.Multiblock;
 import ru.pearx.libmc.common.structure.multiblock.events.MultiblockCapabilityEvent;
+import ru.pearx.libmc.common.tiles.syncable.TileSyncable;
+import ru.pearx.libmc.common.tiles.syncable.TileSyncableComposite;
 
 import javax.annotation.Nullable;
 
 /*
  * Created by mrAppleXZ on 13.11.17 18:24.
  */
-public class TileMultiblockSlave extends TileSyncable implements IMultiblockSlave
+public class TileMultiblockSlave extends TileSyncableComposite implements IMultiblockSlave
 {
+    public static final String NBT_MASTER_POS = "masterPos";
+
     private BlockPos absMasterPos;
+
+    public TileMultiblockSlave()
+    {
+        getSerializers().add(new NBTSerializer.ReaderWriter<>(NBT_MASTER_POS, BlockPos.class, this::setMasterPos, this::getMasterPos));
+    }
 
     @Override
     public BlockPos getMasterPos()
@@ -28,23 +38,6 @@ public class TileMultiblockSlave extends TileSyncable implements IMultiblockSlav
     public void setMasterPos(BlockPos pos)
     {
         absMasterPos = pos;
-    }
-
-    @Override
-    public void readCustomData(NBTTagCompound tag)
-    {
-        if(tag.hasKey("masterPos", Constants.NBT.TAG_INT_ARRAY))
-        {
-            int[] ints = tag.getIntArray("masterPos");
-            setMasterPos(new BlockPos(getPos().getX() + ints[0], getPos().getY() + ints[1], getPos().getZ() + ints[2]));
-        }
-    }
-
-    @Override
-    public void writeCustomData(NBTTagCompound tag)
-    {
-        BlockPos rel = getMasterPos().subtract(getPos());
-        tag.setIntArray("masterPos", new int[] {rel.getX(), rel.getY(), rel.getZ()});
     }
 
     @Nullable

@@ -1,6 +1,7 @@
 package ru.pearx.libmc;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
@@ -297,5 +298,15 @@ public class PXLMC
                 return Rotation.COUNTERCLOCKWISE_90;
         }
         return Rotation.NONE;
+    }
+
+    public static NBTTagByte getTagBoolean(boolean bool)
+    {
+        return new NBTTagByte((byte)(bool ? 1 : 0));
+    }
+
+    public static boolean getBooleanFromTag(NBTTagByte b)
+    {
+        return b.getByte() == 1;
     }
 }

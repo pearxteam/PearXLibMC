@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ru.pearx.libmc.common.networking.ByteBufTools;
-import ru.pearx.libmc.common.tiles.TileSyncable;
+import ru.pearx.libmc.common.tiles.syncable.TileSyncable;
 
 /*
  * Created by mrAppleXZ on 17.02.18 21:42.

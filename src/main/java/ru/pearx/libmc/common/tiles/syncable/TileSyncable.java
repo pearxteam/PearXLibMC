@@ -1,9 +1,10 @@
-package ru.pearx.libmc.common.tiles;
+package ru.pearx.libmc.common.tiles.syncable;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -11,8 +12,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.pearx.lib.PXL;
 import ru.pearx.libmc.PXLMC;
 import ru.pearx.libmc.common.networking.packets.CPacketUpdateTileEntitySyncable;
 
@@ -60,9 +63,12 @@ public abstract class TileSyncable extends TileEntity
     }
 
     public abstract void readCustomData(NBTTagCompound tag);
-    public abstract void writeCustomData(NBTTagCompound tag);
 
-    public void sendUpdates(NBTTagCompound tag, EntityPlayer player)
+    public abstract void writeCustomData(NBTTagCompound tag, String... data);
+
+
+
+    public void sendUpdates(EntityPlayer player, NBTTagCompound tag)
     {
         if(getWorld() instanceof WorldServer)
         {
