@@ -31,12 +31,16 @@ public class NBTAdapter<T, N extends NBTBase> implements INBTAdapter<T, N>
     @Override
     public N convertTo(T o)
     {
+        if(o == null)
+            return null;
         return converterTo.apply(o);
     }
 
     @Override
     public T convertFrom(N n)
     {
+        if(n == null)
+            return null;
         return converterFrom.apply(n);
     }
 

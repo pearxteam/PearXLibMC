@@ -1,6 +1,7 @@
 package ru.pearx.libmc.common.nbt.serialization;
 
 import net.minecraft.nbt.NBTTagCompound;
+import ru.pearx.libmc.common.tiles.syncable.WriteTarget;
 
 /*
  * Created by mrAppleXZ on 03.03.18 14:24.
@@ -10,7 +11,7 @@ public interface INBTSerializer
     String getName();
 
     boolean shouldRead(NBTTagCompound tag);
-    boolean shouldWrite(NBTTagCompound tag);
+    boolean shouldWrite(NBTTagCompound tag, WriteTarget target);
 
     void read(NBTTagCompound tag);
     void write(NBTTagCompound tag);
@@ -22,11 +23,11 @@ public interface INBTSerializer
         @Override
         default boolean shouldRead(NBTTagCompound tag)
         {
-            return tag.hasKey(getName(), getId());
+            return tag.hasKey(getName(), getId()) || NBTSerializer.hasNullTag(getName(), tag);
         }
 
         @Override
-        default boolean shouldWrite(NBTTagCompound tag)
+        default boolean shouldWrite(NBTTagCompound tag, WriteTarget target)
         {
             return false;
         }
@@ -44,7 +45,7 @@ public interface INBTSerializer
         }
 
         @Override
-        default boolean shouldWrite(NBTTagCompound tag)
+        default boolean shouldWrite(NBTTagCompound tag, WriteTarget target)
         {
             return true;
         }
@@ -62,9 +63,9 @@ public interface INBTSerializer
         }
 
         @Override
-        default boolean shouldWrite(NBTTagCompound tag)
+        default boolean shouldWrite(NBTTagCompound tag, WriteTarget target)
         {
-            return Writer.super.shouldWrite(tag);
+            return Writer.super.shouldWrite(tag, target);
         }
 
         @Override

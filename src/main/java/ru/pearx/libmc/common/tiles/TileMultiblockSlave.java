@@ -11,6 +11,7 @@ import ru.pearx.libmc.common.structure.multiblock.Multiblock;
 import ru.pearx.libmc.common.structure.multiblock.events.MultiblockCapabilityEvent;
 import ru.pearx.libmc.common.tiles.syncable.TileSyncable;
 import ru.pearx.libmc.common.tiles.syncable.TileSyncableComposite;
+import ru.pearx.libmc.common.tiles.syncable.WriteTarget;
 
 import javax.annotation.Nullable;
 

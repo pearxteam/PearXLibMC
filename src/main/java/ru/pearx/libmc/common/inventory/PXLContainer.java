@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 /*
  * Created by mrAppleXZ on 18.07.17 11:08.
  */
-public class PXLContainer extends Container
+public abstract class PXLContainer extends Container
 {
     protected int slotCount;
     protected int playerSlotsX, playerSlotsY;
@@ -63,10 +63,7 @@ public class PXLContainer extends Container
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn)
-    {
-        return true;
-    }
+    public abstract boolean canInteractWith(EntityPlayer playerIn);
 
     protected void addPlayerSlots()
     {

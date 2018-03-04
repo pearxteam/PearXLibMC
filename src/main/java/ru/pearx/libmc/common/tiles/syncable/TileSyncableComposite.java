@@ -1,7 +1,6 @@
 package ru.pearx.libmc.common.tiles.syncable;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import ru.pearx.lib.PXL;
 import ru.pearx.libmc.common.nbt.serialization.INBTSerializer;
@@ -25,7 +24,7 @@ public class TileSyncableComposite extends TileSyncable
     public void sendUpdates(EntityPlayer p, String... dataToSend)
     {
         NBTTagCompound tag = new NBTTagCompound();
-        writeCustomData(tag, dataToSend);
+        writeCustomData(tag, WriteTarget.PARTIAL_UPDATE, dataToSend);
         sendUpdates(p, tag);
     }
 
@@ -38,10 +37,10 @@ public class TileSyncableComposite extends TileSyncable
     }
 
     @Override
-    public void writeCustomData(NBTTagCompound tag, String... data)
+    public void writeCustomData(NBTTagCompound tag, WriteTarget target, String... data)
     {
         for(INBTSerializer s : getSerializers())
-            if(s.shouldWrite(tag) && (data.length == 0 || PXL.arrayContains(data, s.getName())))
+            if(s.shouldWrite(tag, target) && (data.length == 0 || PXL.arrayContains(data, s.getName())))
                 s.write(tag);
     }
 }

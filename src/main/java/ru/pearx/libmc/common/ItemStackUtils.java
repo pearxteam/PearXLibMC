@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import ru.pearx.libmc.common.nbt.NBTTagCompoundBuilder;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -156,21 +157,14 @@ public class ItemStackUtils
         return RecipeMatcher.findMatches(items, input) != null;
     }
 
-    public static void loadSlotUpdate(NBTTagCompound tag, IItemHandlerModifiable hand, String nameSlot, String nameStack)
+    public static void loadSlotUpdate(NBTTagCompound tag, IItemHandlerModifiable hand)
     {
-        if(tag.hasKey(nameSlot, Constants.NBT.TAG_INT) && tag.hasKey(nameStack, Constants.NBT.TAG_COMPOUND))
-            hand.setStackInSlot(tag.getInteger(nameSlot), new ItemStack(tag.getCompoundTag(nameStack)));
+        if(tag.hasKey("slot", Constants.NBT.TAG_INT) && tag.hasKey("stack", Constants.NBT.TAG_COMPOUND))
+            hand.setStackInSlot(tag.getInteger("slot"), new ItemStack(tag.getCompoundTag("stack")));
     }
 
-    public static NBTTagCompound writeSlotUpdate(NBTTagCompound tag, IItemHandlerModifiable hand, int slot, String nameSlot, String nameStack)
+    public static NBTTagCompound writeSlotUpdate(IItemHandlerModifiable hand, int slot)
     {
-        tag.setInteger(nameSlot, slot);
-        tag.setTag(nameStack, hand.getStackInSlot(slot).serializeNBT());
-        return tag;
-    }
-
-    public static NBTTagCompound writeSlotUpdate(IItemHandlerModifiable hand, int slot, String nameSlot, String nameStack)
-    {
-        return writeSlotUpdate(new NBTTagCompound(), hand, slot, nameSlot, nameStack);
+        return new NBTTagCompoundBuilder().setInteger("slot", slot).setTag("stack", hand.getStackInSlot(slot).serializeNBT()).build();
     }
 }

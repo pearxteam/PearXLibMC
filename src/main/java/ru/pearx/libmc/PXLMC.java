@@ -299,14 +299,4 @@ public class PXLMC
         }
         return Rotation.NONE;
     }
-
-    public static NBTTagByte getTagBoolean(boolean bool)
-    {
-        return new NBTTagByte((byte)(bool ? 1 : 0));
-    }
-
-    public static boolean getBooleanFromTag(NBTTagByte b)
-    {
-        return b.getByte() == 1;
-    }
 }
