@@ -1,7 +1,6 @@
 package ru.pearx.libmc;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
@@ -92,7 +91,9 @@ public class PXLMC
     public static void onServerStart(FMLServerStartingEvent e)
     {
         e.registerServerCommand(new CommandStructure());
-        e.getServer().setOnlineMode(false);
+        //this is there to allow the developers to disable the online mode for LAN worlds by force
+        if(System.getProperties().containsKey("ru.pearx.libmc.force-offline-mode"))
+            e.getServer().setOnlineMode(false);
     }
 
     public static Logger getLog()
