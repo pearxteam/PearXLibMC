@@ -1,5 +1,6 @@
 package ru.pearx.libmc.common;
 
+import net.minecraft.entity.player.EntityPlayer;
 import ru.pearx.libmc.client.models.IModelProvider;
 
 /*
@@ -16,5 +17,10 @@ public class CommonProxy
     public void preInit()
     {
 
+    }
+
+    public EntityPlayer getClientPlayer()
+    {
+        return null;
     }
 }

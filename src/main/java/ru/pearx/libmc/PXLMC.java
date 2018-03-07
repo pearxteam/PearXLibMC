@@ -91,7 +91,7 @@ public class PXLMC
     public static void onServerStart(FMLServerStartingEvent e)
     {
         e.registerServerCommand(new CommandStructure());
-        //this is there to allow the developers to disable the online mode for LAN worlds by force
+        //this is there to allow developers to disable the online mode for LAN worlds by force
         if(System.getProperties().containsKey("ru.pearx.libmc.force-offline-mode"))
             e.getServer().setOnlineMode(false);
     }
