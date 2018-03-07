@@ -2,22 +2,31 @@ package ru.pearx.libmc.common.nbt.serialization.conversion;
 
 import net.minecraft.nbt.NBTBase;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /*
- * Created by mrAppleXZ on 03.03.18 19:14.
+ * Created by mrAppleXZ on 06.03.18 21:56.
  */
 public class NBTAdapter<T, N extends NBTBase> implements INBTAdapter<T, N>
 {
     private Class<T> type;
     private Function<T, N> converterTo;
-    private Function<N, T> converterFrom;
-    private int nbtId;
+    private BiFunction<Class<? extends T>, N, T> converterFrom;
+    private Function<Class<? extends T>, Integer> idGetter;
 
-    public NBTAdapter(Class<T> type, Class<N> nbtClass, int nbtId, Function<T, N> converterTo, Function<N, T> converterFrom)
+    public NBTAdapter(Class<T> type, Class<N> nbtClass, Function<Class<? extends T>, Integer> idGetter, Function<T, N> converterTo, BiFunction<Class<? extends T>, N, T> converterFrom)
     {
         this.type = type;
-        this.nbtId = nbtId;
+        this.idGetter = idGetter;
+        this.converterFrom = converterFrom;
+        this.converterTo = converterTo;
+    }
+
+    public NBTAdapter(Class<T> type, Class<N> nbtClass, int id, Function<T, N> converterTo, BiFunction<Class<? extends T>, N, T> converterFrom)
+    {
+        this.type = type;
+        this.idGetter = (clazz) -> id;
         this.converterFrom = converterFrom;
         this.converterTo = converterTo;
     }
@@ -37,16 +46,14 @@ public class NBTAdapter<T, N extends NBTBase> implements INBTAdapter<T, N>
     }
 
     @Override
-    public T convertFrom(N n)
+    public T convertFrom(Class<? extends T> clazzToConvert, N n)
     {
-        if(n == null)
-            return null;
-        return converterFrom.apply(n);
+        return converterFrom.apply(clazzToConvert, n);
     }
 
     @Override
-    public int getNbtId()
+    public int getNbtId(Class<? extends T> clazzToConvert)
     {
-        return nbtId;
+        return idGetter.apply(clazzToConvert);
     }
 }

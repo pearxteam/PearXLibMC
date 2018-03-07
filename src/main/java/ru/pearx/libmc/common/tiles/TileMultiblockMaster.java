@@ -39,9 +39,7 @@ public class TileMultiblockMaster extends TileSyncableComposite implements IMult
 
     public TileMultiblockMaster()
     {
-        getSerializers().add(new NBTSerializer.ReaderWriter<>(NBT_ROTATION, int.class,
-                (i) -> setRotation(Rotation.values()[i]),
-                rot::ordinal));
+        getSerializers().add(new NBTSerializer.ReaderWriter<>(NBT_ROTATION, Rotation.class, this::setRotation, this::getRotation));
         getSerializers().add(new NBTSerializer.ReaderWriter<>(NBT_SLAVES, NBTTagList.class,
                 (lst) ->
                 {

@@ -8,17 +8,7 @@ import net.minecraft.nbt.NBTBase;
 public interface INBTAdapter<T, N extends NBTBase>
 {
     Class<T> getType();
-    int getNbtId();
+    int getNbtId(Class<? extends T> clazzToConvert);
     N convertTo(T o);
-    T convertFrom(N n);
-
-    default T castType(Object o)
-    {
-        return (T)o;
-    }
-
-    default N castNbt(NBTBase b)
-    {
-        return (N)b;
-    }
+    T convertFrom(Class<? extends T> clazzToConvert, N n);
 }

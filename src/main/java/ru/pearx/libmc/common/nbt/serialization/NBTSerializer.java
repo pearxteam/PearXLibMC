@@ -1,8 +1,6 @@
 package ru.pearx.libmc.common.nbt.serialization;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants;
 import ru.pearx.lib.PXL;
 import ru.pearx.libmc.common.nbt.serialization.conversion.NBTConverter;
 import ru.pearx.libmc.common.tiles.syncable.WriteTarget;
@@ -19,33 +17,19 @@ public final class NBTSerializer
     {
     }
 
-    public static NBTTagCompound createNullTag()
-    {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setByte("null", (byte)0);
-        return tag;
-    }
-
-    public static boolean hasNullTag(String name, NBTTagCompound tag)
-    {
-        return tag.hasKey(name, Constants.NBT.TAG_COMPOUND) && (tag.getCompoundTag(name).hasKey("null", Constants.NBT.TAG_BYTE));
-    }
-
     private static <T> void read(Consumer<T> reader, Class<T> clazz, String name, NBTTagCompound tag)
     {
-        if(hasNullTag(name, tag))
-            reader.accept(null);
-        else
-            reader.accept(NBTConverter.convertFrom(clazz, tag.getTag(name)));
+        reader.accept(NBTConverter.convertFrom(clazz, tag.getTag(name)));
     }
 
     private static <T> void write(Supplier<T> writer, Class<T> clazz, String name, NBTTagCompound tag)
     {
-        NBTBase t = NBTConverter.convertTo(clazz, writer.get());
-        if(t == null)
-            tag.setTag(name, createNullTag());
-        else
-            tag.setTag(name, t);
+        tag.setTag(name, NBTConverter.convertTo(clazz, writer.get()));
+    }
+
+    private static boolean shouldWrite(WriteTarget[] targets, WriteTarget target)
+    {
+        return (targets.length == 0 || PXL.arrayContains(targets, target));
     }
 
     public static class Reader<T> implements INBTSerializer.Reader
@@ -68,6 +52,12 @@ public final class NBTSerializer
         }
 
         @Override
+        public boolean shouldWrite(NBTTagCompound tag, WriteTarget target)
+        {
+            return false;
+        }
+
+        @Override
         public int getId()
         {
             return NBTConverter.getId(clazz);
@@ -77,6 +67,12 @@ public final class NBTSerializer
         public void read(NBTTagCompound tag)
         {
             NBTSerializer.read(reader, clazz, name, tag);
+        }
+
+        @Override
+        public void write(NBTTagCompound tag)
+        {
+
         }
     }
 
@@ -102,9 +98,21 @@ public final class NBTSerializer
         }
 
         @Override
+        public boolean shouldRead(NBTTagCompound tag)
+        {
+            return false;
+        }
+
+        @Override
         public boolean shouldWrite(NBTTagCompound tag, WriteTarget target)
         {
-            return INBTSerializer.Writer.super.shouldWrite(tag, target) && (targets.length == 0 || PXL.arrayContains(targets, target));
+            return NBTSerializer.shouldWrite(targets, target);
+        }
+
+        @Override
+        public void read(NBTTagCompound tag)
+        {
+
         }
 
         @Override
@@ -114,7 +122,7 @@ public final class NBTSerializer
         }
     }
 
-    public static class ReaderWriter<T> implements INBTSerializer.ReaderWriter
+    public static class ReaderWriter<T> implements INBTSerializer.Reader, INBTSerializer.Writer
     {
         private String name;
         private Class<T> clazz;
@@ -146,7 +154,7 @@ public final class NBTSerializer
         @Override
         public boolean shouldWrite(NBTTagCompound tag, WriteTarget target)
         {
-            return INBTSerializer.ReaderWriter.super.shouldWrite(tag, target) && (targets.length == 0 || PXL.arrayContains(targets, target));
+            return NBTSerializer.shouldWrite(targets, target);
         }
 
         @Override
